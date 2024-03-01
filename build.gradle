@@ -1,0 +1,36 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+repositories {
+    maven { url "https://dl.bintray.com/spark-packages/maven/" }
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
+    implementation 'org.json:json:20210307'
+}
+
+// Task to download WebDriver binaries using WebDriverManager
+task downloadWebDriver(type: Exec) {
+    dependsOn 'clean'
+
+    executable 'java'
+    args '-jar', 'gradle/libraries/webdrivermanager-5.0.3.jar', 'chromedriver'
+}
+
+group = 'wildepizza.com.github.blizzity'
+version = '1.0'
+description = 'blizzity'
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
