@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class GUI {
     private JFrame frame;
     private JPanel panel;
-    private JLabel userLabel, passLabel, languageLabel, lengthLabel, usagesLabel, creditsLabel;
+    private JLabel usernameLabel, passwordLabel, languageLabel, lengthLabel, usagesLabel, creditsLabel;
     private JTextField userText;
     private JPasswordField passText;
     private JButton loginButton;
@@ -27,20 +27,19 @@ public class GUI {
     }
 
     private void showLoginPanel() {
-        panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2));
+        // Create a JPanel with a more visually appealing layout manager
+        panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        userLabel = new JLabel("Username:");
-        panel.add(userLabel);
+        // Use descriptive variable names for better readability
+        usernameLabel = new JLabel("Username:");
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
 
-        userText = new JTextField();
-        panel.add(userText);
+        userText = new JTextField(20); // Set a reasonable width for the text field
 
-        passLabel = new JLabel("Password:");
-        panel.add(passLabel);
+        passwordLabel = new JLabel("Password:");
+        passwordLabel.setFont(usernameLabel.getFont()); // Maintain consistency
 
-        passText = new JPasswordField();
-        panel.add(passText);
+        passText = new JPasswordField(20); // Set width for password field
 
         loginButton = new JButton("Login");
         loginButton.addActionListener(new ActionListener() {
@@ -55,9 +54,27 @@ public class GUI {
                 }
             }
         });
+
+        // Add spacing around components for better organization
+        panel.add(usernameLabel);
+        panel.add(Box.createHorizontalStrut(10)); // Add horizontal spacing
+        panel.add(userText);
+
+        panel.add(Box.createVerticalStrut(10)); // Add vertical spacing
+
+        panel.add(passwordLabel);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(passText);
+
+        panel.add(Box.createVerticalStrut(15)); // Add more space before button
+
         panel.add(loginButton);
 
-        frame.add(panel);
+        // Set preferred size for the panel to avoid potential layout issues
+        panel.setPreferredSize(new Dimension(300, 180));
+
+        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
+        frame.pack(); // Adjust frame size to fit components
         frame.setVisible(true);
     }
     private void showContentPanel(String key) {
