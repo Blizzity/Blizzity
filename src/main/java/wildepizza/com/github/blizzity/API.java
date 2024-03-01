@@ -1,4 +1,4 @@
-package org.example;
+package wildepizza.com.github.blizzity;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -9,13 +9,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class Main {
+public class API {
     // Replace with the actual server address
-    static String serverUrl = "http://localhost:8080";
-    public static void main(String[] args) {
-        video();
+     String serverUrl;
+    API(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
-    public static void test() {
+    public void test() {
 
         // Replace with the actual authorization token
         String authToken = "correct_auth_token";
@@ -46,7 +46,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    public static void login(String username, String password) {
+    public boolean login(String username, String password) {
         // Construct the API endpoint URL
         String apiUrl = serverUrl + "/login?username=" + username + "&password=" + password;
 
@@ -65,12 +65,13 @@ public class Main {
             // Print the response status code and body
             System.out.println("Response Code: " + response.statusCode());
             System.out.println("Response Body: " + response.body());
+            return !response.body().equals("wrong password");
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
-    public static void video() {
-        String serverUrl = "http://localhost:8080";
+    public void video() {
         String authToken = "correct_auth_token";
 
         String name = "english";
@@ -120,6 +121,30 @@ public class Main {
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public String usages(String key) {
+        String apiUrl = serverUrl + "/api/usages?key=" + key;
+
+        // Create an HTTP client
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create an HTTP request with authorization header
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        try {
+            // Send the HTTP request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Print the response status code and body
+            System.out.println("Response Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+            return response.body();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
         }
     }
 }
