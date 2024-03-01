@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -124,7 +125,31 @@ public class API {
         }
     }
     public String usages(String key) {
-        String apiUrl = serverUrl + "/api/usages?key=" + key;
+        String apiUrl = serverUrl + "/api/usages?key=" + URLEncoder.encode(key);
+
+        // Create an HTTP client
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create an HTTP request with authorization header
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        try {
+            // Send the HTTP request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Print the response status code and body
+            System.out.println("Response Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+            return response.body();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+    }
+    public String credits(String key) {
+        String apiUrl = serverUrl + "/api/credits?key=" + URLEncoder.encode(key);
 
         // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();

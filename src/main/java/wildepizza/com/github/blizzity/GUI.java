@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class GUI {
     private JFrame frame;
     private JPanel panel;
-    private JLabel userLabel, passLabel, languageLabel, lengthLabel;
+    private JLabel userLabel, passLabel, languageLabel, lengthLabel, usagesLabel, creditsLabel;
     private JTextField userText;
     private JPasswordField passText;
     private JButton loginButton;
@@ -20,8 +20,8 @@ public class GUI {
         this.api = api;
     }
     public void open() {
-        frame = new JFrame("Login Screen");
-        frame.setSize(400, 200);
+        frame = new JFrame("BlizzityAI");
+        frame.setSize(1000, 1000);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         showLoginPanel();
     }
@@ -49,7 +49,7 @@ public class GUI {
                 String password = new String(passText.getPassword());
                 if (api.login(username, password)) {
                     frame.remove(panel);
-                    showContentPanel();
+                    showContentPanel(StringUtils.encrypt(username, password));
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid Password", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -60,7 +60,7 @@ public class GUI {
         frame.add(panel);
         frame.setVisible(true);
     }
-    private void showContentPanel() {
+    private void showContentPanel(String key) {
         contentPanel = new JPanel();
 
         languageLabel = new JLabel("Select Language:");
@@ -69,6 +69,12 @@ public class GUI {
         String[] languages = {"English", "Spanish", "French"};
         languageComboBox = new JComboBox<>(languages);
         contentPanel.add(languageComboBox);
+
+        usagesLabel = new JLabel("Usages:" + api.usages(key));
+        contentPanel.add(usagesLabel);
+
+        creditsLabel = new JLabel("Credits:" + api.credits(key));
+        contentPanel.add(creditsLabel);
 
         lengthLabel = new JLabel("Select Length:");
         contentPanel.add(lengthLabel);
