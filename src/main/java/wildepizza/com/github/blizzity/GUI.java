@@ -1,9 +1,14 @@
 package wildepizza.com.github.blizzity;
 
+import wildepizza.com.github.blizzity.custom.JRoundedTextField;
+import wildepizza.com.github.blizzity.custom.RoundedBorder;
+import wildepizza.com.github.blizzity.utils.StringUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 public class GUI {
     private JFrame frame;
@@ -27,19 +32,33 @@ public class GUI {
     }
 
     private void showLoginPanel() {
+        Color color1 = new Color(19, 19, 20);
+        Color color2 = new Color(190, 31, 32);
+
+
         // Create a JPanel with a more visually appealing layout manager
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        panel.setBackground(color1); // Dark gray background
 
         // Use descriptive variable names for better readability
         usernameLabel = new JLabel("Username:");
+        usernameLabel.setForeground(Color.WHITE); // White text
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
 
-        userText = new JTextField(20); // Set a reasonable width for the text field
+        userText = new JRoundedTextField(10, 10, 20); // Set a reasonable width for the text field
+        userText.setBackground(color2); // Slightly lighter gray
+        userText.setForeground(Color.WHITE);
+//        userText.setBorder(new RoundedBorder(30, 30, color2));
+        userText.setBorder(BorderFactory.createEmptyBorder());
 
         passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(usernameLabel.getFont()); // Maintain consistency
+        passwordLabel.setForeground(Color.WHITE); // White text
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
 
         passText = new JPasswordField(20); // Set width for password field
+        passText.setBackground(color2); // Slightly lighter gray
+        passText.setForeground(Color.WHITE);
+        passText.setBorder(BorderFactory.createEmptyBorder());
 
         loginButton = new JButton("Login");
         loginButton.addActionListener(new ActionListener() {

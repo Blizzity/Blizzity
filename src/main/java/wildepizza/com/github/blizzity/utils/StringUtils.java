@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity;
+package wildepizza.com.github.blizzity.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
