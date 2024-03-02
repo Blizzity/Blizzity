@@ -1,10 +1,15 @@
 package wildepizza.com.github.blizzity;
 
+import wildepizza.com.github.blizzity.custom.CustomAlignedTextField;
 import wildepizza.com.github.blizzity.custom.JRoundedTextField;
 import wildepizza.com.github.blizzity.custom.RoundedBorder;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +19,7 @@ public class GUI {
     private JFrame frame;
     private JPanel panel;
     private JLabel usernameLabel, passwordLabel, languageLabel, lengthLabel, usagesLabel, creditsLabel;
-    private JTextField userText;
+    private JRoundedTextField userText;
     private JPasswordField passText;
     private JButton loginButton;
     private JComboBox<String> languageComboBox;
@@ -45,6 +50,9 @@ public class GUI {
         usernameLabel.setForeground(Color.WHITE); // White text
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
 
+        userText = new JRoundedTextField(10,10, 20);
+        userText.setAlignmentOffset(20);
+        userText.setOpaque(false);
         userText = new JRoundedTextField(10, 10, 20); // Set a reasonable width for the text field
         userText.setBackground(color2); // Slightly lighter gray
         userText.setForeground(Color.WHITE);
