@@ -50,10 +50,9 @@ public class GUI {
         usernameLabel.setForeground(Color.WHITE); // White text
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
 
-        userText = new JRoundedTextField(10,10, 20);
+        userText = new JRoundedTextField(10,10, 20, color1);
         userText.setAlignmentOffset(20);
         userText.setOpaque(false);
-        userText = new JRoundedTextField(10, 10, 20); // Set a reasonable width for the text field
         userText.setBackground(color2); // Slightly lighter gray
         userText.setForeground(Color.WHITE);
 //        userText.setBorder(new RoundedBorder(30, 30, color2));
