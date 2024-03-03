@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity.custom;
+package wildepizza.com.github.blizzity.gui;
 
 import javax.swing.*;
 import java.awt.*;

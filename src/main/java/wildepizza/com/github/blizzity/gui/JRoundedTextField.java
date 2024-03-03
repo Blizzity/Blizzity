@@ -1,12 +1,11 @@
-package wildepizza.com.github.blizzity.custom;
+package wildepizza.com.github.blizzity.gui;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 public class JRoundedTextField extends JTextField {
     private final int arcWidth;
@@ -14,20 +13,47 @@ public class JRoundedTextField extends JTextField {
     private int alignmentOffset = 40;
     private Point dragStart;
     private int l;
+    private String previewText;
+    private Color previewColor;
     private int w;
-
-    public JRoundedTextField(int arcWidth, int arcHeight, int columns, Color backround) {
+    private boolean blink;
+    private UUID uuid;
+    public JRoundedTextField(int arcWidth, int arcHeight, int columns) {
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
         setColumns(columns);
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder());
-        /*addActionListener(new ActionListener() {
+        FocusListener focusListener = new FocusListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                replaceSelectedText();
+            public void focusGained(FocusEvent e) {
+                repaint();
+                UUID luuid = UUID.randomUUID();
+                uuid = luuid;
+                blink = true;
+                java.util.Timer timer = new Timer();
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        // Your code to be executed every second
+                        if (luuid == uuid) {
+                            repaint();
+                            blink = !blink;
+                        } else
+                            timer.cancel();
+                    }
+                };
+
+                // Schedule the task to run every second with no initial delay
+                timer.schedule(task, 0, 500);
             }
-        });*/
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                repaint();
+                uuid = null;
+            }
+        };
         MouseAdapter mouseHandler = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -36,6 +62,7 @@ public class JRoundedTextField extends JTextField {
                 int clickOffset = viewToModel2D(point);
                 dragStart = point;
                 adjustCaretPosition(e, clickOffset);
+                repaint();
             }
 
             @Override
@@ -47,32 +74,13 @@ public class JRoundedTextField extends JTextField {
                     select(Math.min(viewToModel2D(dragStart), dragEnd), Math.max(viewToModel2D(dragStart), dragEnd));
                     String selected = getSelectedText();
                     if (selected != null) {
-                        int x = getFontMetrics(getFont()).stringWidth(getText().substring(0, Math.min(viewToModel2D(dragStart), viewToModel2D(e.getPoint())))) + alignmentOffset;
-                        int x2 = getFontMetrics(getFont()).stringWidth(selected);
-
-                        l = x;
-                        w = x2;
+                        l = getFontMetrics(getFont()).stringWidth(getText().substring(0, Math.min(viewToModel2D(dragStart), dragEnd))) + alignmentOffset;
+                        w = getFontMetrics(getFont()).stringWidth(selected);
 
                         repaint();
                     }
                 }
             }
-            /*@Override
-            public void mouseReleased(MouseEvent e) {
-                Point point = e.getPoint();
-                point.x -= alignmentOffset;
-                int dragEnd = viewToModel2D(point);
-                adjustCaretPosition(e, dragEnd);
-                if (viewToModel2D(dragStart) != -1 && dragEnd != -1) {
-                    select(Math.min(viewToModel2D(dragStart), dragEnd), Math.max(viewToModel2D(dragStart), dragEnd));
-                    if (dragPrevious != null) {
-                        repaint(new Rectangle(Math.min(dragStart.x, dragPrevious.x), 0, Math.max(dragPrevious.x-dragStart.x, dragStart.x-dragPrevious.x), getHeight()));
-                        dragPrevious = null;
-                    }
-                    repaint(new Rectangle(Math.min(dragStart.x, point.x) + alignmentOffset, 0, Math.max(point.x-dragStart.x, dragStart.x-point.x), getHeight()));
-                    dragPrevious = point;
-                }
-            }*/
             private void adjustCaretPosition(MouseEvent e, int clickOffset) {
                 int textLength = getText().length();
                 int adjustedOffset = Math.min(Math.max(clickOffset, 0), textLength);
@@ -82,12 +90,21 @@ public class JRoundedTextField extends JTextField {
 
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
+        addFocusListener(focusListener);
     }
     public int getAlignmentOffset() {
         return alignmentOffset;
     }
     public void setAlignmentOffset(int alignmentOffset) {
         this.alignmentOffset = alignmentOffset;
+        repaint();
+    }
+    public String getPreviewText() {
+        return previewText;
+    }
+    public void setPreviewText(String text, Color color) {
+        this.previewText = text;
+        this.previewColor = color;
         repaint();
     }
     @Override
@@ -107,7 +124,7 @@ public class JRoundedTextField extends JTextField {
                 g.setColor(getBackground());
                 g.fillRoundRect(insets.left, insets.top, getWidth() - insets.left - insets.right, getHeight() - insets.top - insets.bottom, arcWidth, arcHeight);
                 g.setColor(getSelectionColor());
-                g.fillRect(l, 0, w, getHeight());
+                g.fillRect(l, getHeight()/2-getFontMetrics(getFont()).getHeight()/2, w, getFontMetrics(getFont()).getHeight());
                 g.setColor(getForeground());
                 // Draw the text with the custom alignment
                 g.drawString(text, insets.left + alignmentOffset, baseline);
@@ -116,9 +133,22 @@ public class JRoundedTextField extends JTextField {
             } else {
                 g.setColor(getBackground());
                 g.fillRoundRect(insets.left, insets.top, getWidth() - insets.left - insets.right, getHeight() - insets.top - insets.bottom, arcWidth, arcHeight);
-                g.setColor(getForeground());
                 // Draw the text with the custom alignment
-                g.drawString(text, insets.left + alignmentOffset, baseline);
+                if (text == null || text.isEmpty()) {
+                    if (!hasFocus()) {
+                        g.setColor(previewColor);
+                        g.drawString(previewText, insets.left + alignmentOffset, baseline);
+                    }
+                } else {
+                    g.setColor(getForeground());
+                    g.drawString(text, insets.left + alignmentOffset, baseline);
+                }
+            }
+            if (hasFocus() && getSelectedText() == null) {
+                if (!blink) {
+                    g.setColor(getForeground());
+                    g.fillRect(getFontMetrics(getFont()).stringWidth(getText().substring(0, getCaretPosition())) + alignmentOffset, getHeight() / 2 - getFontMetrics(getFont()).getHeight() / 2, 2, getFontMetrics(getFont()).getHeight());
+                }
             }
         } finally {
             g.dispose();

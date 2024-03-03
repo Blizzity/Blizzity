@@ -1,15 +1,11 @@
 package wildepizza.com.github.blizzity;
 
-import wildepizza.com.github.blizzity.custom.CustomAlignedTextField;
-import wildepizza.com.github.blizzity.custom.JRoundedTextField;
-import wildepizza.com.github.blizzity.custom.RoundedBorder;
+import wildepizza.com.github.blizzity.gui.JRoundedTextField;
+import wildepizza.com.github.blizzity.gui.JTransparentButton;
+import wildepizza.com.github.blizzity.gui.MouseListeners;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
 import javax.swing.*;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,12 +14,9 @@ import java.awt.event.ActionListener;
 public class GUI {
     private JFrame frame;
     private JPanel panel;
-    private JLabel usernameLabel, passwordLabel, languageLabel, lengthLabel, usagesLabel, creditsLabel;
-    private JRoundedTextField userText;
+    static public JRoundedTextField userText;
     private JPasswordField passText;
     private JButton loginButton;
-    private JComboBox<String> languageComboBox;
-    private JSlider amountSlider;
     private JPanel contentPanel;
     private API api;
     GUI (API api) {
@@ -31,36 +24,60 @@ public class GUI {
     }
     public void open() {
         frame = new JFrame("BlizzityAI");
-        frame.setSize(1000, 1000);
+        frame.setSize(450, 520);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         showLoginPanel();
     }
 
     private void showLoginPanel() {
         Color color1 = new Color(19, 19, 20);
-        Color color2 = new Color(190, 31, 32);
+        Color color2 = new Color(30, 31, 32);
+        Color color3 = new Color(191, 191, 191);
+        Color color4 = new Color(63, 61, 62);
+        Color color5 = new Color(26, 115, 233);
+        Color color6 = new Color(227, 227, 227);
+        Color color7 = new Color(210, 210, 210);
+        Color color8 = new Color(46, 135, 253);
+        Color color9 = new Color(22, 67, 128);
 
-
-        // Create a JPanel with a more visually appealing layout manager
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panel.setBackground(color1); // Dark gray background
+        panel.setLayout(null);
+        panel.addMouseListener(new MouseListeners());
+        panel.setBackground(color1);
 
-        // Use descriptive variable names for better readability
-        usernameLabel = new JLabel("Username:");
-        usernameLabel.setForeground(Color.WHITE); // White text
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
+        JLabel signInLabel = new JLabel("Sign in");
+        signInLabel.setForeground(color6);
+        signInLabel.setFont(new Font("Arial", Font.PLAIN, 22));
+        signInLabel.setBounds(190, 90, 70, 25);
 
-        userText = new JRoundedTextField(10,10, 20, color1);
+        JLabel textLabel = new JLabel("Use your Blizzity Account");
+        textLabel.setForeground(color7);
+        textLabel.setFont(new Font("Arial", Font.PLAIN, 17));
+        textLabel.setBounds(130, 130, 190, 15);
+
+        userText = new JRoundedTextField(10,10, 20);
         userText.setAlignmentOffset(20);
         userText.setOpaque(false);
-        userText.setBackground(color2); // Slightly lighter gray
-        userText.setForeground(Color.WHITE);
-//        userText.setBorder(new RoundedBorder(30, 30, color2));
+        userText.setBackground(color2);
+        userText.setForeground(color3);
+        userText.setPreviewText("Username", color4);
+        userText.setFont(new Font("Arial", Font.PLAIN, 16));
         userText.setBorder(BorderFactory.createEmptyBorder());
+        userText.setBounds(45, 185, 360, 55);
 
-        passwordLabel = new JLabel("Password:");
+        JTransparentButton forgotUsernameButton = new JTransparentButton("Forgot username?");
+        forgotUsernameButton.setBackground(color1);
+        forgotUsernameButton.setFont(new Font("Arial", Font.BOLD, 13));
+        forgotUsernameButton.setBounds(45, 250, 120, 15);
+        forgotUsernameButton.setPressedColor(color8, color9);
+        forgotUsernameButton.setBorder(BorderFactory.createEmptyBorder());
+        forgotUsernameButton.setOpaque(false);
+        forgotUsernameButton.setForeground(color5);
+
+        JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setForeground(Color.WHITE); // White text
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14)); // Set appropriate font
+        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         passText = new JPasswordField(20); // Set width for password field
         passText.setBackground(color2); // Slightly lighter gray
@@ -82,7 +99,9 @@ public class GUI {
         });
 
         // Add spacing around components for better organization
-        panel.add(usernameLabel);
+        panel.add(textLabel);
+        panel.add(forgotUsernameButton);
+        panel.add(signInLabel);
         panel.add(Box.createHorizontalStrut(10)); // Add horizontal spacing
         panel.add(userText);
 
@@ -97,7 +116,7 @@ public class GUI {
         panel.add(loginButton);
 
         // Set preferred size for the panel to avoid potential layout issues
-        panel.setPreferredSize(new Dimension(300, 180));
+        panel.setPreferredSize(new Dimension(450, 520));
 
         frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
         frame.pack(); // Adjust frame size to fit components
@@ -106,23 +125,23 @@ public class GUI {
     private void showContentPanel(String key) {
         contentPanel = new JPanel();
 
-        languageLabel = new JLabel("Select Language:");
+        JLabel languageLabel = new JLabel("Select Language:");
         contentPanel.add(languageLabel);
 
         String[] languages = {"English", "Spanish", "French"};
-        languageComboBox = new JComboBox<>(languages);
+        JComboBox<String> languageComboBox = new JComboBox<>(languages);
         contentPanel.add(languageComboBox);
 
-        usagesLabel = new JLabel("Usages:" + api.usages(key));
+        JLabel usagesLabel = new JLabel("Usages:" + api.usages(key));
         contentPanel.add(usagesLabel);
 
-        creditsLabel = new JLabel("Credits:" + api.credits(key));
+        JLabel creditsLabel = new JLabel("Credits:" + api.credits(key));
         contentPanel.add(creditsLabel);
 
-        lengthLabel = new JLabel("Select Length:");
+        JLabel lengthLabel = new JLabel("Select Length:");
         contentPanel.add(lengthLabel);
 
-        amountSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, 10);
+        JSlider amountSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, 10);
         amountSlider.setMajorTickSpacing(1);
         amountSlider.setMinorTickSpacing(0);
         amountSlider.setPaintTicks(true);
