@@ -12,13 +12,13 @@ public class JRoundedTextField extends JTextField {
     private final int arcWidth;
     private final int arcHeight;
     private int alignmentOffset = 40;
-    private Color backround;
-    private int dragStart;
+    private Point dragStart;
+    private int l;
+    private int w;
 
     public JRoundedTextField(int arcWidth, int arcHeight, int columns, Color backround) {
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
-        this.backround = backround;
         setColumns(columns);
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder());
@@ -34,7 +34,7 @@ public class JRoundedTextField extends JTextField {
                 Point point = e.getPoint();
                 point.x -= alignmentOffset;
                 int clickOffset = viewToModel2D(point);
-                dragStart = clickOffset;
+                dragStart = point;
                 adjustCaretPosition(e, clickOffset);
             }
 
@@ -43,20 +43,36 @@ public class JRoundedTextField extends JTextField {
                 Point point = e.getPoint();
                 point.x -= alignmentOffset;
                 int dragEnd = viewToModel2D(point);
-                if (dragStart != -1 && dragEnd != -1) {
-                    select(Math.min(dragStart, dragEnd), Math.max(dragStart, dragEnd));
+                if (viewToModel2D(dragStart) != -1 && dragEnd != -1) {
+                    select(Math.min(viewToModel2D(dragStart), dragEnd), Math.max(viewToModel2D(dragStart), dragEnd));
+                    String selected = getSelectedText();
+                    if (selected != null) {
+                        int x = getFontMetrics(getFont()).stringWidth(getText().substring(0, Math.min(viewToModel2D(dragStart), viewToModel2D(e.getPoint())))) + alignmentOffset;
+                        int x2 = getFontMetrics(getFont()).stringWidth(selected);
+
+                        l = x;
+                        w = x2;
+
+                        repaint();
+                    }
                 }
             }
-            @Override
+            /*@Override
             public void mouseReleased(MouseEvent e) {
                 Point point = e.getPoint();
                 point.x -= alignmentOffset;
                 int dragEnd = viewToModel2D(point);
                 adjustCaretPosition(e, dragEnd);
-                if (dragStart != -1 && dragEnd != -1) {
-                    select(Math.min(dragStart, dragEnd), Math.max(dragStart, dragEnd));
+                if (viewToModel2D(dragStart) != -1 && dragEnd != -1) {
+                    select(Math.min(viewToModel2D(dragStart), dragEnd), Math.max(viewToModel2D(dragStart), dragEnd));
+                    if (dragPrevious != null) {
+                        repaint(new Rectangle(Math.min(dragStart.x, dragPrevious.x), 0, Math.max(dragPrevious.x-dragStart.x, dragStart.x-dragPrevious.x), getHeight()));
+                        dragPrevious = null;
+                    }
+                    repaint(new Rectangle(Math.min(dragStart.x, point.x) + alignmentOffset, 0, Math.max(point.x-dragStart.x, dragStart.x-point.x), getHeight()));
+                    dragPrevious = point;
                 }
-            }
+            }*/
             private void adjustCaretPosition(MouseEvent e, int clickOffset) {
                 int textLength = getText().length();
                 int adjustedOffset = Math.min(Math.max(clickOffset, 0), textLength);
@@ -74,59 +90,38 @@ public class JRoundedTextField extends JTextField {
         this.alignmentOffset = alignmentOffset;
         repaint();
     }
-    /*@Override
-    public Insets getInsets() {
-        Insets insets = super.getInsets();
-        insets.right -= 100; // Adjust based on your observed text position shift
-        return insets;
-    }*/
-    /*@Override
-    protected void paintComponent(Graphics g) {
-        if (ui != null) {
-            Graphics scratchGraphics = (g == null) ? null : g.create();
-            try {
-                int width = getWidth();
-                int height = getHeight();
-                scratchGraphics.setColor(getBackground());
-                scratchGraphics.fillRoundRect(0, 0, width - 1, height - 1, arcWidth, arcHeight); // Draw rounded outline
-                scratchGraphics.drawString(getText(), super.getInsets().left + alignmentOffset, getBaseline(width, height));
-                ui.update(scratchGraphics, this);
-            }
-            finally {
-                scratchGraphics.dispose();
-            }
-        }
-    }*/
-    private void init() {
-    }
     @Override
     protected void paintComponent(Graphics g) {
-        Insets insets = getInsets();
-        FontMetrics fm = g.getFontMetrics();
+        try {
+            Insets insets = getInsets();
 
-        // Clear the existing drawing
-        g.setColor(backround);
-        g.fillRect(0, 0, getWidth(), getHeight());
+            int width = getWidth();
+            int height = getHeight();
+            String text = getText();
 
-        int width = getWidth();
-        int height = getHeight();
+            // Calculate baseline for text drawing to align text properly
+            int baseline = getBaseline(width, height);
 
-        // Set the color for drawing text, considering selection
-        System.out.println(getSelectedText());
-        if (getSelectedText() != null) {
-            g.setColor(getSelectionColor());
-            g.fillRect(insets.left + alignmentOffset, insets.top, getWidth() - insets.left - insets.right - alignmentOffset, getHeight() - insets.top - insets.bottom);
-            g.setColor(getSelectedTextColor());
-        } else {
-            g.setColor(getBackground());
-            g.fillRoundRect(insets.left, insets.top, getWidth() - insets.left - insets.right, getHeight() - insets.top - insets.bottom, arcWidth, arcHeight);
-            g.setColor(getForeground());
+            // Set the color for drawing text, considering selection
+            if (getSelectedText() != null) {
+                g.setColor(getBackground());
+                g.fillRoundRect(insets.left, insets.top, getWidth() - insets.left - insets.right, getHeight() - insets.top - insets.bottom, arcWidth, arcHeight);
+                g.setColor(getSelectionColor());
+                g.fillRect(l, 0, w, getHeight());
+                g.setColor(getForeground());
+                // Draw the text with the custom alignment
+                g.drawString(text, insets.left + alignmentOffset, baseline);
+                g.setColor(getSelectedTextColor());
+                g.drawString(getSelectedText(), l, baseline);
+            } else {
+                g.setColor(getBackground());
+                g.fillRoundRect(insets.left, insets.top, getWidth() - insets.left - insets.right, getHeight() - insets.top - insets.bottom, arcWidth, arcHeight);
+                g.setColor(getForeground());
+                // Draw the text with the custom alignment
+                g.drawString(text, insets.left + alignmentOffset, baseline);
+            }
+        } finally {
+            g.dispose();
         }
-
-        // Calculate baseline for text drawing to align text properly
-        int baseline = getBaseline(width, height);
-
-        // Draw the text with the custom alignment
-        g.drawString(getText(), insets.left + alignmentOffset, baseline);
     }
 }
