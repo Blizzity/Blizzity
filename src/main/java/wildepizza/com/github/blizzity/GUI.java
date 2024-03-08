@@ -408,15 +408,14 @@ public class GUI {
         System.out.println(x);
         System.out.println(y);
 
-        /*panel = new JPanel();
+        mediaPlayerPanel(new File("received_video.mp4"));
+
+        panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(color2);
-        // Set preferred size for the panel to avoid potential layout issues
         panel.setPreferredSize(new Dimension(1530, 920));
 
-        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame*/
-        c(new File("received_video.mp4"));
-//        c(frame);
+        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
 
         // Set the location of the JFrame
         frame.setLocation(x, y);
@@ -424,43 +423,30 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    public void c(File file) {
+    public void mediaPlayerPanel(File file) {
+        int videoWidth = 1080;
+        int videoHeight = 1920;
         JFXPanel panel = new JFXPanel();
 
         Platform.runLater(() -> {
-            // Create the label
-            Label label = new Label("Your String Here");
-
-            // Create a Media object for your video source
             Media media = new Media(file.toURI().toString());
-            System.out.println(file.toURI().toString());
-
-            // Check for media loading errors
-            media.setOnError(() -> {
-                System.out.println("Error loading media: " + media.getError());
-            });
-            System.out.println(media.getHeight());
-
             MediaPlayer mediaPlayer = new MediaPlayer(media);
-
-            // Check for media player errors
-            mediaPlayer.setOnError(() -> {
-                System.out.println("Error playing media player: " + mediaPlayer.getError());
-            });
-
             MediaView mediaView = new MediaView(mediaPlayer);
+            mediaView.setScaleX(0.5);
+            mediaView.setScaleY(0.5);
+            mediaView.setY((double) videoHeight / -4);
+            mediaView.setX((double) videoWidth / -4);
 
-            // Arrange the label and mediaView vertically
             Group root = new Group();
-            root.getChildren().addAll(label, mediaView);
+            root.getChildren().addAll(mediaView);
 
-            Scene scene = new Scene(root, 300, 200); // Adjust size as needed
+            Scene scene = new Scene(root, 0, 0);
             panel.setScene(scene);
 
             mediaPlayer.play(); // Start the video playback
         });
 
-        panel.setPreferredSize(new Dimension(300, 200)); // Adjust size as needed
+        panel.setPreferredSize(new Dimension(videoWidth/2, videoHeight/2));
         frame.add(panel);
     }
     /*
