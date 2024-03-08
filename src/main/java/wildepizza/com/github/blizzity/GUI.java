@@ -3,6 +3,8 @@ package wildepizza.com.github.blizzity;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
@@ -402,16 +404,16 @@ public class GUI {
         int frameHeight = 960;
         int x = (screenWidth - frameWidth) / 2;
         int y = (screenHeight - frameHeight) / 2;
-        System.out.println(x);
-        System.out.println(y);
 
-        panel = new JPanel();
+        /*panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(color2);
         // Set preferred size for the panel to avoid potential layout issues
         panel.setPreferredSize(new Dimension(1530, 920));
 
-        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
+        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame*/
+        c();
+
 
         // Set the location of the JFrame
         frame.setLocation(x, y);
@@ -419,13 +421,34 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private void c(String filePath) {
+    private void c() {
+        File file = new File("C:/Users/Finn/Videos/output.mp4");
+        System.out.println(file.exists());
         JFXPanel videoPanel = new JFXPanel();
+        videoPanel.setPreferredSize( new Dimension(1530, 1530));
         Platform.runLater(() -> {
-            Media media = new Media(new File(filePath).toURI().toString());
+            Media media = new Media(file.toURI().toString());
             MediaPlayer player = new MediaPlayer(media);
             MediaView mediaView = new MediaView(player);
-            videoPanel.setScene(new Scene(mediaView.getParent()));
+
+            // Create a layout container as the parent of the MediaView
+            StackPane root = new StackPane();
+            root.getChildren().add(mediaView);
+
+            // Set the layout container as the root node of the scene
+            Scene scene = new Scene(root);
+            videoPanel.setScene(scene);
+
+            // Play the media when it's ready
+            player.setOnReady(() -> player.play());
+
+            player.setOnError(() -> {
+                System.out.println("Media error occurred: " + player.getError());
+            });
+
+            // Set the preferred size of the JFXPanel
+            videoPanel.setPreferredSize(new Dimension(800, 600));
+
             player.play(); // Start playback automatically
         });
         frame.add(videoPanel);
