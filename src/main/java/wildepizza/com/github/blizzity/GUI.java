@@ -2,7 +2,10 @@ package wildepizza.com.github.blizzity;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
@@ -409,10 +412,11 @@ public class GUI {
         panel.setLayout(null);
         panel.setBackground(color2);
         // Set preferred size for the panel to avoid potential layout issues
-        panel.setPreferredSize(new Dimension(1530, 920));*/
-        c();
+        panel.setPreferredSize(new Dimension(1530, 920));
 
-        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
+        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame*/
+        c(new File("received_video.mp4"));
+//        c(frame);
 
         // Set the location of the JFrame
         frame.setLocation(x, y);
@@ -420,15 +424,66 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private void c() {
+    public void c(File file) {
+        JFXPanel panel = new JFXPanel();
+
+        Platform.runLater(() -> {
+            // Create the label
+            Label label = new Label("Your String Here");
+
+            // Create a Media object for your video source
+            Media media = new Media(file.toURI().toString());
+            System.out.println(file.toURI().toString());
+
+            // Check for media loading errors
+            media.setOnError(() -> {
+                System.out.println("Error loading media: " + media.getError());
+            });
+            System.out.println(media.getHeight());
+
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+            // Check for media player errors
+            mediaPlayer.setOnError(() -> {
+                System.out.println("Error playing media player: " + mediaPlayer.getError());
+            });
+
+            MediaView mediaView = new MediaView(mediaPlayer);
+
+            // Arrange the label and mediaView vertically
+            Group root = new Group();
+            root.getChildren().addAll(label, mediaView);
+
+            Scene scene = new Scene(root, 300, 200); // Adjust size as needed
+            panel.setScene(scene);
+
+            mediaPlayer.play(); // Start the video playback
+        });
+
+        panel.setPreferredSize(new Dimension(300, 200)); // Adjust size as needed
+        frame.add(panel);
+    }
+    /*
+    public void c(File file) {
         JFXPanel videoPanel = new JFXPanel();
-        /*Platform.runLater(() -> {
-            Media media = new Media(new File(filePath).toURI().toString());
+
+        Platform.runLater(() -> {
+            Media media = new Media(file.toURI().toString()); // Replace "file" with your video path
             MediaPlayer player = new MediaPlayer(media);
             MediaView mediaView = new MediaView(player);
-            videoPanel.setScene(new Scene(mediaView.getParent()));
+
+            // Create a container (e.g., Pane) and add MediaView as its child
+            Pane root = new Pane();  // You can use other layout managers (HBox, VBox, etc.)
+            Label messageLabel = new Label("This is a test message!");
+            root.getChildren().add(mediaView);
+            root.getChildren().add(messageLabel);
+
+            Scene scene = new Scene(root);
+            videoPanel.setScene(scene);
             player.play(); // Start playback automatically
-        });*/
+        });
+
+        videoPanel.setPreferredSize(new Dimension(100, 100));
         frame.add(videoPanel);
-    }
+    }*/
 }

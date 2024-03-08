@@ -1,7 +1,16 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'java'
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
 }
+
+group = 'wildepizza.com.github.blizzity'
+version = '1.0'
+description = 'blizzity'
 
 repositories {
     maven { url "https://dl.bintray.com/spark-packages/maven/" }
@@ -11,11 +20,61 @@ repositories {
     }
 }
 
+ext {
+    junitVersion = '5.10.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'com.example.demo'
+    mainClass = 'com.example.demo.HelloApplication'
+}
+
+javafx {
+    version = '17.0.6'
+    modules = [
+            'javafx.controls',
+            'javafx.fxml',
+            'javafx.graphics',
+            'javafx.base',
+            'javafx.media',
+            'javafx.swing',
+            'javafx.web'
+    ]
+}
+
 dependencies {
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
     implementation 'org.json:json:20210307'
-    implementation fileTree(dir: 'lib', include: '*.jar')
+//    implementation fileTree(dir: 'lib', include: '*.jar')
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
 }
 
 // Task to download WebDriver binaries using WebDriverManager
@@ -24,14 +83,4 @@ task downloadWebDriver(type: Exec) {
 
     executable 'java'
     args '-jar', 'gradle/libraries/webdrivermanager-5.0.3.jar', 'chromedriver'
-}
-
-group = 'wildepizza.com.github.blizzity'
-version = '1.0'
-description = 'blizzity'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }
