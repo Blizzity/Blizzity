@@ -405,11 +405,12 @@ public class GUI {
         System.out.println(x);
         System.out.println(y);
 
-        panel = new JPanel();
+        /*panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(color2);
         // Set preferred size for the panel to avoid potential layout issues
-        panel.setPreferredSize(new Dimension(1530, 920));
+        panel.setPreferredSize(new Dimension(1530, 920));*/
+        c();
 
         frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
 
@@ -419,15 +420,15 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    private void c(String filePath) {
+    private void c() {
         JFXPanel videoPanel = new JFXPanel();
-        Platform.runLater(() -> {
+        /*Platform.runLater(() -> {
             Media media = new Media(new File(filePath).toURI().toString());
             MediaPlayer player = new MediaPlayer(media);
             MediaView mediaView = new MediaView(player);
             videoPanel.setScene(new Scene(mediaView.getParent()));
             player.play(); // Start playback automatically
-        });
+        });*/
         frame.add(videoPanel);
     }
 }
