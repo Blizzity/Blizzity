@@ -13,6 +13,9 @@ public class MouseListeners extends MouseAdapter {
         if (!GUI.userText.getBounds().contains(e.getPoint())) {
             GUI.userText.transferFocus(); // Transfers focus away from the field
         }
+        if (!GUI.passText.getBounds().contains(e.getPoint())) {
+            GUI.passText.transferFocus(); // Transfers focus away from the field
+        }
         GUI.minimizeButton.a = false;
     }
 }

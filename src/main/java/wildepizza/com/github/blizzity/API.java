@@ -66,18 +66,64 @@ public class API {
             // Print the response status code and body
             System.out.println("Response Code: " + response.statusCode());
             System.out.println("Response Body: " + response.body());
-            return !response.body().equals("wrong password");
+            return response.body().equals("Successfully logged in");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-    public void video() {
-        String authToken = "correct_auth_token";
+    public boolean register(String username, String password) {
+        // Construct the API endpoint URL
+        String apiUrl = serverUrl + "/register?username=" + username + "&password=" + password;
 
-        String name = "english";
-        int length = 10;
-        String apiUrl = serverUrl + "/api/video?language=" + name + "&length=" + length;
+        // Create an HTTP client
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create an HTTP request with authorization header
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        try {
+            // Send the HTTP request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Print the response status code and body
+            System.out.println("Response Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+            return response.body().equals("Successfully registered");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean verify(String username) {
+        // Construct the API endpoint URL
+        String apiUrl = serverUrl + "/verify?username=" + username;
+
+        // Create an HTTP client
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Create an HTTP request with authorization header
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        try {
+            // Send the HTTP request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Print the response status code and body
+            System.out.println("Response Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+            return response.body().equals("Username is available");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean video(String authToken, String language, int length) {
+        String apiUrl = serverUrl + "/api/video?language=" + language + "&length=" + length;
 
         try {
             // Create URL object
@@ -91,6 +137,7 @@ public class API {
 
             // Set request headers
             connection.setRequestProperty("Authorization", authToken);
+            System.out.println(authToken);
 
             // Get response code
             int responseCode = connection.getResponseCode();
@@ -114,15 +161,17 @@ public class API {
                 inputStream.close();
 
                 System.out.println("Video file received successfully.");
+                connection.disconnect();
+                return true;
             } else {
-                System.out.println("Failed to receive video file. Response code: " + responseCode);
+                connection.disconnect();
+                System.out.println(connection.getResponseMessage());
+                return false;
             }
-
-            // Disconnect the connection
-            connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
     public String usages(String key) {
         String apiUrl = serverUrl + "/api/usages?key=" + URLEncoder.encode(key);

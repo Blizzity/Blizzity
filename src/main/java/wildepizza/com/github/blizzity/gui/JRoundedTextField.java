@@ -54,7 +54,7 @@ public class JRoundedTextField extends JTextField {
                 uuid = null;
             }
         };
-        MouseAdapter mouseHandler = new MouseAdapter() {
+        MouseAdapter mouseHandler = new MouseAdapter() { //TODO improve selection system
             @Override
             public void mousePressed(MouseEvent e) {
                 Point point = e.getPoint();
