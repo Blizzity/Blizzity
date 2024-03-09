@@ -2,13 +2,16 @@ package wildepizza.com.github.blizzity;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.SVGPath;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
@@ -51,7 +54,7 @@ public class GUI {
         frame.setResizable(false);
         frame.setUndecorated(true);
         addTitleBarPanel();
-        showContentPanel2("");
+        showContentPanel(StringUtils.encrypt("admin", "admin"));
 //        showLoginPanel();
     }
     private void addTitleBarPanel() {
@@ -353,55 +356,6 @@ public class GUI {
         frame.setVisible(true);
     }
     private void showContentPanel(String key) {
-        contentPanel = new JPanel();
-
-        JLabel languageLabel = new JLabel("Select Language:");
-        contentPanel.add(languageLabel);
-
-        String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
-        JComboBox<String> languageComboBox = new JComboBox<>(languages);
-        contentPanel.add(languageComboBox);
-
-        JLabel usagesLabel = new JLabel("Usages:" + api.usages(key));
-        contentPanel.add(usagesLabel);
-
-        JLabel creditsLabel = new JLabel("Credits:" + api.credits(key));
-        contentPanel.add(creditsLabel);
-
-        JLabel lengthLabel = new JLabel("Select Length:");
-        contentPanel.add(lengthLabel);
-
-        JSlider amountSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, 10);
-        amountSlider.setMajorTickSpacing(1);
-        amountSlider.setMinorTickSpacing(0);
-        amountSlider.setPaintTicks(true);
-        amountSlider.setPaintLabels(true);
-        contentPanel.add(amountSlider);
-        contentPanel.setLayout(new GridLayout(2, 1));
-
-        JRoundedButton logoutButton = new JRoundedButton(5,5, "Logout");
-        logoutButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.remove(contentPanel);
-                showLoginPanel();
-            }
-        });
-        contentPanel.add(logoutButton);
-        JRoundedButton generateButton = new JRoundedButton(5,5, "Generate");
-        generateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (api.video(URLEncoder.encode(key), languageComboBox.getSelectedItem().toString().toLowerCase(), amountSlider.getValue())) {
-                } else
-                    JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-        });
-        contentPanel.add(generateButton);
-
-        frame.add(contentPanel);
-        frame.revalidate();
-        frame.repaint();
-    }
-    private void showContentPanel2(String key) {
         int screenWidth = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
         int screenHeight = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
         int frameWidth = 1530;
@@ -417,6 +371,8 @@ public class GUI {
 
         File file = new File("received_video.mp4");
         Platform.runLater(() -> {
+            Media media = new Media(file.toURI().toString());
+
             javafx.scene.shape.Rectangle optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
             optionsBackground.setArcWidth(30);
             optionsBackground.setArcHeight(30);
@@ -441,12 +397,12 @@ public class GUI {
             languageComboBox.setLayoutX(22);
             languageComboBox.setLayoutY(82);
 
-            Label usagesLabel = new Label("Usages:" /*+ api.usages(key)*/);
+            Label usagesLabel = new Label("Usages:" + api.usages(key));
             usagesLabel.setLayoutX(22);
             usagesLabel.setLayoutY(115);
             usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-            Label creditsLabel = new Label("Credits:" /*+ api.credits(key)*/);
+            Label creditsLabel = new Label("Credits:" + api.credits(key));
             creditsLabel.setLayoutX(22);
             creditsLabel.setLayoutY(155);
             creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
@@ -488,10 +444,16 @@ public class GUI {
                     JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
             });
 
-            Label optionsLabel = new Label("Options");
-            optionsLabel.setLayoutX(22);
-            optionsLabel.setLayoutY(22);
-            optionsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+            Label generateLabel = new Label("Generate");
+            generateLabel.setLayoutX(22);
+            generateLabel.setLayoutY(32);
+            generateLabel.setTextFill(javafx.scene.paint.Color.rgb(3, 181, 193));
+
+
+            Label adjustmentsLabel = new Label("Adjustments");
+            adjustmentsLabel.setLayoutX(90);
+            adjustmentsLabel.setLayoutY(32);
+            adjustmentsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
             javafx.scene.shape.Rectangle resultBackground = new javafx.scene.shape.Rectangle(430, 490);
             resultBackground.setArcWidth(30);
@@ -527,6 +489,56 @@ public class GUI {
             detailsLabel.setLayoutY(22);
             detailsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
+            Label nameLabel = new Label("Name:");
+            nameLabel.setLayoutX(1142);
+            nameLabel.setLayoutY(60);
+            nameLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
+            Label nameLabel2 = new Label(file.getName());
+            nameLabel2.setLayoutX(1250);
+            nameLabel2.setLayoutY(60);
+            nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
+            Label pathLabel = new Label("Path:");
+            pathLabel.setLayoutX(1142);
+            pathLabel.setLayoutY(83);
+            pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
+            Label pathLabel2 = new Label(file.getAbsolutePath().replace("\\" + file.getName(), ""));
+            pathLabel2.setLayoutX(1250);
+            pathLabel2.setLayoutY(83);
+            pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
+            Label ratioLabel = new Label("Aspect ratio:");
+            ratioLabel.setLayoutX(1142);
+            ratioLabel.setLayoutY(106);
+            ratioLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
+            Label ratioLabel2 = new Label("9:16");
+            ratioLabel2.setLayoutX(1250);
+            ratioLabel2.setLayoutY(106);
+            ratioLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
+            Label resolutionLabel = new Label("Resolution:");
+            resolutionLabel.setLayoutX(1142);
+            resolutionLabel.setLayoutY(129);
+            resolutionLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
+            Label resolutionLabel2 = new Label(videoWidth + "x" + videoHeight);
+            resolutionLabel2.setLayoutX(1250);
+            resolutionLabel2.setLayoutY(129);
+            resolutionLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
+            Label fpsLabel = new Label("Frame rate:");
+            fpsLabel.setLayoutX(1142);
+            fpsLabel.setLayoutY(152);
+            fpsLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
+            Label fpsLabel2 = new Label("25.00fps");
+            fpsLabel2.setLayoutX(1250);
+            fpsLabel2.setLayoutY(152);
+            fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
             javafx.scene.shape.Rectangle timelineBackground = new javafx.scene.shape.Rectangle(1510, 400);
             timelineBackground.setArcWidth(30);
             timelineBackground.setArcHeight(30);
@@ -544,7 +556,6 @@ public class GUI {
             timelineLabel.setLayoutY(522);
             timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-            Media media = new Media(file.toURI().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             MediaView mediaView = new MediaView(mediaPlayer);
             mediaView.setScaleX((double) videoPreviewWidth / videoWidth);
@@ -552,11 +563,40 @@ public class GUI {
             mediaView.setLayoutY(-705);
             mediaView.setLayoutX(363.5);
 
+            Button playButton = new Button();
+            playButton.setGraphic(createPlayShape(11, 12, javafx.scene.paint.Color.WHITE));
+            playButton.setBackground(null);
+            playButton.setLayoutX(890);
+            playButton.setLayoutY(468);
+            final boolean[] playing = {false};
+            playButton.setOnAction(event -> {
+                if (playing[0]) {
+                    mediaPlayer.pause();
+                    playButton.setGraphic(createPlayShape(11, 12, javafx.scene.paint.Color.WHITE));
+                } else {
+                    mediaPlayer.play();
+                    playButton.setGraphic(createPauseShape(11, 12, javafx.scene.paint.Color.WHITE));
+                }
+                playing[0] = !playing[0];
+            });
+
             Group root = new Group();
             root.getChildren().addAll(
                     optionsBackground,
                     optionsBackground2,
-                    optionsLabel,
+                    generateLabel,
+                    adjustmentsLabel,
+                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M11.5805 4.77604C12.2752 3.00516 12.6226 2.11971 13.349 2.01056C14.0755 1.90141 14.6999 2.64083 15.9488 4.11967L16.2719 4.50226C16.6268 4.9225 16.8042 5.13263 17.0455 5.25261C17.2868 5.37259 17.5645 5.38884 18.1201 5.42135L18.6258 5.45095C20.5808 5.56537 21.5583 5.62258 21.8975 6.26168C22.2367 6.90079 21.713 7.69853 20.6656 9.29403L20.3946 9.7068C20.097 10.1602 19.9482 10.3869 19.908 10.6457C19.8678 10.9045 19.9407 11.1662 20.0866 11.6895L20.2195 12.166C20.733 14.0076 20.9898 14.9284 20.473 15.4325C19.9562 15.9367 19.0081 15.6903 17.1118 15.1975L16.6213 15.07C16.0824 14.93 15.813 14.86 15.5469 14.8999C15.2808 14.9399 15.0481 15.0854 14.5828 15.3763L14.1591 15.6412C12.5215 16.6649 11.7027 17.1768 11.0441 16.8493C10.3854 16.5217 10.3232 15.5717 10.1987 13.6717L10.1665 13.1801C10.1311 12.6402 10.1134 12.3702 9.98914 12.1361C9.86488 11.902 9.64812 11.7302 9.21459 11.3867L8.8199 11.0739C7.29429 9.86506 6.53149 9.26062 6.64124 8.55405C6.751 7.84748 7.66062 7.50672 9.47988 6.8252L9.95054 6.64888C10.4675 6.45522 10.726 6.35839 10.9153 6.17371C11.1046 5.98903 11.2033 5.73742 11.4008 5.23419L11.5805 4.77604Z"),
+                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M5.31003 9.59277C2.87292 11.9213 1.27501 15.8058 2.33125 22.0002C3.27403 19.3966 5.85726 17.2407 8.91219 15.9528C8.80559 15.3601 8.7583 14.6364 8.70844 13.8733L8.66945 13.2782C8.66038 13.1397 8.65346 13.0347 8.64607 12.9443C8.643 12.9068 8.64012 12.8754 8.63743 12.8489C8.61421 12.829 8.58591 12.8053 8.55117 12.7769C8.47874 12.7177 8.39377 12.6503 8.28278 12.5623L7.80759 12.1858C7.11448 11.6368 6.46884 11.1254 6.02493 10.6538C5.77182 10.385 5.48876 10.0304 5.31003 9.59277Z"),
+                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M10.3466 15.4231C10.3415 15.3857 10.3365 15.3475 10.3316 15.3086L10.3877 15.41C10.374 15.4144 10.3603 15.4187 10.3466 15.4231Z"),
+                    svgPath(107, 7, 0.8f, javafx.scene.paint.Color.WHITE, "M23,13.4l-4.9,4.9c-0.2,0.2-0.5,0.3-0.7,0.3s-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l4.9-4.9c-1.5-1.2-3.5-2-5.6-2 c-5,0-9,4-9,9s4,9,9,9s9-4,9-9C25,16.9,24.3,14.9,23,13.4z"),
+                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M16,8c-0.6,0-1-0.4-1-1V5c0-0.6,0.4-1,1-1s1,0.4,1,1v2C17,7.6,16.6,8,16,8z"),
+                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M10,9.6c-0.3,0-0.7-0.2-0.9-0.5l-1-1.7C7.9,6.9,8,6.3,8.5,6C9,5.7,9.6,5.9,9.9,6.4l1,1.7c0.3,0.5,0.1,1.1-0.4,1.4 C10.3,9.6,10.2,9.6,10,9.6z"),
+                    svgPath(108, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M5.6,14c-0.2,0-0.3,0-0.5-0.1l-1.7-1C2.9,12.6,2.7,12,3,11.5c0.3-0.5,0.9-0.6,1.4-0.4l1.7,1c0.5,0.3,0.6,0.9,0.4,1.4 C6.3,13.8,6,14,5.6,14z"),
+                    svgPath(109, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M4,20H2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S4.6,20,4,20z"),
+                    svgPath(105, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M30,20h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S30.6,20,30,20z"),
+                    svgPath(106, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M26.4,14c-0.3,0-0.7-0.2-0.9-0.5c-0.3-0.5-0.1-1.1,0.4-1.4l1.7-1c0.5-0.3,1.1-0.1,1.4,0.4c0.3,0.5,0.1,1.1-0.4,1.4l-1.7,1 C26.7,14,26.6,14,26.4,14z"),
+                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M22,9.6c-0.2,0-0.3,0-0.5-0.1c-0.5-0.3-0.6-0.9-0.4-1.4l1-1.7C22.4,5.9,23,5.7,23.5,6c0.5,0.3,0.6,0.9,0.4,1.4l-1,1.7 C22.7,9.4,22.3,9.6,22,9.6z"),
                     languageLabel,
                     languageComboBox,
                     usagesLabel,
@@ -569,9 +609,20 @@ public class GUI {
                     resultBackground2,
                     resultLabel,
                     mediaView,
+                    playButton,
                     detailsBackground,
                     detailsBackground2,
                     detailsLabel,
+                    nameLabel,
+                    nameLabel2,
+                    pathLabel,
+                    pathLabel2,
+                    ratioLabel,
+                    ratioLabel2,
+                    resolutionLabel,
+                    resolutionLabel2,
+                    fpsLabel,
+                    fpsLabel2,
                     timelineBackground,
                     timelineBackground2,
                     timelineLabel
@@ -599,5 +650,49 @@ public class GUI {
         frame.setLocation(x, y);
         frame.pack(); // Adjust frame size to fit components
         frame.setVisible(true);
+    }
+    private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
+        return svgPath(x, y, 1, color, path);
+    }
+    private Polygon createPlayShape(double width, double height, javafx.scene.paint.Color fillColor) {
+        double halfHeight = height / 2;
+
+        Polygon playShape = new Polygon();
+        playShape.getPoints().addAll(
+                width, halfHeight,
+                0.0 , 0.0,
+                0.0 , height,
+                width, halfHeight
+        );
+        playShape.setFill(fillColor);
+
+        return playShape;
+    }
+    private StackPane createPauseShape(double width, double height, javafx.scene.paint.Color fillColor) {
+        double rectangleWidth = width / 3;
+        double rectangleHeight = height;
+
+        javafx.scene.shape.Rectangle pauseShape1 = new javafx.scene.shape.Rectangle(rectangleWidth, rectangleHeight);
+        pauseShape1.setFill(fillColor);
+        pauseShape1.setTranslateX(0);
+
+        javafx.scene.shape.Rectangle pauseShape2 = new javafx.scene.shape.Rectangle(rectangleWidth, rectangleHeight);
+        pauseShape2.setFill(fillColor);
+        pauseShape2.setTranslateX(rectangleWidth * 2);
+
+        StackPane pauseShape = new StackPane(pauseShape1, pauseShape2);
+        pauseShape.setAlignment(Pos.CENTER);
+
+        return pauseShape;
+    }
+    private SVGPath svgPath(int x, int y, float scale, javafx.scene.paint.Color color, String path) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent(path);
+        svgPath.setLayoutX(x);
+        svgPath.setLayoutY(y);
+        svgPath.setScaleX(scale);
+        svgPath.setScaleY(scale);
+        svgPath.setFill(color);
+        return svgPath;
     }
 }
