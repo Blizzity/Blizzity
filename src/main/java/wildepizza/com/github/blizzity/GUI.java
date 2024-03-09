@@ -2,9 +2,12 @@ package wildepizza.com.github.blizzity;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.utils.StringUtils;
@@ -48,7 +51,7 @@ public class GUI {
         frame.setResizable(false);
         frame.setUndecorated(true);
         addTitleBarPanel();
-        showContentPanel2();
+        showContentPanel2("");
 //        showLoginPanel();
     }
     private void addTitleBarPanel() {
@@ -398,78 +401,203 @@ public class GUI {
         frame.revalidate();
         frame.repaint();
     }
-    private void showContentPanel2() {
+    private void showContentPanel2(String key) {
         int screenWidth = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
         int screenHeight = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
         int frameWidth = 1530;
         int frameHeight = 960;
         int x = (screenWidth - frameWidth) / 2;
         int y = (screenHeight - frameHeight) / 2;
-        System.out.println(x);
-        System.out.println(y);
 
-        mediaPlayerPanel(new File("received_video.mp4"));
+        int videoWidth = 1080;
+        int videoHeight = 1920;
+        int videoPreviewWidth = 230;
+        int videoPreviewHeight = 410;
+        JFXPanel panel = new JFXPanel();
 
-        panel = new JPanel();
+        File file = new File("received_video.mp4");
+        Platform.runLater(() -> {
+            javafx.scene.shape.Rectangle optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
+            optionsBackground.setArcWidth(30);
+            optionsBackground.setArcHeight(30);
+            optionsBackground.setLayoutX(10);
+            optionsBackground.setLayoutY(10);
+            optionsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+            javafx.scene.shape.Rectangle optionsBackground2 = new javafx.scene.shape.Rectangle(670, 410);
+            optionsBackground2.setLayoutX(10);
+            optionsBackground2.setLayoutY(50);
+            optionsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+            Label languageLabel = new Label("Select Language:");
+            languageLabel.setLayoutX(22);
+            languageLabel.setLayoutY(55);
+            languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
+            ComboBox<String> languageComboBox = new ComboBox<>();
+            languageComboBox.getItems().addAll(languages);
+            languageComboBox.getSelectionModel().select(0);
+            languageComboBox.setLayoutX(22);
+            languageComboBox.setLayoutY(82);
+
+            Label usagesLabel = new Label("Usages:" /*+ api.usages(key)*/);
+            usagesLabel.setLayoutX(22);
+            usagesLabel.setLayoutY(115);
+            usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            Label creditsLabel = new Label("Credits:" /*+ api.credits(key)*/);
+            creditsLabel.setLayoutX(22);
+            creditsLabel.setLayoutY(155);
+            creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            Slider amountSlider = new Slider(1, 20, 10);
+
+            Label lengthLabel = new Label("Select Length:"  + (int) amountSlider.getValue());
+            lengthLabel.setLayoutX(22);
+            lengthLabel.setLayoutY(195);
+            lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            amountSlider.setLayoutX(22);
+            amountSlider.setLayoutY(235);
+            amountSlider.setShowTickMarks(true);
+            amountSlider.setMinorTickCount(20);
+            amountSlider.setMinorTickCount(4);
+            amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                lengthLabel.setText("Select Length:"  + newValue.intValue());
+            });
+            /*amountSlider.setMajorTickSpacing(0);
+            amountSlider.setMinorTickSpacing(1);
+            amountSlider.setPaintTicks(true);
+            amountSlider.setPaintLabels(true);*/
+
+            javafx.scene.control.Button logoutButton = new javafx.scene.control.Button("Logout");
+            logoutButton.setLayoutX(22);
+            logoutButton.setLayoutY(275);
+            logoutButton.setOnAction(actionEvent -> {
+                frame.remove(panel);
+                showLoginPanel();
+            });
+            javafx.scene.control.Button generateButton = new javafx.scene.control.Button("Generate");
+            generateButton.setLayoutX(22);
+            generateButton.setLayoutY(315);
+            generateButton.setOnAction(actionEvent -> {
+                if (api.video(URLEncoder.encode(key), languageComboBox.getValue().toLowerCase(), (int) amountSlider.getValue())) {
+                    System.out.println("received video");
+                } else
+                    JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
+            });
+
+            Label optionsLabel = new Label("Options");
+            optionsLabel.setLayoutX(22);
+            optionsLabel.setLayoutY(22);
+            optionsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            javafx.scene.shape.Rectangle resultBackground = new javafx.scene.shape.Rectangle(430, 490);
+            resultBackground.setArcWidth(30);
+            resultBackground.setArcHeight(30);
+            resultBackground.setLayoutX(690);
+            resultBackground.setLayoutY(10);
+            resultBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+            javafx.scene.shape.Rectangle resultBackground2 = new javafx.scene.shape.Rectangle(430, 410);
+            resultBackground2.setLayoutX(690);
+            resultBackground2.setLayoutY(50);
+            resultBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+            Label resultLabel = new Label("Player");
+            resultLabel.setLayoutX(702);
+            resultLabel.setLayoutY(22);
+            resultLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            javafx.scene.shape.Rectangle detailsBackground = new javafx.scene.shape.Rectangle(390, 490);
+            detailsBackground.setArcWidth(30);
+            detailsBackground.setArcHeight(30);
+            detailsBackground.setLayoutX(1130);
+            detailsBackground.setLayoutY(10);
+            detailsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+            javafx.scene.shape.Rectangle detailsBackground2 = new javafx.scene.shape.Rectangle(390, 410);
+            detailsBackground2.setLayoutX(1130);
+            detailsBackground2.setLayoutY(50);
+            detailsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+            Label detailsLabel = new Label("Details");
+            detailsLabel.setLayoutX(1142);
+            detailsLabel.setLayoutY(22);
+            detailsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            javafx.scene.shape.Rectangle timelineBackground = new javafx.scene.shape.Rectangle(1510, 400);
+            timelineBackground.setArcWidth(30);
+            timelineBackground.setArcHeight(30);
+            timelineBackground.setLayoutX(10);
+            timelineBackground.setLayoutY(510);
+            timelineBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+            javafx.scene.shape.Rectangle timelineBackground2 = new javafx.scene.shape.Rectangle(1510, 320);
+            timelineBackground2.setLayoutX(10);
+            timelineBackground2.setLayoutY(550);
+            timelineBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+            Label timelineLabel = new Label("Timeline");
+            timelineLabel.setLayoutX(22);
+            timelineLabel.setLayoutY(522);
+            timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+            Media media = new Media(file.toURI().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            MediaView mediaView = new MediaView(mediaPlayer);
+            mediaView.setScaleX((double) videoPreviewWidth / videoWidth);
+            mediaView.setScaleY((double) videoPreviewHeight / videoHeight);
+            mediaView.setLayoutY(-705);
+            mediaView.setLayoutX(363.5);
+
+            Group root = new Group();
+            root.getChildren().addAll(
+                    optionsBackground,
+                    optionsBackground2,
+                    optionsLabel,
+                    languageLabel,
+                    languageComboBox,
+                    usagesLabel,
+                    creditsLabel,
+                    lengthLabel,
+                    amountSlider,
+                    logoutButton,
+                    generateButton,
+                    resultBackground,
+                    resultBackground2,
+                    resultLabel,
+                    mediaView,
+                    detailsBackground,
+                    detailsBackground2,
+                    detailsLabel,
+                    timelineBackground,
+                    timelineBackground2,
+                    timelineLabel
+            );
+
+            Scene scene = new Scene(root, 0, 0);
+            scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+            panel.setScene(scene);
+
+//            mediaPlayer.setAutoPlay(false);
+//            mediaPlayer.play(); // Start the video playback
+        });
+
+        panel.setPreferredSize(new Dimension(1530, 920));
+        frame.add(panel);
+
+        /*panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(color2);
         panel.setPreferredSize(new Dimension(1530, 920));
 
-        frame.add(panel, BorderLayout.CENTER); // Add panel to the center of the frame
+        frame.add(panel, BorderLayout.CENTER);*/ // Add panel to the center of the frame
 
         // Set the location of the JFrame
         frame.setLocation(x, y);
         frame.pack(); // Adjust frame size to fit components
         frame.setVisible(true);
     }
-
-    public void mediaPlayerPanel(File file) {
-        int videoWidth = 1080;
-        int videoHeight = 1920;
-        JFXPanel panel = new JFXPanel();
-
-        Platform.runLater(() -> {
-            Media media = new Media(file.toURI().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            MediaView mediaView = new MediaView(mediaPlayer);
-            mediaView.setScaleX(0.5);
-            mediaView.setScaleY(0.5);
-            mediaView.setY((double) videoHeight / -4);
-            mediaView.setX((double) videoWidth / -4);
-
-            Group root = new Group();
-            root.getChildren().addAll(mediaView);
-
-            Scene scene = new Scene(root, 0, 0);
-            panel.setScene(scene);
-
-            mediaPlayer.play(); // Start the video playback
-        });
-
-        panel.setPreferredSize(new Dimension(videoWidth/2, videoHeight/2));
-        frame.add(panel);
-    }
-    /*
-    public void c(File file) {
-        JFXPanel videoPanel = new JFXPanel();
-
-        Platform.runLater(() -> {
-            Media media = new Media(file.toURI().toString()); // Replace "file" with your video path
-            MediaPlayer player = new MediaPlayer(media);
-            MediaView mediaView = new MediaView(player);
-
-            // Create a container (e.g., Pane) and add MediaView as its child
-            Pane root = new Pane();  // You can use other layout managers (HBox, VBox, etc.)
-            Label messageLabel = new Label("This is a test message!");
-            root.getChildren().add(mediaView);
-            root.getChildren().add(messageLabel);
-
-            Scene scene = new Scene(root);
-            videoPanel.setScene(scene);
-            player.play(); // Start playback automatically
-        });
-
-        videoPanel.setPreferredSize(new Dimension(100, 100));
-        frame.add(videoPanel);
-    }*/
 }
