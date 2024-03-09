@@ -30,7 +30,6 @@ public class GUI {
     static public JRoundedTextField userText;
     static public JRoundedPasswordField passText;
     private JRoundedButton nextButton, createButton;
-    private JPanel contentPanel;
     private API api;
     private Point lastClick; // Used for dragging
     public static JSimpleButton closeButton;
@@ -53,11 +52,11 @@ public class GUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setUndecorated(true);
-        addTitleBarPanel();
+        addTitleBarPanel(false);
         showContentPanel(StringUtils.encrypt("admin", "admin"));
 //        showLoginPanel();
     }
-    private void addTitleBarPanel() {
+    private void addTitleBarPanel(boolean advanced) {
         JPanel titleBarPanel = new JPanel();
         titleBarPanel.setBackground(color2); // Set background color
         titleBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -422,10 +421,6 @@ public class GUI {
             amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
                 lengthLabel.setText("Select Length:"  + newValue.intValue());
             });
-            /*amountSlider.setMajorTickSpacing(0);
-            amountSlider.setMinorTickSpacing(1);
-            amountSlider.setPaintTicks(true);
-            amountSlider.setPaintLabels(true);*/
 
             javafx.scene.control.Button logoutButton = new javafx.scene.control.Button("Logout");
             logoutButton.setLayoutX(22);
@@ -631,20 +626,10 @@ public class GUI {
             Scene scene = new Scene(root, 0, 0);
             scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
             panel.setScene(scene);
-
-//            mediaPlayer.setAutoPlay(false);
-//            mediaPlayer.play(); // Start the video playback
         });
 
         panel.setPreferredSize(new Dimension(1530, 920));
         frame.add(panel);
-
-        /*panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBackground(color2);
-        panel.setPreferredSize(new Dimension(1530, 920));
-
-        frame.add(panel, BorderLayout.CENTER);*/ // Add panel to the center of the frame
 
         // Set the location of the JFrame
         frame.setLocation(x, y);
