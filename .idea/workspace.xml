@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListenersOld.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JHoverButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JHoverButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JImageButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JImageButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JSimpleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JSimpleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListeners.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListeners.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

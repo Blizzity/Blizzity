@@ -56,6 +56,7 @@ public class GUI {
     private JFXPanel jfxPanel;
     void init() {
         jfxPanel = new JFXPanel();
+        MouseListeners.addMouseClickListener(jfxPanel);
         optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
         optionsBackground.setArcWidth(30);
         optionsBackground.setArcHeight(30);
@@ -175,6 +176,7 @@ public class GUI {
         init();
         addTitleBarPanel(false);
         showContentPanel(StringUtils.encrypt("admin", "admin"));
+
 //        showLoginPanel();
     }
     private void addTitleBarPanel(boolean advanced) {
@@ -284,7 +286,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        panel.addMouseListener(new MouseListeners());
+        MouseListeners.addMouseClickListener(panel);
         panel.setBackground(color1);
 
         String signInText = "Sign in";
@@ -371,7 +373,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        panel.addMouseListener(new MouseListeners());
+        MouseListeners.addMouseClickListener(panel);
         panel.setBackground(color1);
 
         String signInText = "Welcome";
@@ -449,7 +451,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        panel.addMouseListener(new MouseListeners());
+        MouseListeners.addMouseClickListener(panel);
         panel.setBackground(color1);
 
         String createText = "Create a Blizzity Account";
