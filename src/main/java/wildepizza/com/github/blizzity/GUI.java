@@ -14,6 +14,8 @@ import javafx.scene.media.MediaView;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.SVGPath;
 import wildepizza.com.github.blizzity.gui.*;
+import wildepizza.com.github.blizzity.gui.listeners.LoginListener;
+import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 import wildepizza.com.github.blizzity.utils.StringUtils;
 
 import javafx.scene.media.Media;
@@ -48,7 +50,7 @@ public class GUI {
     GUI (API api) {
         this.api = api;
     }
-    private javafx.scene.shape.Rectangle optionsBackground, optionsBackground2, resultBackground, resultBackground2, detailsBackground, detailsBackground2, timelineBackground, timelineBackground2;
+    private javafx.scene.shape.Rectangle optionsBackground, optionsBackground2, resultBackground, resultBackground2, detailsBackground, detailsBackground2, timelineBackground, timelineBackground2, exportBackground, exportBackground2, exportBackground3, exportBackground4;
     private javafx.scene.control.Label languageLabel, lengthLabel, generateLabel, adjustmentsLabel, resultLabel, detailsLabel, timelineLabel;
     private ComboBox<String> languageComboBox;
     private javafx.scene.control.Button logoutButton;
@@ -56,7 +58,7 @@ public class GUI {
     private JFXPanel jfxPanel;
     void init() {
         jfxPanel = new JFXPanel();
-        MouseListeners.addMouseClickListener(jfxPanel, 0, 40);
+        ScreenListener.addMouseClickListener(jfxPanel, 0, 40);
         optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
         optionsBackground.setArcWidth(30);
         optionsBackground.setArcHeight(30);
@@ -166,6 +168,28 @@ public class GUI {
         timelineLabel.setLayoutX(22);
         timelineLabel.setLayoutY(522);
         timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        exportBackground = new javafx.scene.shape.Rectangle(1530, 1000);
+        exportBackground.setLayoutX(0);
+        exportBackground.setLayoutY(0);
+        exportBackground.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.5));
+
+        exportBackground2 = new javafx.scene.shape.Rectangle(640, 670);
+        exportBackground2.setLayoutX((double) 1530 /2- (double) 640 /2);
+        exportBackground2.setLayoutY((double) 1000 /2- (double) 670 /2 - 40);
+        exportBackground2.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+
+        exportBackground3 = new javafx.scene.shape.Rectangle(200, 20);
+        exportBackground3.setArcWidth(5);
+        exportBackground3.setArcHeight(5);
+        exportBackground3.setLayoutX((double) 1530 /2- (double) 640 /2 + 430);
+        exportBackground3.setLayoutY((double) 1000 /2- (double) 670 /2 - 30);
+        exportBackground3.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+        exportBackground4 = new javafx.scene.shape.Rectangle(640, 40);
+        exportBackground4.setLayoutX((double) 1530 /2- (double) 640 /2);
+        exportBackground4.setLayoutY((double) 1000 /2- (double) 670 /2 - 80);
+        exportBackground4.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
     }
     public void open() {
         frame = new JFrame("BlizzityAI");
@@ -176,7 +200,6 @@ public class GUI {
         init();
         addTitleBarPanel(false);
         showContentPanel(StringUtils.encrypt("admin", "admin"));
-
 //        showLoginPanel();
     }
     private void addTitleBarPanel(boolean advanced) {
@@ -186,7 +209,7 @@ public class GUI {
         titleBarPanel = new JPanel();
         titleBarPanel.setBackground(color2); // Set background color
         titleBarPanel.setLayout(new GridBagLayout());
-        MouseListeners.addMouseClickListener(titleBarPanel, 0, 0);
+        ScreenListener.addMouseClickListener(titleBarPanel, 0, 0);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
         gbc.weightx = 1.0;
@@ -194,6 +217,15 @@ public class GUI {
         GridBagConstraints gbc2 = new GridBagConstraints();
         gbc2.anchor = GridBagConstraints.EAST;
         gbc2.weightx = 2000.0;
+        GridBagConstraints gbc3 = new GridBagConstraints();
+        gbc3.anchor = GridBagConstraints.WEST;
+        gbc3.weightx = 2000.0;
+        gbc3.insets = new Insets(0, 10, 0, 0);
+
+        JLabel label = new JLabel("Blizzity");
+//        label.setFont(label.getFont().deriveFont(Font.PLAIN, 16));
+//        label.setForeground(color7);
+        titleBarPanel.add(label, gbc3);
 
         if (advanced) {
             try {
@@ -208,7 +240,7 @@ public class GUI {
                         Scene scene = jfxPanel.getScene();
                         Group root = ((Group)scene.getRoot());
                         Platform.runLater(() -> {
-                            root.getChildren().remove(timelineLabel);
+                            root.getChildren().addAll(exportBackground, exportBackground2, exportBackground3, exportBackground4);
                             frame.add(jfxPanel);
                             frame.pack();
                         });
@@ -249,7 +281,10 @@ public class GUI {
         });
         minimizeButton.setPreferredSize(new Dimension(50, 40));
         minimizeButton.setMinimumSize(new Dimension(50, 40));
-        titleBarPanel.add(minimizeButton);
+        if (advanced)
+            titleBarPanel.add(minimizeButton);
+        else
+            titleBarPanel.add(minimizeButton, gbc2);
         closeButton = new JSimpleButton("X");
         closeButton.setBackground(color2);
         closeButton.setForeground(color7);
@@ -286,7 +321,8 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel, 0, 40);
+        ScreenListener.addMouseClickListener(panel, 0, 40);
+        panel.addMouseListener(new LoginListener());
         panel.setBackground(color1);
 
         String signInText = "Sign in";
@@ -373,7 +409,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel, 0, 40);
+        ScreenListener.addMouseClickListener(panel, 0, 40);
         panel.setBackground(color1);
 
         String signInText = "Welcome";
@@ -451,7 +487,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel, 0, 40);
+        ScreenListener.addMouseClickListener(panel, 0, 40);
         panel.setBackground(color1);
 
         String createText = "Create a Blizzity Account";

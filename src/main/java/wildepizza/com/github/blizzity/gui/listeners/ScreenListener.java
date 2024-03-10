@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.listeners;
 
 import javafx.embed.swing.JFXPanel;
 
@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-public class MouseListeners {
+public class ScreenListener {
     public static Point mouse;
     public static boolean change = true;
     public static MouseMotionListener getMouseListener(int x, int y) {

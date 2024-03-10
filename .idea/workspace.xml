@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/listeners/LoginListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JHoverButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JHoverButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListeners.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListeners.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JVideoPlayer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListeners.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/listeners/ScreenListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/MouseListenersOld.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,5 +135,20 @@
       <updated>1709299553580</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java</url>
+          <line>193</line>
+          <properties class="wildepizza.com.github.blizzity.GUI" method="open">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

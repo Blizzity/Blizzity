@@ -1,9 +1,10 @@
 package wildepizza.com.github.blizzity.gui;
 
+import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.UUID;
 
 public class JHoverButton extends JButton implements MouseMotionListener {
     Color hoverTextColor;
@@ -21,7 +22,7 @@ public class JHoverButton extends JButton implements MouseMotionListener {
     @Override
     protected void paintComponent(Graphics g) {
         try {
-            paintComponent(g, /*!MouseListeners.change && */MouseListeners.isSelected(this));
+            paintComponent(g, !ScreenListener.change && ScreenListener.isSelected(this)); //TODO fix top
         } finally {
             g.dispose();
         }
@@ -32,10 +33,10 @@ public class JHoverButton extends JButton implements MouseMotionListener {
     }
     @Override
     public void mouseMoved(MouseEvent e) {
-        MouseListeners.change = false;
+        ScreenListener.change = false;
         Point point = e.getPoint();
         point.x += getX();
         point.y += getY();
-        MouseListeners.mouse = point;
+        ScreenListener.mouse = point;
     }
 }

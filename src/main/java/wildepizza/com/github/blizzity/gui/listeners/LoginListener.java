@@ -1,14 +1,11 @@
-/*
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.listeners;
 
 import wildepizza.com.github.blizzity.GUI;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MouseListeners extends MouseAdapter {
+public class LoginListener extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
         // Check if the clicked point is outside the text field bounds
@@ -18,7 +15,5 @@ public class MouseListeners extends MouseAdapter {
         if (GUI.passText != null && !GUI.passText.getBounds().contains(e.getPoint())) {
             GUI.passText.transferFocus(); // Transfers focus away from the field
         }
-        GUI.minimizeButton.a = false;
     }
 }
-*/
