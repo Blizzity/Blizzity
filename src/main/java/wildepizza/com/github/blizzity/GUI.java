@@ -56,7 +56,7 @@ public class GUI {
     private JFXPanel jfxPanel;
     void init() {
         jfxPanel = new JFXPanel();
-        MouseListeners.addMouseClickListener(jfxPanel);
+        MouseListeners.addMouseClickListener(jfxPanel, 0, 40);
         optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
         optionsBackground.setArcWidth(30);
         optionsBackground.setArcHeight(30);
@@ -186,6 +186,7 @@ public class GUI {
         titleBarPanel = new JPanel();
         titleBarPanel.setBackground(color2); // Set background color
         titleBarPanel.setLayout(new GridBagLayout());
+        MouseListeners.addMouseClickListener(titleBarPanel, 0, 0);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
         gbc.weightx = 1.0;
@@ -240,7 +241,6 @@ public class GUI {
         minimizeButton.setHoverForeground(color6);
         minimizeButton.setForeground(color7);
         minimizeButton.setHoverBackground(color4);
-        minimizeButton.setCloseClick(true);
         minimizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -286,7 +286,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel);
+        MouseListeners.addMouseClickListener(panel, 0, 40);
         panel.setBackground(color1);
 
         String signInText = "Sign in";
@@ -373,7 +373,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel);
+        MouseListeners.addMouseClickListener(panel, 0, 40);
         panel.setBackground(color1);
 
         String signInText = "Welcome";
@@ -451,7 +451,7 @@ public class GUI {
         int width;
         panel = new JPanel();
         panel.setLayout(null);
-        MouseListeners.addMouseClickListener(panel);
+        MouseListeners.addMouseClickListener(panel, 0, 40);
         panel.setBackground(color1);
 
         String createText = "Create a Blizzity Account";
