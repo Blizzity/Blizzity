@@ -7,9 +7,10 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.SVGPath;
 import wildepizza.com.github.blizzity.gui.*;
@@ -23,8 +24,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URLEncoder;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 
 public class GUI {
     private JFrame frame;
@@ -49,12 +48,131 @@ public class GUI {
     GUI (API api) {
         this.api = api;
     }
+    private javafx.scene.shape.Rectangle optionsBackground, optionsBackground2, resultBackground, resultBackground2, detailsBackground, detailsBackground2, timelineBackground, timelineBackground2;
+    private javafx.scene.control.Label languageLabel, lengthLabel, generateLabel, adjustmentsLabel, resultLabel, detailsLabel, timelineLabel;
+    private ComboBox<String> languageComboBox;
+    private javafx.scene.control.Button logoutButton;
+    private Slider amountSlider;
+    private JFXPanel jfxPanel;
+    void init() {
+        jfxPanel = new JFXPanel();
+        optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
+        optionsBackground.setArcWidth(30);
+        optionsBackground.setArcHeight(30);
+        optionsBackground.setLayoutX(10);
+        optionsBackground.setLayoutY(10);
+        optionsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+        optionsBackground2 = new javafx.scene.shape.Rectangle(670, 410);
+        optionsBackground2.setLayoutX(10);
+        optionsBackground2.setLayoutY(50);
+        optionsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        languageLabel = new javafx.scene.control.Label("Select Language:");
+        languageLabel.setLayoutX(22);
+        languageLabel.setLayoutY(55);
+        languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
+        languageComboBox = new ComboBox<>();
+        languageComboBox.getItems().addAll(languages);
+        languageComboBox.getSelectionModel().select(0);
+        languageComboBox.setLayoutX(22);
+        languageComboBox.setLayoutY(82);
+
+        amountSlider = new Slider(1, 20, 10);
+
+        lengthLabel = new javafx.scene.control.Label("Select Length:"  + (int) amountSlider.getValue());
+        lengthLabel.setLayoutX(22);
+        lengthLabel.setLayoutY(195);
+        lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        amountSlider.setLayoutX(22);
+        amountSlider.setLayoutY(235);
+        amountSlider.setShowTickMarks(true);
+        amountSlider.setMinorTickCount(20);
+        amountSlider.setMinorTickCount(4);
+        amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            lengthLabel.setText("Select Length:"  + newValue.intValue());
+        });
+
+        logoutButton = new javafx.scene.control.Button("Logout");
+        logoutButton.setLayoutX(22);
+        logoutButton.setLayoutY(275);
+        logoutButton.setOnAction(actionEvent -> {
+            frame.remove(panel);
+            showLoginPanel();
+        });
+
+        generateLabel = new javafx.scene.control.Label("Generate");
+        generateLabel.setLayoutX(22);
+        generateLabel.setLayoutY(32);
+        generateLabel.setTextFill(javafx.scene.paint.Color.rgb(3, 181, 193));
+
+
+        adjustmentsLabel = new javafx.scene.control.Label("Adjustments");
+        adjustmentsLabel.setLayoutX(90);
+        adjustmentsLabel.setLayoutY(32);
+        adjustmentsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        resultBackground = new javafx.scene.shape.Rectangle(430, 490);
+        resultBackground.setArcWidth(30);
+        resultBackground.setArcHeight(30);
+        resultBackground.setLayoutX(690);
+        resultBackground.setLayoutY(10);
+        resultBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+        resultBackground2 = new javafx.scene.shape.Rectangle(430, 410);
+        resultBackground2.setLayoutX(690);
+        resultBackground2.setLayoutY(50);
+        resultBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        resultLabel = new javafx.scene.control.Label("Player");
+        resultLabel.setLayoutX(702);
+        resultLabel.setLayoutY(22);
+        resultLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        detailsBackground = new javafx.scene.shape.Rectangle(390, 490);
+        detailsBackground.setArcWidth(30);
+        detailsBackground.setArcHeight(30);
+        detailsBackground.setLayoutX(1130);
+        detailsBackground.setLayoutY(10);
+        detailsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+        detailsBackground2 = new javafx.scene.shape.Rectangle(390, 410);
+        detailsBackground2.setLayoutX(1130);
+        detailsBackground2.setLayoutY(50);
+        detailsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        detailsLabel = new javafx.scene.control.Label("Details");
+        detailsLabel.setLayoutX(1142);
+        detailsLabel.setLayoutY(22);
+        detailsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        timelineBackground = new javafx.scene.shape.Rectangle(1510, 400);
+        timelineBackground.setArcWidth(30);
+        timelineBackground.setArcHeight(30);
+        timelineBackground.setLayoutX(10);
+        timelineBackground.setLayoutY(510);
+        timelineBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+
+        timelineBackground2 = new javafx.scene.shape.Rectangle(1510, 320);
+        timelineBackground2.setLayoutX(10);
+        timelineBackground2.setLayoutY(550);
+        timelineBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        timelineLabel = new javafx.scene.control.Label("Timeline");
+        timelineLabel.setLayoutX(22);
+        timelineLabel.setLayoutY(522);
+        timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+    }
     public void open() {
         frame = new JFrame("BlizzityAI");
         frame.setSize(450, 520);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setUndecorated(true);
+        init();
         addTitleBarPanel(false);
         showContentPanel(StringUtils.encrypt("admin", "admin"));
 //        showLoginPanel();
@@ -65,22 +183,51 @@ public class GUI {
         }
         titleBarPanel = new JPanel();
         titleBarPanel.setBackground(color2); // Set background color
-        titleBarPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        titleBarPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.anchor = GridBagConstraints.EAST;
+        gbc2.weightx = 2000.0;
 
         if (advanced) {
             try {
+                JImageButton exportButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("export.png"))));
+                exportButton.setBackground(color2);
+                exportButton.setHoverForeground(color6);
+                exportButton.setForeground(color7);
+                exportButton.setHoverBackground(color4);
+                exportButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Scene scene = jfxPanel.getScene();
+                        Group root = ((Group)scene.getRoot());
+                        Platform.runLater(() -> {
+                            root.getChildren().remove(timelineLabel);
+                            frame.add(jfxPanel);
+                            frame.pack();
+                        });
+                    }
+                });
+                exportButton.setPreferredSize(new Dimension(40, 40));
+                exportButton.setMinimumSize(new Dimension(40, 40));
+                titleBarPanel.add(exportButton, gbc2);
                 JImageButton shareButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("share3.png"))));
                 shareButton.setBackground(color2);
+                shareButton.setHoverForeground(color6);
                 shareButton.setForeground(color7);
-                shareButton.setPressedColor(color6, color4);
+                shareButton.setHoverBackground(color4);
                 shareButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         frame.dispose(); // Close the window
                     }
                 });
-                shareButton.setPreferredSize(new Dimension(50, 40));
-                titleBarPanel.add(shareButton);
+                shareButton.setPreferredSize(new Dimension(40, 40));
+                shareButton.setMinimumSize(new Dimension(40, 40));
+                titleBarPanel.add(shareButton, gbc);
             } catch (Exception e) {
                 throw new RuntimeException();
             }
@@ -88,8 +235,10 @@ public class GUI {
 
         minimizeButton = new JSimpleButton("-");
         minimizeButton.setBackground(color2);
+        minimizeButton.setHoverForeground(color6);
         minimizeButton.setForeground(color7);
-        minimizeButton.setPressedColor(color6, color4);
+        minimizeButton.setHoverBackground(color4);
+        minimizeButton.setCloseClick(true);
         minimizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,11 +246,13 @@ public class GUI {
             }
         });
         minimizeButton.setPreferredSize(new Dimension(50, 40));
+        minimizeButton.setMinimumSize(new Dimension(50, 40));
         titleBarPanel.add(minimizeButton);
         closeButton = new JSimpleButton("X");
         closeButton.setBackground(color2);
         closeButton.setForeground(color7);
-        closeButton.setPressedColor(color6, Color.RED);
+        closeButton.setHoverForeground(color6);
+        closeButton.setHoverBackground(Color.RED);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,6 +260,7 @@ public class GUI {
             }
         });
         closeButton.setPreferredSize(new Dimension(50, 40));
+        closeButton.setMinimumSize(new Dimension(50, 40));
         titleBarPanel.add(closeButton);
 
         // Add custom title bar panel to the frame
@@ -391,68 +543,21 @@ public class GUI {
         int videoHeight = 1920;
         int videoPreviewWidth = 230;
         int videoPreviewHeight = 410;
-        JFXPanel panel = new JFXPanel();
+
 
         File file = new File("received_video.mp4");
         Media media = new Media(file.toURI().toString());
 
-        javafx.scene.shape.Rectangle optionsBackground = new javafx.scene.shape.Rectangle(670, 490);
-        optionsBackground.setArcWidth(30);
-        optionsBackground.setArcHeight(30);
-        optionsBackground.setLayoutX(10);
-        optionsBackground.setLayoutY(10);
-        optionsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
-
-        javafx.scene.shape.Rectangle optionsBackground2 = new javafx.scene.shape.Rectangle(670, 410);
-        optionsBackground2.setLayoutX(10);
-        optionsBackground2.setLayoutY(50);
-        optionsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
-
-        Label languageLabel = new Label("Select Language:");
-        languageLabel.setLayoutX(22);
-        languageLabel.setLayoutY(55);
-        languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
-        ComboBox<String> languageComboBox = new ComboBox<>();
-        languageComboBox.getItems().addAll(languages);
-        languageComboBox.getSelectionModel().select(0);
-        languageComboBox.setLayoutX(22);
-        languageComboBox.setLayoutY(82);
-
-        Label usagesLabel = new Label("Usages:" + api.usages(key));
+        javafx.scene.control.Label usagesLabel = new javafx.scene.control.Label("Usages:" + api.usages(key));
         usagesLabel.setLayoutX(22);
         usagesLabel.setLayoutY(115);
         usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        Label creditsLabel = new Label("Credits:" + api.credits(key));
+        javafx.scene.control.Label creditsLabel = new javafx.scene.control.Label("Credits:" + api.credits(key));
         creditsLabel.setLayoutX(22);
         creditsLabel.setLayoutY(155);
         creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        Slider amountSlider = new Slider(1, 20, 10);
-
-        Label lengthLabel = new Label("Select Length:"  + (int) amountSlider.getValue());
-        lengthLabel.setLayoutX(22);
-        lengthLabel.setLayoutY(195);
-        lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        amountSlider.setLayoutX(22);
-        amountSlider.setLayoutY(235);
-        amountSlider.setShowTickMarks(true);
-        amountSlider.setMinorTickCount(20);
-        amountSlider.setMinorTickCount(4);
-        amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            lengthLabel.setText("Select Length:"  + newValue.intValue());
-        });
-
-        javafx.scene.control.Button logoutButton = new javafx.scene.control.Button("Logout");
-        logoutButton.setLayoutX(22);
-        logoutButton.setLayoutY(275);
-        logoutButton.setOnAction(actionEvent -> {
-            frame.remove(panel);
-            showLoginPanel();
-        });
         javafx.scene.control.Button generateButton = new javafx.scene.control.Button("Generate");
         generateButton.setLayoutX(22);
         generateButton.setLayoutY(315);
@@ -463,117 +568,55 @@ public class GUI {
                 JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
         });
 
-        Label generateLabel = new Label("Generate");
-        generateLabel.setLayoutX(22);
-        generateLabel.setLayoutY(32);
-        generateLabel.setTextFill(javafx.scene.paint.Color.rgb(3, 181, 193));
-
-
-        Label adjustmentsLabel = new Label("Adjustments");
-        adjustmentsLabel.setLayoutX(90);
-        adjustmentsLabel.setLayoutY(32);
-        adjustmentsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        javafx.scene.shape.Rectangle resultBackground = new javafx.scene.shape.Rectangle(430, 490);
-        resultBackground.setArcWidth(30);
-        resultBackground.setArcHeight(30);
-        resultBackground.setLayoutX(690);
-        resultBackground.setLayoutY(10);
-        resultBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
-
-        javafx.scene.shape.Rectangle resultBackground2 = new javafx.scene.shape.Rectangle(430, 410);
-        resultBackground2.setLayoutX(690);
-        resultBackground2.setLayoutY(50);
-        resultBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
-
-        Label resultLabel = new Label("Player");
-        resultLabel.setLayoutX(702);
-        resultLabel.setLayoutY(22);
-        resultLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        javafx.scene.shape.Rectangle detailsBackground = new javafx.scene.shape.Rectangle(390, 490);
-        detailsBackground.setArcWidth(30);
-        detailsBackground.setArcHeight(30);
-        detailsBackground.setLayoutX(1130);
-        detailsBackground.setLayoutY(10);
-        detailsBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
-
-        javafx.scene.shape.Rectangle detailsBackground2 = new javafx.scene.shape.Rectangle(390, 410);
-        detailsBackground2.setLayoutX(1130);
-        detailsBackground2.setLayoutY(50);
-        detailsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
-
-        Label detailsLabel = new Label("Details");
-        detailsLabel.setLayoutX(1142);
-        detailsLabel.setLayoutY(22);
-        detailsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        Label nameLabel = new Label("Name:");
+        javafx.scene.control.Label nameLabel = new javafx.scene.control.Label("Name:");
         nameLabel.setLayoutX(1142);
         nameLabel.setLayoutY(60);
         nameLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-        Label nameLabel2 = new Label(file.getName());
+        javafx.scene.control.Label nameLabel2 = new javafx.scene.control.Label(file.getName());
         nameLabel2.setLayoutX(1250);
         nameLabel2.setLayoutY(60);
         nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-        Label pathLabel = new Label("Path:");
+        javafx.scene.control.Label pathLabel = new javafx.scene.control.Label("Path:");
         pathLabel.setLayoutX(1142);
         pathLabel.setLayoutY(83);
         pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-        Label pathLabel2 = new Label(file.getAbsolutePath().replace("\\" + file.getName(), ""));
+        javafx.scene.control.Label pathLabel2 = new javafx.scene.control.Label(file.getAbsolutePath().replace("\\" + file.getName(), ""));
         pathLabel2.setLayoutX(1250);
         pathLabel2.setLayoutY(83);
         pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-        Label ratioLabel = new Label("Aspect ratio:");
+        javafx.scene.control.Label ratioLabel = new javafx.scene.control.Label("Aspect ratio:");
         ratioLabel.setLayoutX(1142);
         ratioLabel.setLayoutY(106);
         ratioLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-        Label ratioLabel2 = new Label("9:16");
+        javafx.scene.control.Label ratioLabel2 = new javafx.scene.control.Label("9:16");
         ratioLabel2.setLayoutX(1250);
         ratioLabel2.setLayoutY(106);
         ratioLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-        Label resolutionLabel = new Label("Resolution:");
+        javafx.scene.control.Label resolutionLabel = new javafx.scene.control.Label("Resolution:");
         resolutionLabel.setLayoutX(1142);
         resolutionLabel.setLayoutY(129);
         resolutionLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-        Label resolutionLabel2 = new Label(videoWidth + "x" + videoHeight);
+        javafx.scene.control.Label resolutionLabel2 = new javafx.scene.control.Label(videoWidth + "x" + videoHeight);
         resolutionLabel2.setLayoutX(1250);
         resolutionLabel2.setLayoutY(129);
         resolutionLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-        Label fpsLabel = new Label("Frame rate:");
+        javafx.scene.control.Label fpsLabel = new javafx.scene.control.Label("Frame rate:");
         fpsLabel.setLayoutX(1142);
         fpsLabel.setLayoutY(152);
         fpsLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-        Label fpsLabel2 = new Label("25.00fps");
+        javafx.scene.control.Label fpsLabel2 = new javafx.scene.control.Label("25.00fps");
         fpsLabel2.setLayoutX(1250);
         fpsLabel2.setLayoutY(152);
         fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
-
-        javafx.scene.shape.Rectangle timelineBackground = new javafx.scene.shape.Rectangle(1510, 400);
-        timelineBackground.setArcWidth(30);
-        timelineBackground.setArcHeight(30);
-        timelineBackground.setLayoutX(10);
-        timelineBackground.setLayoutY(510);
-        timelineBackground.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
-
-        javafx.scene.shape.Rectangle timelineBackground2 = new javafx.scene.shape.Rectangle(1510, 320);
-        timelineBackground2.setLayoutX(10);
-        timelineBackground2.setLayoutY(550);
-        timelineBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
-
-        Label timelineLabel = new Label("Timeline");
-        timelineLabel.setLayoutX(22);
-        timelineLabel.setLayoutY(522);
-        timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         MediaView mediaView = new MediaView(mediaPlayer);
@@ -582,7 +625,7 @@ public class GUI {
         mediaView.setLayoutY(-705);
         mediaView.setLayoutX(363.5);
 
-        Button playButton = new Button();
+        javafx.scene.control.Button playButton = new Button();
         playButton.setGraphic(createPlayShape(11, 12, javafx.scene.paint.Color.WHITE));
         playButton.setBackground(null);
         playButton.setLayoutX(890);
@@ -650,10 +693,10 @@ public class GUI {
             );
 
             scene.setRoot(root);
-            panel.setScene(scene);
-            panel.setPreferredSize(new Dimension(1530, 920));
+            jfxPanel.setScene(scene);
+            jfxPanel.setPreferredSize(new Dimension(1530, 920));
             addTitleBarPanel(true);
-            frame.add(panel);
+            frame.add(jfxPanel);
             frame.pack();
         });
 

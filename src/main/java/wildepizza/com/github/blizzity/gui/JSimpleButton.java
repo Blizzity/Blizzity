@@ -4,37 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class JSimpleButton extends JButton implements ActionListener, MouseMotionListener {
-    boolean pressed;
-    boolean hovering;
+public class JSimpleButton extends JHoverButton {
     boolean a;
-    Color pressedColor;
-    Color pressedBoxColor;
     public JSimpleButton(String text) {
-        super(text);
+        super();
+        setText(text);
         setOpaque(false);
-        addMouseMotionListener(this);
-        MouseAdapter mouseHandler = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                pressed = true;
-                repaint();
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                pressed = false;
-                repaint();
-            }
-        };
-        addMouseListener(mouseHandler);
-        addMouseMotionListener(mouseHandler);
-    }
-    public void setPressedColor(Color pressed, Color pressedBox) {
-        this.pressedColor = pressed;
-        this.pressedBoxColor = pressedBox;
     }
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g, boolean color) {
         try {
             int width = getWidth();
             int height = getHeight();
@@ -42,22 +20,15 @@ public class JSimpleButton extends JButton implements ActionListener, MouseMotio
 
             // Calculate baseline for text drawing to align text properly
             int baseline = getBaseline(width, height);
-            if (pressed) {
-                g.setColor(pressedBoxColor);
-            } else {
-                if (hovering && a)
-                    g.setColor(pressedBoxColor);
-                else {
-                    g.setColor(getBackground());
-                }
-            }
+            if (color)
+                g.setColor(hoverBoxColor);
+            else
+                g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
-            if (pressed) {
-                g.setColor(pressedColor);
-            } else {
+            if (color)
+                g.setColor(hoverTextColor);
+            else
                 g.setColor(getForeground());
-                hovering = !hovering;
-            }
             int size = 10;
             if (text.equals("X")) {
                 // Draw the "X" lines
@@ -72,20 +43,5 @@ public class JSimpleButton extends JButton implements ActionListener, MouseMotio
         } finally {
             g.dispose();
         }
-    }
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        if (!a)
-            hovering = true;
-        a = true;
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        a = false;
-        hovering = false;
     }
 }
