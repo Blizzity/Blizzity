@@ -4,15 +4,20 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.FontPosture;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.gui.listeners.LoginListener;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
@@ -22,10 +27,15 @@ import javafx.scene.media.Media;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class GUI {
     private JFrame frame;
@@ -33,13 +43,13 @@ public class GUI {
     static public JRoundedTextField userText;
     static public JRoundedPasswordField passText;
     private JRoundedButton nextButton;
-    private JPanel titleBarPanel;
+    private JDarkenedPanel titleBarPanel;
     private final API api;
     private Point lastClick; // Used for dragging
     public static JSimpleButton closeButton;
     public static JSimpleButton minimizeButton;
     Color color1 = new Color(19, 19, 20);
-    Color color2 = new Color(30, 31, 32);
+    public static Color color2 = new Color(30, 31, 32);
     Color color3 = new Color(191, 191, 191);
     Color color4 = new Color(63, 61, 62);
     Color color5 = new Color(26, 115, 233);
@@ -50,12 +60,41 @@ public class GUI {
     GUI (API api) {
         this.api = api;
     }
-    private javafx.scene.shape.Rectangle optionsBackground, optionsBackground2, resultBackground, resultBackground2, detailsBackground, detailsBackground2, timelineBackground, timelineBackground2, exportBackground, exportBackground2, exportBackground3, exportBackground4;
-    private javafx.scene.control.Label languageLabel, lengthLabel, generateLabel, adjustmentsLabel, resultLabel, detailsLabel, timelineLabel;
-    private ComboBox<String> languageComboBox;
-    private javafx.scene.control.Button logoutButton;
+    private javafx.scene.shape.Rectangle
+            optionsBackground,
+            optionsBackground2,
+            resultBackground,
+            resultBackground2,
+            detailsBackground,
+            detailsBackground2,
+            timelineBackground,
+            timelineBackground2,
+            darkenBackground,
+            exportBackground,
+            exportTitle,
+            shareBackground,
+            shareTitle;
+    private javafx.scene.control.Label
+            languageLabel,
+            lengthLabel,
+            generateLabel,
+            adjustmentsLabel,
+            resultLabel,
+            detailsLabel,
+            timelineLabel,
+            nameLabel,
+            exportLabel,
+            exportFieldLabel,
+            exportTitleLabel,
+            spaceLabel,
+            shareTitleLabel;
+    private ComboBox<String> languageComboBox, spaceComboBox;
+    private javafx.scene.control.Button logoutButton, jfxCloseButton, folderButton, exportCompleteButton;
+    private TextField nameTextField;
     private Slider amountSlider;
+    private MediaView mediaView, mediaViewClone;
     private JFXPanel jfxPanel;
+    private JImageButton exportButton, shareButton;
     void init() {
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseClickListener(jfxPanel, 0, 40);
@@ -169,27 +208,163 @@ public class GUI {
         timelineLabel.setLayoutY(522);
         timelineLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        exportBackground = new javafx.scene.shape.Rectangle(1530, 1000);
-        exportBackground.setLayoutX(0);
-        exportBackground.setLayoutY(0);
-        exportBackground.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.5));
+        darkenBackground = new javafx.scene.shape.Rectangle(1530, 1000);
+        darkenBackground.setLayoutX(0);
+        darkenBackground.setLayoutY(0);
+        darkenBackground.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.5));
 
-        exportBackground2 = new javafx.scene.shape.Rectangle(640, 670);
-        exportBackground2.setLayoutX((double) 1530 /2- (double) 640 /2);
-        exportBackground2.setLayoutY((double) 1000 /2- (double) 670 /2 - 40);
-        exportBackground2.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+        exportBackground = new javafx.scene.shape.Rectangle(640, 540);
+        exportBackground.setLayoutX((double) 1530 /2- (double) 640 /2);
+        exportBackground.setLayoutY((double) 1000 /2- (double) 670 /2 - 40 + 65);
+        exportBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
-        exportBackground3 = new javafx.scene.shape.Rectangle(200, 20);
-        exportBackground3.setArcWidth(5);
-        exportBackground3.setArcHeight(5);
-        exportBackground3.setLayoutX((double) 1530 /2- (double) 640 /2 + 430);
-        exportBackground3.setLayoutY((double) 1000 /2- (double) 670 /2 - 30);
-        exportBackground3.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+        shareBackground = new javafx.scene.shape.Rectangle(640, 540);
+        shareBackground.setLayoutX((double) 1530 /2- (double) 640 /2);
+        shareBackground.setLayoutY((double) 1000 /2- (double) 670 /2 - 40 + 65);
+        shareBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
-        exportBackground4 = new javafx.scene.shape.Rectangle(640, 40);
-        exportBackground4.setLayoutX((double) 1530 /2- (double) 640 /2);
-        exportBackground4.setLayoutY((double) 1000 /2- (double) 670 /2 - 80);
-        exportBackground4.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+        exportTitle = new javafx.scene.shape.Rectangle(640, 40);
+        exportTitle.setLayoutX((double) 1530 /2- (double) 640 /2);
+        exportTitle.setLayoutY((double) 1000 /2- (double) 670 /2 - 80 + 65);
+        exportTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        shareTitle = new javafx.scene.shape.Rectangle(640, 40);
+        shareTitle.setLayoutX((double) 1530 /2- (double) 640 /2);
+        shareTitle.setLayoutY((double) 1000 /2- (double) 670 /2 - 80 + 65);
+        shareTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
+
+        exportTitleLabel = new Label("Export");
+        exportTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
+        exportTitleLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 15);
+        exportTitleLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 70 + 65);
+        exportTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        shareTitleLabel = new Label("Share");
+        shareTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
+        shareTitleLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 15);
+        shareTitleLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 70 + 65);
+        shareTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        nameTextField = new TextField("output");
+        nameTextField.setPrefSize(200, 20);
+        nameTextField.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        nameTextField.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
+        nameTextField.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
+
+        File defaultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getParent() + "\\Videos");
+        exportFieldLabel = new Label("  " + defaultDir);
+        exportFieldLabel.setPrefSize(159, 26);
+        exportFieldLabel.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        exportFieldLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
+        exportFieldLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 17 + 65);
+
+        exportCompleteButton = new Button("Generate");
+        exportCompleteButton.setPrefSize(100, 26);
+        exportCompleteButton.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        exportCompleteButton.setLayoutX((double) 1530 /2- (double) 640 /2 + 500);
+        exportCompleteButton.setLayoutY((double) 1000 /2- (double) 670 /2 + 455 + 65);
+        exportCompleteButton.setOnAction(event -> {
+            Scene scene = jfxPanel.getScene();
+            Group root = ((Group)scene.getRoot());
+            Platform.runLater(() -> {
+                try {
+                    Files.copy(Paths.get(mediaViewClone.getMediaPlayer().getMedia().getSource().replace("file:/", "")), Paths.get(exportFieldLabel.getText().replace("  ", "") + "\\" + nameTextField.getText() + ".mp4"), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                root.getChildren().removeAll(getExportParts());
+                titleBarPanel.setDarkened(false);
+                exportButton.setDarkened(false);
+                minimizeButton.setDarkened(false);
+                closeButton.setDarkened(false);
+                shareButton.setDarkened(false);
+                frame.add(jfxPanel);
+                frame.pack();
+            });
+        });
+
+        folderButton = new Button();
+        SVGPath path = new SVGPath();
+        path.setContent("M3 8.2C3 7.07989 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H9.67452C10.1637 5 10.4083 5 10.6385 5.05526C10.8425 5.10425 11.0376 5.18506 11.2166 5.29472C11.4184 5.4184 11.5914 5.59135 11.9373 5.93726L12.0627 6.06274C12.4086 6.40865 12.5816 6.5816 12.7834 6.70528C12.9624 6.81494 13.1575 6.89575 13.3615 6.94474C13.5917 7 13.8363 7 14.3255 7H17.8C18.9201 7 19.4802 7 19.908 7.21799C20.2843 7.40973 20.5903 7.71569 20.782 8.09202C21 8.51984 21 9.0799 21 10.2V15.8C21 16.9201 21 17.4802 20.782 17.908C20.5903 18.2843 20.2843 18.5903 19.908 18.782C19.4802 19 18.9201 19 17.8 19H6.2C5.07989 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2Z");
+        path.setStrokeWidth(1.3);
+        path.setStroke(javafx.scene.paint.Color.WHITE);
+        path.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
+        folderButton.setGraphic(path);
+        folderButton.setPrefSize(36, 26);
+        folderButton.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        folderButton.setLayoutX((double) 1530 /2- (double) 640 /2 + 425 + 159 + 5);
+        folderButton.setLayoutY((double) 1000 /2- (double) 670 /2 + 17 + 65);
+        folderButton.setOnAction(event -> {
+            JFileChooser fileChooser = new JFileChooser(defaultDir);
+            // Set to directories only for folder selection
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = fileChooser.showOpenDialog(frame);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                // Get the selected folder path
+                String selectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
+                exportFieldLabel.setText("  " + selectedFolder);
+            }
+        });
+
+        spaceLabel = new Label("Space");
+        spaceLabel.setPrefSize(85, 20);
+        spaceLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        spaceLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
+        spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        exportLabel = new Label("Export to");
+        exportLabel.setPrefSize(85, 20);
+        exportLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        exportLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
+        exportLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        nameLabel = new Label("Name");
+        nameLabel.setPrefSize(85, 20);
+        nameLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        nameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
+        nameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        jfxCloseButton = new javafx.scene.control.Button();
+        // First SVG path
+        SVGPath path1 = new SVGPath();
+        path1.setContent("M7 17L16.8995 7.10051");
+        path1.setStrokeWidth(0.7);
+        path1.setStroke(javafx.scene.paint.Color.WHITE);
+
+        // Second SVG path
+        SVGPath path2 = new SVGPath();
+        path2.setContent("M7 7.00001L16.8995 16.8995");
+        path2.setStrokeWidth(0.7);
+        path2.setStroke(javafx.scene.paint.Color.WHITE);
+
+        // Combine the SVGPaths into a Group to use as button graphic
+        javafx.scene.Group svgGroup = new javafx.scene.Group(path1, path2);
+        svgGroup.setScaleX(1.2);
+        svgGroup.setScaleY(1.2);
+        jfxCloseButton.setGraphic(svgGroup); //TODO make thinner (or the other one thicker)
+        jfxCloseButton.setStyle("-fx-background-color: #1E1F20; -fx-padding: 10; -fx-background-radius: 0;");
+        jfxCloseButton.setOnMouseEntered(e -> jfxCloseButton.setStyle("-fx-background-color: #C94F4F; -fx-padding: 10; -fx-background-radius: 0;"));
+        jfxCloseButton.setOnMouseExited(e -> jfxCloseButton.setStyle("-fx-background-color: #1E1F20; -fx-padding: 10; -fx-background-radius: 0;"));
+        jfxCloseButton.setPrefSize(50, 39);
+        jfxCloseButton.setLayoutX((double) 1530 /2- (double) 640 /2 + 590);
+        jfxCloseButton.setLayoutY((double) 1000 /2- (double) 670 /2 - 80 + 65);
+        jfxCloseButton.setOnMousePressed(e -> jfxCloseButton.setPrefHeight(40));
+        jfxCloseButton.setOnMouseClicked(e -> jfxCloseButton.setPrefHeight(39));
+        jfxCloseButton.setOnAction(actionEvent -> {
+            Scene scene = jfxPanel.getScene();
+            Group root = ((Group)scene.getRoot());
+            Platform.runLater(() -> {
+                root.getChildren().removeAll(getExportParts());
+                titleBarPanel.setDarkened(false);
+                exportButton.setDarkened(false);
+                minimizeButton.setDarkened(false);
+                closeButton.setDarkened(false);
+                shareButton.setDarkened(false);
+                frame.add(jfxPanel);
+                frame.pack();
+            });
+        });
     }
     public void open() {
         frame = new JFrame("BlizzityAI");
@@ -206,7 +381,7 @@ public class GUI {
         if (titleBarPanel != null) {
             frame.remove(titleBarPanel);
         }
-        titleBarPanel = new JPanel();
+        titleBarPanel = new JDarkenedPanel();
         titleBarPanel.setBackground(color2); // Set background color
         titleBarPanel.setLayout(new GridBagLayout());
         ScreenListener.addMouseClickListener(titleBarPanel, 0, 0);
@@ -223,13 +398,12 @@ public class GUI {
         gbc3.insets = new Insets(0, 10, 0, 0);
 
         JLabel label = new JLabel("Blizzity");
-//        label.setFont(label.getFont().deriveFont(Font.PLAIN, 16));
-//        label.setForeground(color7);
         titleBarPanel.add(label, gbc3);
 
         if (advanced) {
             try {
-                JImageButton exportButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("export.png"))));
+                exportButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("export.png"))));
+                shareButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("share3.png"))));;
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
                 exportButton.setForeground(color7);
@@ -240,16 +414,24 @@ public class GUI {
                         Scene scene = jfxPanel.getScene();
                         Group root = ((Group)scene.getRoot());
                         Platform.runLater(() -> {
-                            root.getChildren().addAll(exportBackground, exportBackground2, exportBackground3, exportBackground4);
+                            javafx.scene.shape.Rectangle clipRect = new Rectangle(1080, 1920);
+                            clipRect.setArcWidth(80); // Adjust corner radius
+                            clipRect.setArcHeight(80); // Adjust corner radius
+                            mediaViewClone.setClip(clipRect);
+                            root.getChildren().addAll(getExportParts());
                             frame.add(jfxPanel);
                             frame.pack();
+                            titleBarPanel.setDarkened(true); //TODO fix interactible
+                            exportButton.setDarkened(true);
+                            minimizeButton.setDarkened(true);
+                            closeButton.setDarkened(true);
+                            shareButton.setDarkened(true);
                         });
                     }
                 });
                 exportButton.setPreferredSize(new Dimension(40, 40));
                 exportButton.setMinimumSize(new Dimension(40, 40));
                 titleBarPanel.add(exportButton, gbc2);
-                JImageButton shareButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("share3.png"))));
                 shareButton.setBackground(color2);
                 shareButton.setHoverForeground(color6);
                 shareButton.setForeground(color7);
@@ -257,7 +439,22 @@ public class GUI {
                 shareButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        frame.dispose(); // Close the window
+                        Scene scene = jfxPanel.getScene();
+                        Group root = ((Group)scene.getRoot());
+                        Platform.runLater(() -> {
+                            javafx.scene.shape.Rectangle clipRect = new Rectangle(1080, 1920);
+                            clipRect.setArcWidth(80); // Adjust corner radius
+                            clipRect.setArcHeight(80); // Adjust corner radius
+                            mediaViewClone.setClip(clipRect);
+                            root.getChildren().addAll(getShareParts());
+                            frame.add(jfxPanel);
+                            frame.pack();
+                            titleBarPanel.setDarkened(true); //TODO fix interactible
+                            exportButton.setDarkened(true);
+                            minimizeButton.setDarkened(true);
+                            closeButton.setDarkened(true);
+                            shareButton.setDarkened(true);
+                        });
                     }
                 });
                 shareButton.setPreferredSize(new Dimension(40, 40));
@@ -289,7 +486,7 @@ public class GUI {
         closeButton.setBackground(color2);
         closeButton.setForeground(color7);
         closeButton.setHoverForeground(color6);
-        closeButton.setHoverBackground(Color.RED);
+        closeButton.setHoverBackground(new Color(201, 79, 79));
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -316,6 +513,12 @@ public class GUI {
         frame.addMouseListener(mouseHandler);
         frame.addMouseMotionListener(mouseHandler);
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
+    }
+    private Node[] getExportParts() {
+        return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
+    }
+    private Node[] getShareParts() {
+        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, exportCompleteButton, shareTitleLabel, nameLabel, nameTextField};
     }
     private void showLoginPanel() {
         int width;
@@ -657,11 +860,17 @@ public class GUI {
         fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
-        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView = new MediaView(mediaPlayer);
         mediaView.setScaleX((double) videoPreviewWidth / videoWidth);
         mediaView.setScaleY((double) videoPreviewHeight / videoHeight);
         mediaView.setLayoutY(-705);
         mediaView.setLayoutX(363.5);
+
+        mediaViewClone = new MediaView(mediaPlayer);
+        mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth);
+        mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight);
+        mediaViewClone.setLayoutX(80);
+        mediaViewClone.setLayoutY(-610 + 65);
 
         javafx.scene.control.Button playButton = new Button();
         playButton.setGraphic(createPlayShape(11, 12, javafx.scene.paint.Color.WHITE));
