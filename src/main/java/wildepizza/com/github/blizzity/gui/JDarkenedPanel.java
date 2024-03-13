@@ -14,7 +14,7 @@ public class JDarkenedPanel extends JPanel {
         super.paintComponent(g);
         int componentCount = getComponentCount();
         for (int i = 0; i < componentCount; i++) {
-            Component component = getComponent(i);
+            getComponent(i);
         }
         if (isDarkened) {
             g.setColor(new Color(0, 0, 0, 128));

@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+@SuppressWarnings({"deprecation", "SameParameterValue"})
 public class GUI {
     private JFrame frame;
     private JPanel panel;
@@ -48,6 +49,7 @@ public class GUI {
     private Point lastClick; // Used for dragging
     public static JSimpleButton closeButton;
     public static JSimpleButton minimizeButton;
+    public static Variables variables = new Variables("variables.dat");
     Color color1 = new Color(19, 19, 20);
     public static Color color2 = new Color(30, 31, 32);
     Color color3 = new Color(191, 191, 191);
@@ -89,7 +91,12 @@ public class GUI {
             spaceLabel,
             shareTitleLabel;
     private ComboBox<String> languageComboBox, spaceComboBox;
-    private javafx.scene.control.Button logoutButton, jfxCloseButton, folderButton, exportCompleteButton;
+    private javafx.scene.control.Button
+            logoutButton,
+            jfxCloseButton,
+            folderButton,
+            exportCompleteButton,
+            shareCompleteButton;
     private TextField nameTextField;
     private Slider amountSlider;
     private MediaView mediaView, mediaViewClone;
@@ -134,15 +141,14 @@ public class GUI {
         amountSlider.setShowTickMarks(true);
         amountSlider.setMinorTickCount(20);
         amountSlider.setMinorTickCount(4);
-        amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            lengthLabel.setText("Select Length:"  + newValue.intValue());
-        });
+        amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> lengthLabel.setText("Select Length:"  + newValue.intValue()));
 
         logoutButton = new javafx.scene.control.Button("Logout");
         logoutButton.setLayoutX(22);
         logoutButton.setLayoutY(275);
         logoutButton.setOnAction(actionEvent -> {
-            frame.remove(panel);
+            variables.deleteVariable("key");
+            frame.remove(jfxPanel);
             showLoginPanel();
         });
 
@@ -283,6 +289,26 @@ public class GUI {
             });
         });
 
+        shareCompleteButton = new Button("Share");
+        shareCompleteButton.setPrefSize(100, 26);
+        shareCompleteButton.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        shareCompleteButton.setLayoutX((double) 1530 /2- (double) 640 /2 + 500);
+        shareCompleteButton.setLayoutY((double) 1000 /2- (double) 670 /2 + 455 + 65);
+        shareCompleteButton.setOnAction(event -> {
+            Scene scene = jfxPanel.getScene();
+            Group root = ((Group)scene.getRoot());
+            Platform.runLater(() -> {
+                root.getChildren().removeAll(getShareParts());
+                titleBarPanel.setDarkened(false);
+                exportButton.setDarkened(false);
+                minimizeButton.setDarkened(false);
+                closeButton.setDarkened(false);
+                shareButton.setDarkened(false);
+                frame.add(jfxPanel);
+                frame.pack();
+            });
+        });
+
         folderButton = new Button();
         SVGPath path = new SVGPath();
         path.setContent("M3 8.2C3 7.07989 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H9.67452C10.1637 5 10.4083 5 10.6385 5.05526C10.8425 5.10425 11.0376 5.18506 11.2166 5.29472C11.4184 5.4184 11.5914 5.59135 11.9373 5.93726L12.0627 6.06274C12.4086 6.40865 12.5816 6.5816 12.7834 6.70528C12.9624 6.81494 13.1575 6.89575 13.3615 6.94474C13.5917 7 13.8363 7 14.3255 7H17.8C18.9201 7 19.4802 7 19.908 7.21799C20.2843 7.40973 20.5903 7.71569 20.782 8.09202C21 8.51984 21 9.0799 21 10.2V15.8C21 16.9201 21 17.4802 20.782 17.908C20.5903 18.2843 20.2843 18.5903 19.908 18.782C19.4802 19 18.9201 19 17.8 19H6.2C5.07989 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2Z");
@@ -306,6 +332,15 @@ public class GUI {
                 exportFieldLabel.setText("  " + selectedFolder);
             }
         });
+
+        String[] spaces = {"Tiktok", "Youtube", "Snapchat", "Instagram"};
+        spaceComboBox = new ComboBox<>();
+        spaceComboBox.setStyle("-fx-base: rgb(45, 45, 45); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
+        spaceComboBox.getItems().addAll(spaces);
+        spaceComboBox.getSelectionModel().select(0);
+        spaceComboBox.setPrefSize(200, 20);
+        spaceComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
+        spaceComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 17 + 65);
 
         spaceLabel = new Label("Space");
         spaceLabel.setPrefSize(85, 20);
@@ -355,7 +390,10 @@ public class GUI {
             Scene scene = jfxPanel.getScene();
             Group root = ((Group)scene.getRoot());
             Platform.runLater(() -> {
-                root.getChildren().removeAll(getExportParts());
+                if (root.getChildren().contains(exportBackground))
+                    root.getChildren().removeAll(getExportParts());
+                else
+                    root.getChildren().removeAll(getShareParts());
                 titleBarPanel.setDarkened(false);
                 exportButton.setDarkened(false);
                 minimizeButton.setDarkened(false);
@@ -374,8 +412,10 @@ public class GUI {
         frame.setUndecorated(true);
         init();
         addTitleBarPanel(false);
-        showContentPanel(StringUtils.encrypt("admin", "admin"));
-//        showLoginPanel();
+        if (variables.getVariable("key") != null)
+            showContentPanel((String) variables.getVariable("key"));
+        else
+            showLoginPanel();
     }
     private void addTitleBarPanel(boolean advanced) {
         if (titleBarPanel != null) {
@@ -403,31 +443,28 @@ public class GUI {
         if (advanced) {
             try {
                 exportButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("export.png"))));
-                shareButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("share3.png"))));;
+                shareButton = new JImageButton(10, 10, new ImageIcon(ImageIO.read(new File("share3.png"))));
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
                 exportButton.setForeground(color7);
                 exportButton.setHoverBackground(color4);
-                exportButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Scene scene = jfxPanel.getScene();
-                        Group root = ((Group)scene.getRoot());
-                        Platform.runLater(() -> {
-                            javafx.scene.shape.Rectangle clipRect = new Rectangle(1080, 1920);
-                            clipRect.setArcWidth(80); // Adjust corner radius
-                            clipRect.setArcHeight(80); // Adjust corner radius
-                            mediaViewClone.setClip(clipRect);
-                            root.getChildren().addAll(getExportParts());
-                            frame.add(jfxPanel);
-                            frame.pack();
-                            titleBarPanel.setDarkened(true); //TODO fix interactible
-                            exportButton.setDarkened(true);
-                            minimizeButton.setDarkened(true);
-                            closeButton.setDarkened(true);
-                            shareButton.setDarkened(true);
-                        });
-                    }
+                exportButton.addActionListener(e -> {
+                    Scene scene = jfxPanel.getScene();
+                    Group root = ((Group)scene.getRoot());
+                    Platform.runLater(() -> {
+                        Rectangle clipRect = new Rectangle(1080, 1920);
+                        clipRect.setArcWidth(80); // Adjust corner radius
+                        clipRect.setArcHeight(80); // Adjust corner radius
+                        mediaViewClone.setClip(clipRect);
+                        root.getChildren().addAll(getExportParts());
+                        frame.add(jfxPanel);
+                        frame.pack();
+                        titleBarPanel.setDarkened(true); //TODO fix interactible
+                        exportButton.setDarkened(true);
+                        minimizeButton.setDarkened(true);
+                        closeButton.setDarkened(true);
+                        shareButton.setDarkened(true);
+                    });
                 });
                 exportButton.setPreferredSize(new Dimension(40, 40));
                 exportButton.setMinimumSize(new Dimension(40, 40));
@@ -436,26 +473,23 @@ public class GUI {
                 shareButton.setHoverForeground(color6);
                 shareButton.setForeground(color7);
                 shareButton.setHoverBackground(color4);
-                shareButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Scene scene = jfxPanel.getScene();
-                        Group root = ((Group)scene.getRoot());
-                        Platform.runLater(() -> {
-                            javafx.scene.shape.Rectangle clipRect = new Rectangle(1080, 1920);
-                            clipRect.setArcWidth(80); // Adjust corner radius
-                            clipRect.setArcHeight(80); // Adjust corner radius
-                            mediaViewClone.setClip(clipRect);
-                            root.getChildren().addAll(getShareParts());
-                            frame.add(jfxPanel);
-                            frame.pack();
-                            titleBarPanel.setDarkened(true); //TODO fix interactible
-                            exportButton.setDarkened(true);
-                            minimizeButton.setDarkened(true);
-                            closeButton.setDarkened(true);
-                            shareButton.setDarkened(true);
-                        });
-                    }
+                shareButton.addActionListener(e -> {
+                    Scene scene = jfxPanel.getScene();
+                    Group root = ((Group)scene.getRoot());
+                    Platform.runLater(() -> {
+                        Rectangle clipRect = new Rectangle(1080, 1920);
+                        clipRect.setArcWidth(80); // Adjust corner radius
+                        clipRect.setArcHeight(80); // Adjust corner radius
+                        mediaViewClone.setClip(clipRect);
+                        root.getChildren().addAll(getShareParts());
+                        frame.add(jfxPanel);
+                        frame.pack();
+                        titleBarPanel.setDarkened(true); //TODO fix interactible
+                        exportButton.setDarkened(true);
+                        minimizeButton.setDarkened(true);
+                        closeButton.setDarkened(true);
+                        shareButton.setDarkened(true);
+                    });
                 });
                 shareButton.setPreferredSize(new Dimension(40, 40));
                 shareButton.setMinimumSize(new Dimension(40, 40));
@@ -470,11 +504,8 @@ public class GUI {
         minimizeButton.setHoverForeground(color6);
         minimizeButton.setForeground(color7);
         minimizeButton.setHoverBackground(color4);
-        minimizeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.setState(JFrame.ICONIFIED); // Close the window
-            }
+        minimizeButton.addActionListener(e -> {
+            frame.setState(JFrame.ICONIFIED); // Close the window
         });
         minimizeButton.setPreferredSize(new Dimension(50, 40));
         minimizeButton.setMinimumSize(new Dimension(50, 40));
@@ -487,11 +518,8 @@ public class GUI {
         closeButton.setForeground(color7);
         closeButton.setHoverForeground(color6);
         closeButton.setHoverBackground(new Color(201, 79, 79));
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Close the window
-            }
+        closeButton.addActionListener(e -> {
+            frame.dispose(); // Close the window
         });
         closeButton.setPreferredSize(new Dimension(50, 40));
         closeButton.setMinimumSize(new Dimension(50, 40));
@@ -518,7 +546,7 @@ public class GUI {
         return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
     }
     private Node[] getShareParts() {
-        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, exportCompleteButton, shareTitleLabel, nameLabel, nameTextField};
+        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, nameLabel, nameTextField, spaceComboBox, spaceLabel};
     }
     private void showLoginPanel() {
         int width;
@@ -569,11 +597,9 @@ public class GUI {
         createAccountButton.setBorder(BorderFactory.createEmptyBorder());
         createAccountButton.setOpaque(false);
         createAccountButton.setForeground(color5);
-        createAccountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.remove(panel);
-                showRegisterPanel();
-            }
+        createAccountButton.addActionListener(e -> {
+            frame.remove(panel);
+            showRegisterPanel();
         });
 
         nextButton = new JRoundedButton(10,10, "Next");
@@ -581,15 +607,13 @@ public class GUI {
         nextButton.setBackground(color5); // Slightly lighter gray
         nextButton.setPressedColor(color9, color8);
         nextButton.setBounds(330, 400, 80, 35);
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!userText.getText().isEmpty()) {
-                    if (!api.verify(userText.getText())) {
-                        frame.remove(panel);
-                        showLoginVerifyPanel(userText.getText());
-                    } else
-                        JOptionPane.showMessageDialog(frame, "This User doesn't exist", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+        nextButton.addActionListener(e -> {
+            if (!userText.getText().isEmpty()) {
+                if (!api.verify(userText.getText())) {
+                    frame.remove(panel);
+                    showLoginVerifyPanel(userText.getText());
+                } else
+                    JOptionPane.showMessageDialog(frame, "This User doesn't exist", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -659,15 +683,14 @@ public class GUI {
         nextButton.setBackground(color5); // Slightly lighter gray
         nextButton.setPressedColor(color9, color8);
         nextButton.setBounds(330, 400, 80, 35);
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!userText.getText().isEmpty()) {
-                    if (api.login(username, passText.getText())) {
-                        frame.remove(panel);
-                        showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
-                    } else
-                        JOptionPane.showMessageDialog(frame, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+        nextButton.addActionListener(e -> {
+            if (!userText.getText().isEmpty()) {
+                if (api.login(username, passText.getText())) {
+                    frame.remove(panel);
+                    variables.setVariable("key", StringUtils.encrypt(userText.getText(), passText.getText()));
+                    showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
+                } else
+                    JOptionPane.showMessageDialog(frame, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -735,11 +758,9 @@ public class GUI {
         logInButton.setBorder(BorderFactory.createEmptyBorder());
         logInButton.setOpaque(false);
         logInButton.setForeground(color5);
-        logInButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.remove(panel);
-                showLoginPanel();
-            }
+        logInButton.addActionListener(e -> {
+            frame.remove(panel);
+            showLoginPanel();
         });
 
         JRoundedButton createButton = new JRoundedButton(10, 10, "Create");
@@ -747,14 +768,13 @@ public class GUI {
         createButton.setBackground(color5); // Slightly lighter gray
         createButton.setPressedColor(color9, color8);
         createButton.setBounds(330, 400, 80, 35);
-        createButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (api.register(userText.getText(), passText.getText())) {
-                    frame.remove(panel);
-                    showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
-                } else
-                    JOptionPane.showMessageDialog(frame, "This username is already taken", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+        createButton.addActionListener(e -> {
+            if (api.register(userText.getText(), passText.getText())) {
+                frame.remove(panel);
+                variables.setVariable("key", StringUtils.encrypt(userText.getText(), passText.getText()));
+                showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
+            } else
+                JOptionPane.showMessageDialog(frame, "This username is already taken", "Error", JOptionPane.ERROR_MESSAGE);
         });
 
         // Add spacing around components for better organization
@@ -888,6 +908,12 @@ public class GUI {
             }
             playing[0] = !playing[0];
         });
+        spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    System.out.println("Selected item: " + newValue);
+                    api.verify(newValue.toLowerCase(), key);
+                }
+        );
         Platform.runLater(() -> {
             Group root = new Group();
             Scene scene = new Scene(root, 0, 0);
@@ -971,13 +997,12 @@ public class GUI {
     }
     private StackPane createPauseShape(double width, double height, javafx.scene.paint.Color fillColor) {
         double rectangleWidth = width / 3;
-        double rectangleHeight = height;
 
-        javafx.scene.shape.Rectangle pauseShape1 = new javafx.scene.shape.Rectangle(rectangleWidth, rectangleHeight);
+        javafx.scene.shape.Rectangle pauseShape1 = new javafx.scene.shape.Rectangle(rectangleWidth, height);
         pauseShape1.setFill(fillColor);
         pauseShape1.setTranslateX(0);
 
-        javafx.scene.shape.Rectangle pauseShape2 = new javafx.scene.shape.Rectangle(rectangleWidth, rectangleHeight);
+        javafx.scene.shape.Rectangle pauseShape2 = new javafx.scene.shape.Rectangle(rectangleWidth, height);
         pauseShape2.setFill(fillColor);
         pauseShape2.setTranslateX(rectangleWidth * 2);
 

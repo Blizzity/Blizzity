@@ -1,5 +1,6 @@
 package wildepizza.com.github.blizzity;
 
+import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -9,6 +10,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class API {
     // Replace with the actual server address
@@ -16,107 +18,43 @@ public class API {
     API(String serverUrl) {
         this.serverUrl = serverUrl;
     }
-    public void test() {
-
-        // Replace with the actual authorization token
-        String authToken = "correct_auth_token";
-
-        // Replace with the actual name parameter
-        String name = "YourName";
-
-        // Construct the API endpoint URL
-        String apiUrl = serverUrl + "/api/welcome?name=" + name;
-
-        // Create an HTTP client
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .header("Authorization", authToken)
-                .build();
-
-        try {
-            // Send the HTTP request and get the response
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     public boolean login(String username, String password) {
-        // Construct the API endpoint URL
         String apiUrl = serverUrl + "/login?username=" + username + "&password=" + password;
-
-        // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
-
         try {
-            // Send the HTTP request and get the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
-            return response.body().equals("Successfully logged in");
+            return response.body().equals("success");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
     public boolean register(String username, String password) {
-        // Construct the API endpoint URL
         String apiUrl = serverUrl + "/register?username=" + username + "&password=" + password;
-
-        // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
-
         try {
-            // Send the HTTP request and get the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
-            return response.body().equals("Successfully registered");
+            return response.body().equals("success");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
     public boolean verify(String username) {
-        // Construct the API endpoint URL
-        String apiUrl = serverUrl + "/verify?username=" + username;
-
-        // Create an HTTP client
+        String apiUrl = serverUrl + "/api/username/available?username=" + username;
         HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
-
         try {
-            // Send the HTTP request and get the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
-            return response.body().equals("Username is available");
+            return response.body().equals("true");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -175,50 +113,71 @@ public class API {
     }
     public String usages(String key) {
         String apiUrl = serverUrl + "/api/usages?key=" + URLEncoder.encode(key);
-
-        // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
-
         try {
-            // Send the HTTP request and get the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
             System.out.println("Response Code: " + response.statusCode());
             System.out.println("Response Body: " + response.body());
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
-            return "ERROR";
+            return null;
+        }
+    }
+    public boolean verify(String space, String key) {
+        String apiUrl = serverUrl + "/api/verify/" + space + "?key=" + URLEncoder.encode(key);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                if (response.body().equals("true")) {
+                    return true;
+                } else {
+                    AtomicReference<String> code = new AtomicReference<>();
+                    spark.Spark.get("/google/callback", (req, res) -> {
+                        code.set(req.queryParams("code"));
+                        res.redirect("https://blizzity.de?close=true");
+                        return "";
+                    });
+                    Desktop.getDesktop().browse(URI.create(response.body()));
+                    while (code.get() == null)
+                        Thread.sleep(1);
+                    apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get();
+                    client = HttpClient.newHttpClient();
+                    request = HttpRequest.newBuilder()
+                            .uri(URI.create(apiUrl))
+                            .build();
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    return response.body().equals("success");
+                }
+            } else {
+                System.out.println("Response Code: " + response.statusCode());
+                System.out.println("Response Body: " + response.body());
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
     public String credits(String key) {
         String apiUrl = serverUrl + "/api/credits?key=" + URLEncoder.encode(key);
-
-        // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request with authorization header
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
-
         try {
-            // Send the HTTP request and get the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Print the response status code and body
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
             return response.body();
         } catch (Exception e) {
             e.printStackTrace();
-            return "ERROR";
+            return null;
         }
     }
 }
