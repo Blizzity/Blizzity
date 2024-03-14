@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'java'
     id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'com.teamdev.jxbrowser' version '1.0.1'
 }
 
 group = 'wildepizza.com.github.blizzity'
@@ -33,7 +34,11 @@ javafx {
             'javafx.web'
     ]
 }
+jxbrowser {
+    version '7.37.2'
+}
 dependencies {
+    implementation jxbrowser.javafx
     implementation 'org.apache.httpcomponents:httpclient:latest.release'
     implementation 'org.json:json:latest.release'
     implementation "com.sparkjava:spark-core:latest.release"
