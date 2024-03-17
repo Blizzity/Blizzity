@@ -1,10 +1,13 @@
 package wildepizza.com.github.blizzity;
 
-import javafx.application.Platform;
-import javafx.scene.Group;
+import com.teamdev.jxbrowser.browser.Browser;
+import com.teamdev.jxbrowser.engine.Engine;
+import com.teamdev.jxbrowser.engine.EngineOptions;
+import com.teamdev.jxbrowser.engine.RenderingMode;
+import com.teamdev.jxbrowser.view.javafx.BrowserView;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.web.WebView;
-import spark.Spark;
+import javafx.scene.layout.BorderPane;
 
 import java.awt.*;
 import java.io.File;
@@ -16,6 +19,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static wildepizza.com.github.blizzity.GUI.frame;
 
 public class API {
      String serverUrl;
@@ -82,58 +87,101 @@ public class API {
             return false;
         }
     }
-    public File video(String authToken, String language, int length) {
-        String apiUrl = serverUrl + "/api/video?language=" + language + "&length=" + length;
+    public Double<File, String> video(String authToken, String language, int length) {
+
+        String apiUrl = serverUrl + "/api/generate?language=" + language + "&length=" + length;
 
         try {
-            // Create URL object
-            URL url = new URL(apiUrl);
-
-            // Create connection
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            // Set request method
-            connection.setRequestMethod("GET");
-
-            // Set request headers
-            connection.setRequestProperty("Authorization", URLEncoder.encode(authToken));
-            System.out.println(authToken);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .header("Authorization", URLEncoder.encode(authToken))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             // Get response code
-            int responseCode = connection.getResponseCode();
+            int responseCode = response.statusCode();
+            String video = response.body();
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Get input stream from the connection
-                InputStream inputStream = connection.getInputStream();
+                apiUrl = serverUrl + "/api/video?video=" + video;
 
-                File outputFile = File.createTempFile("received_video", ".mp4");
-                // Create a file output stream to save the video file
-                FileOutputStream outputStream = new FileOutputStream(outputFile);
+                // Create URL object
+                URL url = new URL(apiUrl);
 
-                // Read data from input stream and write to output stream
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+                // Create connection
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                // Set request method
+                connection.setRequestMethod("GET");
+
+                // Set request headers
+                connection.setRequestProperty("Authorization", URLEncoder.encode(authToken));
+
+                // Get response code
+                responseCode = connection.getResponseCode();
+
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Get input stream from the connection
+                    InputStream inputStream = connection.getInputStream();
+
+                    File outputFile = File.createTempFile("received_video", ".mp4");
+                    // Create a file output stream to save the video file
+                    FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+                    // Read data from input stream and write to output stream
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+
+                    // Close streams
+                    outputStream.close();
+                    inputStream.close();
+
+                    System.out.println("Video file received successfully.");
+                    connection.disconnect();
+                    return new Double<>(outputFile, video);
+                } else {
+                    System.out.println("Response Code: " + connection.getResponseCode());
+                    System.out.println("Response Body: " + connection.getResponseMessage());
+                    connection.disconnect();
+                    return null;
                 }
-
-                // Close streams
-                outputStream.close();
-                inputStream.close();
-
-                System.out.println("Video file received successfully.");
-                connection.disconnect();
-                return outputFile;
             } else {
-                System.out.println("Response Code: " + connection.getResponseCode());
-                System.out.println("Response Body: " + connection.getResponseMessage());
-                connection.disconnect();
+                System.out.println("Response Code: " + response.statusCode());
+                System.out.println("Response Body: " + response.body());
                 return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+    public void tiktokPost(String authToken, String video, String title, String privacy_level, boolean disable_duet, boolean disable_comment, boolean disable_stitch, int video_cover_timestamp_ms) {
+        String apiUrl = serverUrl + "/api/upload/tiktok?video=" + video + "&key=" + URLEncoder.encode(authToken) + "&title=" + title + "&privacy_level=" + privacy_level + "&disable_duet=" + disable_duet + "&disable_comment=" + disable_comment + "&disable_stitch=" + disable_stitch + "&video_cover_timestamp_ms=" + video_cover_timestamp_ms;
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+//                    .header("Authorization", URLEncoder.encode(authToken))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Get response code
+            int responseCode = response.statusCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                System.out.println("Successfully posted video: " + apiUrl);
+            } else {
+                System.out.println("Response Code: " + response.statusCode());
+                System.out.println("Response Body: " + response.body());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public String usages(String key) {
         String apiUrl = serverUrl + "/api/usages?key=" + URLEncoder.encode(key);
@@ -186,7 +234,7 @@ public class API {
                     Wait wait = new Wait();
                     AtomicReference<String> code = new AtomicReference<>();
                     if (space.equals("youtube")) {
-                        Spark.get("/google/callback", (req, res) -> {
+                        spark.Spark.get("/google/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -197,7 +245,18 @@ public class API {
                             }
                         });
                     } else if (space.equals("tiktok")) {
-                        Spark.get("/tiktok/callback", (req, res) -> {
+                        spark.Spark.get("/tiktok/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                    } else if (space.equals("facebook")) {
+                        spark.Spark.get("/facebook/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -211,10 +270,22 @@ public class API {
                         return false;
 
                     String url = response.body();
-                    openURLInNewWindow(url, 400, 600);
+                    /*Engine engine = Engine.newInstance(RenderingMode.HARDWARE_ACCELERATED);
+                    Browser browser = engine.newBrowser();
+                    browser.navigation().loadUrl(url);
+                    BrowserView view = BrowserView.newInstance(browser);
+                    BorderPane root = new BorderPane(view);
+                    Scene scene = new Scene(root, 800, 600);
+                    JFXPanel panel = new JFXPanel();
+                    panel.setScene(scene);
+                    frame.add(panel);
+                    frame.pack();*/
+
+                    Desktop.getDesktop().browse(URI.create(url));
 
                     wait.waitForVariable();
-                    Spark.stop();
+                    System.out.println(code.get());
+                    spark.Spark.stop();
                     apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get();
                     client = HttpClient.newHttpClient();
                     request = HttpRequest.newBuilder()

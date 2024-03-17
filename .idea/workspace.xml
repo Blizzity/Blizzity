@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Wait.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Double.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/received_video.mp4" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
     </list>
@@ -91,7 +90,7 @@
     "Gradle.Blizzity [:Main.main()].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240314_0000",
+    "com.google.cloudcode.ide_session_index": "20240316_0001",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "F:/Github/BlizzityCore"
@@ -134,20 +133,5 @@
       <updated>1709299553580</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java</url>
-          <line>405</line>
-          <properties class="wildepizza.com.github.blizzity.GUI" method="open">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

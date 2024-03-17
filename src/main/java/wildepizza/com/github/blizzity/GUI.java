@@ -6,10 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
@@ -18,7 +17,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontPosture;
-import javafx.scene.web.WebView;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.gui.listeners.LoginListener;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
@@ -37,9 +35,11 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-@SuppressWarnings({"deprecation", "SameParameterValue"})
+@SuppressWarnings({"SameParameterValue"})
 public class GUI {
     public static JFrame frame;
     private JPanel panel;
@@ -78,7 +78,6 @@ public class GUI {
             exportTitle,
             shareBackground,
             shareTitle;
-    public static WebView webView;
     private Label
             languageLabel,
             lengthLabel,
@@ -93,7 +92,10 @@ public class GUI {
             exportTitleLabel,
             spaceLabel,
             shareTitleLabel;
-    private ComboBox<String> languageComboBox, spaceComboBox;
+    private ComboBox<String> languageComboBox, spaceComboBox, privacyComboBox;
+    Label privacyLabel, stitchLabel, duetLabel, commentLabel;
+    CheckBox commentCheckBox, stitchCheckBox, duetCheckBox;
+    Label settingsLabel;
     Label nameLabel2;
     Label pathLabel;
     Label pathLabel2;
@@ -102,6 +104,7 @@ public class GUI {
     Label ratioLabel2;
     Label resolutionLabel;
     Label resolutionLabel2;
+    Double<File, String> file;
     Label fpsLabel;
     Label fpsLabel2;
     private Button
@@ -332,11 +335,10 @@ public class GUI {
             }
         });
 
-        String[] spaces = {"Tiktok", "Youtube", "Snapchat", "Instagram"};
+        String[] spaces = {"Tiktok", "Youtube", "Snapchat", "Instagram", "Facebook"};
         spaceComboBox = new ComboBox<>();
         spaceComboBox.setStyle("-fx-base: rgb(45, 45, 45); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
         spaceComboBox.getItems().addAll(spaces);
-        spaceComboBox.getSelectionModel().select(0);
         spaceComboBox.setPrefSize(200, 20);
         spaceComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
         spaceComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 17 + 65);
@@ -346,6 +348,80 @@ public class GUI {
         spaceLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
         spaceLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
         spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        String[] privacy = {"Public", "Friends", "Private"};
+        privacyComboBox = new ComboBox<>();
+        privacyComboBox.setStyle("-fx-base: rgb(45, 45, 45); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
+        privacyComboBox.getItems().addAll(privacy);
+        privacyComboBox.setPrefSize(200, 20);
+        privacyComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        privacyComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 85 + 65);
+
+        privacyLabel = new Label("Who can watch this video");
+        privacyLabel.setPrefSize(200, 20);
+        privacyLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        privacyLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 62 + 65);
+        privacyLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        commentLabel = new Label("Comment");
+        commentLabel.setPrefSize(200, 20);
+        commentLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 390);
+        commentLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        commentLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        commentCheckBox = new CheckBox();
+        commentCheckBox.setStyle("-fx-background-color: blue");
+        commentCheckBox.setOnAction(event -> {
+            if (commentCheckBox.isSelected()) {
+                System.out.println("Button is toggled ON");
+            } else {
+                System.out.println("Button is toggled OFF");
+            }
+        });
+        commentCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        commentCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+
+        duetLabel = new Label("Duet");
+        duetLabel.setPrefSize(200, 20);
+        duetLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 500);
+        duetLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        duetLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        duetCheckBox = new CheckBox();
+        duetCheckBox.setStyle("-fx-background-color: blue");
+        duetCheckBox.setOnAction(event -> {
+            if (duetCheckBox.isSelected()) {
+                System.out.println("Button is toggled ON");
+            } else {
+                System.out.println("Button is toggled OFF");
+            }
+        });
+        duetCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 470);
+        duetCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+
+        stitchLabel = new Label("Duet");
+        stitchLabel.setPrefSize(200, 20);
+        stitchLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 590);
+        stitchLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        stitchLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        stitchCheckBox = new CheckBox();
+        stitchCheckBox.setStyle("-fx-background-color: blue");
+        stitchCheckBox.setOnAction(event -> {
+            if (stitchCheckBox.isSelected()) {
+                System.out.println("Button is toggled ON");
+            } else {
+                System.out.println("Button is toggled OFF");
+            }
+        });
+        stitchCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 560);
+        stitchCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+
+        settingsLabel = new Label("Allow users to:");
+        settingsLabel.setPrefSize(85, 20);
+        settingsLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        settingsLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 120 + 65);
+        settingsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         exportLabel = new Label("Export to");
         exportLabel.setPrefSize(85, 20);
@@ -540,6 +616,16 @@ public class GUI {
         frame.addMouseListener(mouseHandler);
         frame.addMouseMotionListener(mouseHandler);
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
+    }
+    private Node[] getSpaceParts(String space) {
+        List<Node> parts = new ArrayList<>();
+        if (space != null && space.equals("Tiktok"))
+            parts.addAll(List.of(new Node[]{privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel}));
+        Node[] result = new Node[parts.size()];
+        for (Node n : parts) {
+            result[parts.indexOf(n)] = n;
+        }
+        return result;
     }
     private Node[] getExportParts() {
         return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
@@ -819,10 +905,10 @@ public class GUI {
         generateButton.setLayoutX(22);
         generateButton.setLayoutY(315);
         generateButton.setOnAction(actionEvent -> {
-            File file = api.video(key, languageComboBox.getValue().toLowerCase(), (int) amountSlider.getValue());
+            file = api.video(key, languageComboBox.getValue().toLowerCase(), (int) amountSlider.getValue());
             if (file != null) {
                 System.out.println("received video");
-                Media media = new Media(file.toURI().toString());
+                Media media = new Media(file.getKey().toURI().toString());
                 Scene scene = jfxPanel.getScene();
                 Group root = ((Group)scene.getRoot());
                 if (nameLabel2 != null)
@@ -840,7 +926,7 @@ public class GUI {
                             pathLabel2
                     );
 
-                nameLabel2 = new Label(file.getName());
+                nameLabel2 = new Label(file.getKey().getName());
                 nameLabel2.setLayoutX(1250);
                 nameLabel2.setLayoutY(60);
                 nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
@@ -850,7 +936,7 @@ public class GUI {
                 pathLabel.setLayoutY(83);
                 pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                pathLabel2 = new Label(file.getAbsolutePath().replace("\\" + file.getName(), ""));
+                pathLabel2 = new Label(file.getKey().getAbsolutePath().replace("\\" + file.getKey().getName(), ""));
                 pathLabel2.setLayoutX(1250);
                 pathLabel2.setLayoutY(83);
                 pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
@@ -939,22 +1025,45 @@ public class GUI {
         spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     System.out.println("Selected item: " + newValue);
+                    Scene scene = jfxPanel.getScene();
+                    Group root = ((Group) scene.getRoot());
+                    root.getChildren().addAll(getSpaceParts(newValue));
+                    root.getChildren().removeAll(getSpaceParts(oldValue));
                 }
         );
         shareCompleteButton.setOnAction(event -> {
-            Scene scene = jfxPanel.getScene();
-            Group root = ((Group)scene.getRoot());
-            if (api.verify(spaceComboBox.getValue().toLowerCase(), key)) {
-                root.getChildren().removeAll(getShareParts());
-//                root.getChildren().remove(webView);
-                titleBarPanel.setDarkened(false);
-                exportButton.setDarkened(false);
-                minimizeButton.setDarkened(false);
-                closeButton.setDarkened(false);
-                shareButton.setDarkened(false);
-                frame.add(jfxPanel);
-                frame.pack();
-            }
+            Thread thread = new Thread(() -> {
+                Scene scene = jfxPanel.getScene();
+                Group root = ((Group) scene.getRoot());
+                if (api.verify(spaceComboBox.getValue().toLowerCase(), key)) {
+                    String privacy = switch (privacyComboBox.getValue()) {
+                        case "Private":
+                            yield "SELF_ONLY";
+                        case "Friends":
+                            yield "MUTUAL_FOLLOW_FRIENDS";
+                        case "Public":
+                            yield "PUBLIC_TO_EVERYONE";
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + privacyComboBox.getValue());
+                    };
+                    if (spaceComboBox.getValue().equals("Tiktok")) {
+                        System.out.println("uploading...");
+                        api.tiktokPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(nameTextField.getText()), privacy, duetCheckBox.isSelected(), commentCheckBox.isSelected(), stitchCheckBox.isSelected(), 1000);
+                    }
+                    Platform.runLater(() -> {
+                        root.getChildren().removeAll(getShareParts());
+                        titleBarPanel.setDarkened(false);
+                        exportButton.setDarkened(false);
+                        minimizeButton.setDarkened(false);
+                        closeButton.setDarkened(false);
+                        shareButton.setDarkened(false);
+                        frame.add(jfxPanel);
+                        frame.pack();
+                    });
+
+                }
+            });
+            thread.start();
         });
         Platform.runLater(() -> {
             Group root = new Group();

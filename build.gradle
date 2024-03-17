@@ -39,6 +39,7 @@ jxbrowser {
 }
 dependencies {
     implementation jxbrowser.javafx
+    implementation jxbrowser.core
     implementation 'org.apache.httpcomponents:httpclient:latest.release'
     implementation 'org.json:json:latest.release'
     implementation "com.sparkjava:spark-core:latest.release"
