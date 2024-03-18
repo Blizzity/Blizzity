@@ -13,10 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
@@ -93,6 +95,7 @@ public class GUI {
             detailsLabel,
             timelineLabel,
             nameLabel,
+            captionNameLabel,
             exportLabel,
             exportFieldLabel,
             exportTitleLabel,
@@ -123,6 +126,7 @@ public class GUI {
             generateButton,
             shareCompleteButton;
     private TextField nameTextField;
+    private TextArea captionNameTextField;
     private MediaView mediaView, mediaViewClone;
     public static JFXPanel jfxPanel;
     private JImageButton exportButton, shareButton;
@@ -283,12 +287,6 @@ public class GUI {
         shareTitleLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 70 + 65);
         shareTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        nameTextField = new TextField("output");
-        nameTextField.setPrefSize(200, 20);
-        nameTextField.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
-        nameTextField.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
-        nameTextField.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
-
         File defaultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getParent() + "\\Videos");
         exportFieldLabel = new Label("  " + defaultDir);
         exportFieldLabel.setPrefSize(159, 26);
@@ -363,13 +361,27 @@ public class GUI {
         spaceComboBox.getItems().addAll(spaces);
         spaceComboBox.setPrefSize(200, 20);
         spaceComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
-        spaceComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 17 + 65);
+        spaceComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 - 28 + 65);
 
         spaceLabel = new Label("Space");
         spaceLabel.setPrefSize(85, 20);
         spaceLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        spaceLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
+        spaceLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
         spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        captionNameLabel = new Label("Caption");
+        captionNameLabel.setPrefSize(85, 20);
+        captionNameLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        captionNameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
+        captionNameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        captionNameTextField = new TextArea();
+        captionNameTextField.setPromptText("Add a title that describes your video");
+        captionNameTextField.setPrefSize(200, 60);
+        captionNameTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); " +
+                "-fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
+        captionNameTextField.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
+        captionNameTextField.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
 
         nameLabel = new Label("Name");
         nameLabel.setPrefSize(85, 20);
@@ -377,78 +389,63 @@ public class GUI {
         nameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
         nameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
+        nameTextField = new TextField("output");
+        nameTextField.setPrefSize(200, 20);
+        nameTextField.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
+        nameTextField.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
+        nameTextField.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
+
         String[] privacy = {"Public", "Friends", "Private"};
         privacyComboBox = new ComboBox<>();
         privacyComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
         privacyComboBox.getItems().addAll(privacy);
-        privacyComboBox.setPrefSize(200, 20);
+        privacyComboBox.setPrefSize(265, 20);
         privacyComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        privacyComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 85 + 65);
+        privacyComboBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 85 + 65 + 40);
 
         privacyLabel = new Label("Who can watch this video");
         privacyLabel.setPrefSize(200, 20);
         privacyLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        privacyLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 62 + 65);
+        privacyLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 62 + 65 + 40);
         privacyLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         commentLabel = new Label("Comment");
-        commentLabel.setPrefSize(200, 20);
+        commentLabel.setPrefSize(60, 20);
         commentLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 390);
-        commentLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        commentLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
         commentLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         commentCheckBox = new CheckBox();
         commentCheckBox.setStyle("-fx-background-color: blue");
-        commentCheckBox.setOnAction(event -> {
-            if (commentCheckBox.isSelected()) {
-                System.out.println("Button is toggled ON");
-            } else {
-                System.out.println("Button is toggled OFF");
-            }
-        });
         commentCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        commentCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        commentCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
 
         duetLabel = new Label("Duet");
-        duetLabel.setPrefSize(200, 20);
+        duetLabel.setPrefSize(50, 20);
         duetLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 500);
-        duetLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        duetLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
         duetLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         duetCheckBox = new CheckBox();
         duetCheckBox.setStyle("-fx-background-color: blue");
-        duetCheckBox.setOnAction(event -> {
-            if (duetCheckBox.isSelected()) {
-                System.out.println("Button is toggled ON");
-            } else {
-                System.out.println("Button is toggled OFF");
-            }
-        });
         duetCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 470);
-        duetCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        duetCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
 
-        stitchLabel = new Label("Duet");
-        stitchLabel.setPrefSize(200, 20);
+        stitchLabel = new Label("Stitch");
+        stitchLabel.setPrefSize(50, 20);
         stitchLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 590);
-        stitchLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        stitchLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
         stitchLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         stitchCheckBox = new CheckBox();
         stitchCheckBox.setStyle("-fx-background-color: blue");
-        stitchCheckBox.setOnAction(event -> {
-            if (stitchCheckBox.isSelected()) {
-                System.out.println("Button is toggled ON");
-            } else {
-                System.out.println("Button is toggled OFF");
-            }
-        });
         stitchCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 560);
-        stitchCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65);
+        stitchCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
 
         settingsLabel = new Label("Allow users to:");
         settingsLabel.setPrefSize(85, 20);
         settingsLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        settingsLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 120 + 65);
+        settingsLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 120 + 65 + 40);
         settingsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         exportLabel = new Label("Export to");
@@ -647,8 +644,22 @@ public class GUI {
     }
     private Node[] getSpaceParts(String space) {
         List<Node> parts = new ArrayList<>();
+        ToggleButton myToggleSwitch = new ToggleButton();
+        myToggleSwitch.setStyle("-fx-background-color: white;");
+        myToggleSwitch.setStyle("-fx-background-color: white; -fx-border-color: green; -fx-border-width: 2px;");
+        Circle knob = new Circle(5, javafx.scene.paint.Color.GREEN);  // Set size and color of the knob
+
+        myToggleSwitch.selectedProperty().addListener((observable, oldValue, isSelected) -> {
+            if (isSelected) {
+                // Move the knob to the right side when the button is selected
+                knob.setCenterX(myToggleSwitch.getWidth() - knob.getRadius());
+            } else {
+                // Move the knob to the left side when the button is unselected
+                knob.setCenterX(knob.getRadius());
+            }
+        });
         if (space != null && space.equals("Tiktok"))
-            parts.addAll(List.of(new Node[]{privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel}));
+            parts.addAll(List.of(myToggleSwitch, knob, captionNameLabel, captionNameTextField, privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel));
         Node[] result = new Node[parts.size()];
         for (Node n : parts) {
             result[parts.indexOf(n)] = n;
@@ -659,7 +670,7 @@ public class GUI {
         return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
     }
     private Node[] getShareParts() {
-        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, nameLabel, nameTextField, spaceComboBox, spaceLabel};
+        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, spaceComboBox, spaceLabel};
     }
     private void showLoginPanel() {
         int width;
@@ -930,106 +941,114 @@ public class GUI {
 
         AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
         generateButton.setOnAction(actionEvent -> {
-            Double<File, String> tempFile = api.video(key, languageComboBox.getValue().toLowerCase(), lengthComboBox.getSelectionModel().getSelectedIndex() == 0 ? 7 : 10);
-            if (tempFile != null)
-                file = tempFile;
-            if (file != null) {
-                Media media = new Media(file.getKey().toURI().toString());
-                Scene scene = jfxPanel.getScene();
-                Group root = ((Group)scene.getRoot());
-                if (nameLabel2 != null)
-                    root.getChildren().removeAll(
-                            nameLabel2,
-                            pathLabel,
-                            nameDetailLabel,
-                            mediaView,
-                            ratioLabel,
-                            ratioLabel2,
-                            resolutionLabel,
-                            resolutionLabel2,
-                            fpsLabel,
-                            fpsLabel2,
-                            pathLabel2
-                    );
+            Scene scene = jfxPanel.getScene();
+            startLoadingScreen(scene);
+            AtomicReference<Double<File, String>> tempFile = new AtomicReference<>();
+            Thread thread = new Thread(() -> {
+                tempFile.set(api.video(key, languageComboBox.getValue().toLowerCase(), lengthComboBox.getSelectionModel().getSelectedIndex() == 0 ? 6 : 10));
+                if (tempFile.get() != null)
+                    file = tempFile.get();
+                Platform.runLater(() -> {
+                    if (file != null) {
+                        Media media = new Media(file.getKey().toURI().toString());
+                        Group root = ((Group)scene.getRoot());
+                        if (nameLabel2 != null)
+                            root.getChildren().removeAll(
+                                    nameLabel2,
+                                    pathLabel,
+                                    nameDetailLabel,
+                                    mediaView,
+                                    ratioLabel,
+                                    ratioLabel2,
+                                    resolutionLabel,
+                                    resolutionLabel2,
+                                    fpsLabel,
+                                    fpsLabel2,
+                                    pathLabel2
+                            );
 
-                nameLabel2 = new Label(file.getKey().getName());
-                nameLabel2.setLayoutX(1250);
-                nameLabel2.setLayoutY(60);
-                nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+                        nameLabel2 = new Label(file.getKey().getName());
+                        nameLabel2.setLayoutX(1250);
+                        nameLabel2.setLayoutY(60);
+                        nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                pathLabel = new Label("Path:");
-                pathLabel.setLayoutX(1142);
-                pathLabel.setLayoutY(83);
-                pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+                        pathLabel = new Label("Path:");
+                        pathLabel.setLayoutX(1142);
+                        pathLabel.setLayoutY(83);
+                        pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                pathLabel2 = new Label(file.getKey().getAbsolutePath().replace("\\" + file.getKey().getName(), ""));
-                pathLabel2.setLayoutX(1250);
-                pathLabel2.setLayoutY(83);
-                pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+                        pathLabel2 = new Label(file.getKey().getAbsolutePath().replace("\\" + file.getKey().getName(), ""));
+                        pathLabel2.setLayoutX(1250);
+                        pathLabel2.setLayoutY(83);
+                        pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                mediaPlayer.set(new MediaPlayer(media));
-                mediaView = new MediaView(mediaPlayer.get());
-                mediaView.setScaleX((double) videoPreviewWidth / videoWidth);
-                mediaView.setScaleY((double) videoPreviewHeight / videoHeight);
-                mediaView.setLayoutY(-705);
-                mediaView.setLayoutX(363.5);
+                        mediaPlayer.set(new MediaPlayer(media));
+                        mediaView = new MediaView(mediaPlayer.get());
+                        mediaView.setScaleX((double) videoPreviewWidth / videoWidth);
+                        mediaView.setScaleY((double) videoPreviewHeight / videoHeight);
+                        mediaView.setLayoutY(-705);
+                        mediaView.setLayoutX(363.5);
 
-                mediaViewClone = new MediaView(mediaPlayer.get());
-                mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth);
-                mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight);
-                mediaViewClone.setLayoutX(80);
-                mediaViewClone.setLayoutY(-610 + 65);
+                        mediaViewClone = new MediaView(mediaPlayer.get());
+                        mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth);
+                        mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight);
+                        mediaViewClone.setLayoutX(80);
+                        mediaViewClone.setLayoutY(-610 + 65);
 
-                nameDetailLabel = new Label("Name:");
-                nameDetailLabel.setLayoutX(1142);
-                nameDetailLabel.setLayoutY(60);
-                nameDetailLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+                        nameDetailLabel = new Label("Name:");
+                        nameDetailLabel.setLayoutX(1142);
+                        nameDetailLabel.setLayoutY(60);
+                        nameDetailLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                ratioLabel = new Label("Aspect ratio:");
-                ratioLabel.setLayoutX(1142);
-                ratioLabel.setLayoutY(106);
-                ratioLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+                        ratioLabel = new Label("Aspect ratio:");
+                        ratioLabel.setLayoutX(1142);
+                        ratioLabel.setLayoutY(106);
+                        ratioLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                ratioLabel2 = new Label("9:16");
-                ratioLabel2.setLayoutX(1250);
-                ratioLabel2.setLayoutY(106);
-                ratioLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+                        ratioLabel2 = new Label("9:16");
+                        ratioLabel2.setLayoutX(1250);
+                        ratioLabel2.setLayoutY(106);
+                        ratioLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                resolutionLabel = new Label("Resolution:");
-                resolutionLabel.setLayoutX(1142);
-                resolutionLabel.setLayoutY(129);
-                resolutionLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+                        resolutionLabel = new Label("Resolution:");
+                        resolutionLabel.setLayoutX(1142);
+                        resolutionLabel.setLayoutY(129);
+                        resolutionLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                resolutionLabel2 = new Label(videoWidth + "x" + videoHeight);
-                resolutionLabel2.setLayoutX(1250);
-                resolutionLabel2.setLayoutY(129);
-                resolutionLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+                        resolutionLabel2 = new Label(videoWidth + "x" + videoHeight);
+                        resolutionLabel2.setLayoutX(1250);
+                        resolutionLabel2.setLayoutY(129);
+                        resolutionLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                fpsLabel = new Label("Frame rate:");
-                fpsLabel.setLayoutX(1142);
-                fpsLabel.setLayoutY(152);
-                fpsLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+                        fpsLabel = new Label("Frame rate:");
+                        fpsLabel.setLayoutX(1142);
+                        fpsLabel.setLayoutY(152);
+                        fpsLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
-                fpsLabel2 = new Label("25.00fps");
-                fpsLabel2.setLayoutX(1250);
-                fpsLabel2.setLayoutY(152);
-                fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+                        fpsLabel2 = new Label("25.00fps");
+                        fpsLabel2.setLayoutX(1250);
+                        fpsLabel2.setLayoutY(152);
+                        fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                root.getChildren().addAll(
-                        nameLabel2,
-                        pathLabel,
-                        nameDetailLabel,
-                        mediaView,
-                        ratioLabel,
-                        ratioLabel2,
-                        resolutionLabel,
-                        resolutionLabel2,
-                        fpsLabel,
-                        fpsLabel2,
-                        pathLabel2
-                );
-            } else
-                JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
+                        root.getChildren().addAll(
+                                nameLabel2,
+                                pathLabel,
+                                nameDetailLabel,
+                                mediaView,
+                                ratioLabel,
+                                ratioLabel2,
+                                resolutionLabel,
+                                resolutionLabel2,
+                                fpsLabel,
+                                fpsLabel2,
+                                pathLabel2
+                        );
+                    } else
+                        JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
+                    stopLoadingScreen(scene);
+                });
+            });
+            thread.start();
         });
 
         Button playButton = new Button();
@@ -1174,7 +1193,7 @@ public class GUI {
     Rectangle loading;
     private void startLoadingScreen(Scene scene) {
         Group root = ((Group) scene.getRoot());
-        loading = new Rectangle(50, 20, javafx.scene.paint.Color.BLUE);
+        loading = new Rectangle(50, 20, javafx.scene.paint.Color.BLACK);
         loading.setArcWidth(10);
         loading.setArcHeight(10);
         loading.setX(765);

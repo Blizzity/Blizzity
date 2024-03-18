@@ -137,7 +137,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java</url>
-          <line>367</line>
+          <line>365</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
