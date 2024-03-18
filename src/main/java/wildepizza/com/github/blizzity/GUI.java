@@ -1,5 +1,9 @@
 package wildepizza.com.github.blizzity;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Pos;
@@ -17,6 +21,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontPosture;
+import javafx.util.Duration;
 import wildepizza.com.github.blizzity.gui.*;
 import wildepizza.com.github.blizzity.gui.listeners.LoginListener;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
@@ -74,6 +79,7 @@ public class GUI {
             timelineBackground,
             timelineBackground2,
             darkenBackground,
+            loadingBackground,
             exportBackground,
             exportTitle,
             shareBackground,
@@ -82,7 +88,7 @@ public class GUI {
             languageLabel,
             lengthLabel,
             generateLabel,
-            adjustmentsLabel,
+            accountLabel,
             resultLabel,
             detailsLabel,
             timelineLabel,
@@ -92,7 +98,7 @@ public class GUI {
             exportTitleLabel,
             spaceLabel,
             shareTitleLabel;
-    private ComboBox<String> languageComboBox, spaceComboBox, privacyComboBox;
+    private ComboBox<String> languageComboBox, spaceComboBox, privacyComboBox, lengthComboBox;
     Label privacyLabel, stitchLabel, duetLabel, commentLabel;
     CheckBox commentCheckBox, stitchCheckBox, duetCheckBox;
     Label settingsLabel;
@@ -104,6 +110,8 @@ public class GUI {
     Label ratioLabel2;
     Label resolutionLabel;
     Label resolutionLabel2;
+    private Label usagesLabel;
+    private Label creditsLabel;
     Double<File, String> file;
     Label fpsLabel;
     Label fpsLabel2;
@@ -112,12 +120,13 @@ public class GUI {
             jfxCloseButton,
             folderButton,
             exportCompleteButton,
+            generateButton,
             shareCompleteButton;
     private TextField nameTextField;
-    private Slider amountSlider;
     private MediaView mediaView, mediaViewClone;
     public static JFXPanel jfxPanel;
     private JImageButton exportButton, shareButton;
+    private boolean section;
     void init() {
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseClickListener(jfxPanel, 0, 40);
@@ -133,31 +142,33 @@ public class GUI {
         optionsBackground2.setLayoutY(50);
         optionsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
-        languageLabel = new Label("Select Language:");
+        languageLabel = new Label("Language:");
         languageLabel.setLayoutX(22);
-        languageLabel.setLayoutY(55);
+        languageLabel.setLayoutY(65);
+        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)"); //TODO make it look better
         languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
         languageComboBox = new ComboBox<>();
+        languageComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: rgb(210, 210, 210); -fx-background-radius: 5;");
         languageComboBox.getItems().addAll(languages);
         languageComboBox.getSelectionModel().select(0);
-        languageComboBox.setLayoutX(22);
-        languageComboBox.setLayoutY(82);
+        languageComboBox.setLayoutX(87);
+        languageComboBox.setLayoutY(62);
 
-        amountSlider = new Slider(1, 20, 10);
-
-        lengthLabel = new Label("Select Length:"  + (int) amountSlider.getValue());
+        lengthLabel = new Label("Length:");
         lengthLabel.setLayoutX(22);
-        lengthLabel.setLayoutY(195);
+        lengthLabel.setLayoutY(105);
+        lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)"); //TODO make it look better
         lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        amountSlider.setLayoutX(22);
-        amountSlider.setLayoutY(235);
-        amountSlider.setShowTickMarks(true);
-        amountSlider.setMinorTickCount(20);
-        amountSlider.setMinorTickCount(4);
-        amountSlider.valueProperty().addListener((observable, oldValue, newValue) -> lengthLabel.setText("Select Length:"  + newValue.intValue()));
+        String[] lengths = {"< 1 min", "> 1 min 30 sec"};
+        lengthComboBox = new ComboBox<>();
+        lengthComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: rgb(210, 210, 210); -fx-background-radius: 5;");
+        lengthComboBox.getItems().addAll(lengths);
+        lengthComboBox.getSelectionModel().select(0);
+        lengthComboBox.setLayoutX(87);
+        lengthComboBox.setLayoutY(102);
 
         logoutButton = new Button("Logout");
         logoutButton.setLayoutX(22);
@@ -174,10 +185,10 @@ public class GUI {
         generateLabel.setTextFill(javafx.scene.paint.Color.rgb(3, 181, 193));
 
 
-        adjustmentsLabel = new Label("Adjustments");
-        adjustmentsLabel.setLayoutX(90);
-        adjustmentsLabel.setLayoutY(32);
-        adjustmentsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        accountLabel = new Label("Account");
+        accountLabel.setLayoutX(90);
+        accountLabel.setLayoutY(32);
+        accountLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         resultBackground = new Rectangle(430, 490);
         resultBackground.setArcWidth(30);
@@ -234,6 +245,11 @@ public class GUI {
         darkenBackground.setLayoutX(0);
         darkenBackground.setLayoutY(0);
         darkenBackground.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.5));
+
+        loadingBackground = new Rectangle(1530, 1000);
+        loadingBackground.setLayoutX(0);
+        loadingBackground.setLayoutY(0);
+        loadingBackground.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.5));
 
         exportBackground = new Rectangle(640, 540);
         exportBackground.setLayoutX((double) 1530 /2- (double) 640 /2);
@@ -335,9 +351,15 @@ public class GUI {
             }
         });
 
+
+        generateButton = new Button("Generate");
+        generateButton.setLayoutX(22);
+        generateButton.setLayoutY(142);
+        generateButton.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: rgb(210, 210, 210); -fx-background-radius: 5;");
+
         String[] spaces = {"Tiktok", "Youtube", "Snapchat", "Instagram", "Facebook"};
         spaceComboBox = new ComboBox<>();
-        spaceComboBox.setStyle("-fx-base: rgb(45, 45, 45); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
+        spaceComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
         spaceComboBox.getItems().addAll(spaces);
         spaceComboBox.setPrefSize(200, 20);
         spaceComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 425);
@@ -349,9 +371,15 @@ public class GUI {
         spaceLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
         spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
+        nameLabel = new Label("Name");
+        nameLabel.setPrefSize(85, 20);
+        nameLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        nameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
+        nameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
         String[] privacy = {"Public", "Friends", "Private"};
         privacyComboBox = new ComboBox<>();
-        privacyComboBox.setStyle("-fx-base: rgb(45, 45, 45); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
+        privacyComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
         privacyComboBox.getItems().addAll(privacy);
         privacyComboBox.setPrefSize(200, 20);
         privacyComboBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
@@ -429,12 +457,6 @@ public class GUI {
         exportLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
         exportLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        nameLabel = new Label("Name");
-        nameLabel.setPrefSize(85, 20);
-        nameLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
-        nameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 - 25 + 65);
-        nameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
         jfxCloseButton = new Button();
         // First SVG path
         SVGPath path1 = new SVGPath();
@@ -467,8 +489,10 @@ public class GUI {
             Platform.runLater(() -> {
                 if (root.getChildren().contains(exportBackground))
                     root.getChildren().removeAll(getExportParts());
-                else
+                else {
                     root.getChildren().removeAll(getShareParts());
+                    root.getChildren().removeAll(getSpaceParts(spaceComboBox.getValue()));
+                }
                 titleBarPanel.setDarkened(false);
                 exportButton.setDarkened(false);
                 minimizeButton.setDarkened(false);
@@ -486,11 +510,13 @@ public class GUI {
         frame.setResizable(false);
         frame.setUndecorated(true);
         init();
-        addTitleBarPanel(false);
-        if (variables.getVariable("key") != null)
+        if (variables.getVariable("key") != null) {
             showContentPanel((String) variables.getVariable("key"));
-        else
+            addTitleBarPanel(false);
+        } else {
+            addTitleBarPanel(false);
             showLoginPanel();
+        }
     }
     private void addTitleBarPanel(boolean advanced) {
         if (titleBarPanel != null) {
@@ -557,6 +583,8 @@ public class GUI {
                         clipRect.setArcHeight(80); // Adjust corner radius
                         mediaViewClone.setClip(clipRect);
                         root.getChildren().addAll(getShareParts());
+                        if (spaceComboBox.getValue() != null)
+                            root.getChildren().addAll(getSpaceParts(spaceComboBox.getValue()));
                         frame.add(jfxPanel);
                         frame.pack();
                         titleBarPanel.setDarkened(true); //TODO fix interactible
@@ -890,24 +918,22 @@ public class GUI {
         int videoPreviewWidth = 230;
         int videoPreviewHeight = 410;
 
-        Label usagesLabel = new Label("Usages:" + api.usages(key));
+        usagesLabel = new Label("Usages: " + api.usages(key));
         usagesLabel.setLayoutX(22);
         usagesLabel.setLayoutY(115);
         usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        Label creditsLabel = new Label("Credits:" + api.credits(key));
+        creditsLabel = new Label("Credits: " + api.credits(key));
         creditsLabel.setLayoutX(22);
         creditsLabel.setLayoutY(155);
         creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
-        Button generateButton = new Button("Generate");
-        generateButton.setLayoutX(22);
-        generateButton.setLayoutY(315);
         generateButton.setOnAction(actionEvent -> {
-            file = api.video(key, languageComboBox.getValue().toLowerCase(), (int) amountSlider.getValue());
+            Double<File, String> tempFile = api.video(key, languageComboBox.getValue().toLowerCase(), lengthComboBox.getSelectionModel().getSelectedIndex() == 0 ? 7 : 10);
+            if (tempFile != null)
+                file = tempFile;
             if (file != null) {
-                System.out.println("received video");
                 Media media = new Media(file.getKey().toURI().toString());
                 Scene scene = jfxPanel.getScene();
                 Group root = ((Group)scene.getRoot());
@@ -1032,67 +1058,94 @@ public class GUI {
                 }
         );
         shareCompleteButton.setOnAction(event -> {
-            Thread thread = new Thread(() -> {
+            if (privacyComboBox.getValue() != null) {
                 Scene scene = jfxPanel.getScene();
                 Group root = ((Group) scene.getRoot());
-                if (api.verify(spaceComboBox.getValue().toLowerCase(), key)) {
-                    String privacy = switch (privacyComboBox.getValue()) {
-                        case "Private":
-                            yield "SELF_ONLY";
-                        case "Friends":
-                            yield "MUTUAL_FOLLOW_FRIENDS";
-                        case "Public":
-                            yield "PUBLIC_TO_EVERYONE";
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + privacyComboBox.getValue());
-                    };
-                    if (spaceComboBox.getValue().equals("Tiktok")) {
-                        System.out.println("uploading...");
-                        api.tiktokPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(nameTextField.getText()), privacy, duetCheckBox.isSelected(), commentCheckBox.isSelected(), stitchCheckBox.isSelected(), 1000);
-                    }
-                    Platform.runLater(() -> {
-                        root.getChildren().removeAll(getShareParts());
-                        titleBarPanel.setDarkened(false);
-                        exportButton.setDarkened(false);
-                        minimizeButton.setDarkened(false);
-                        closeButton.setDarkened(false);
-                        shareButton.setDarkened(false);
-                        frame.add(jfxPanel);
-                        frame.pack();
-                    });
+                startLoadingScreen(scene);
+                Thread thread = new Thread(() -> {
+                    if (api.verify(spaceComboBox.getValue().toLowerCase(), key)) {
+                        String privacy = switch (privacyComboBox.getValue()) {
+                            case "Private":
+                                yield "SELF_ONLY";
+                            case "Friends":
+                                yield "MUTUAL_FOLLOW_FRIENDS";
+                            case "Public":
+                                yield "PUBLIC_TO_EVERYONE";
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + privacyComboBox.getValue());
+                        };
+                        if (spaceComboBox.getValue().equals("Tiktok")) {
+                            System.out.println("uploading...");
+                            api.tiktokPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(nameTextField.getText()), privacy, duetCheckBox.isSelected(), commentCheckBox.isSelected(), stitchCheckBox.isSelected(), 1000);
+                        }
+                        Platform.runLater(() -> {
+                            stopLoadingScreen(scene);
+                            root.getChildren().removeAll(getShareParts());
+                            root.getChildren().removeAll(getSpaceParts(spaceComboBox.getValue()));
+                            titleBarPanel.setDarkened(false);
+                            exportButton.setDarkened(false);
+                            minimizeButton.setDarkened(false);
+                            closeButton.setDarkened(false);
+                            shareButton.setDarkened(false);
+                            frame.add(jfxPanel);
+                            frame.pack();
+                        });
 
-                }
-            });
-            thread.start();
+                    }
+                });
+                thread.start();
+            } else {
+                // TODO mark
+            }
         });
         Platform.runLater(() -> {
+            javafx.scene.paint.Color selectColor = javafx.scene.paint.Color.rgb(3, 181, 193);
             Group root = new Group();
             Scene scene = new Scene(root, 0, 0);
             scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+            Rectangle generateSectionButton = new Rectangle(0, 0, 60, 40);
+            generateSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            Group generateSvgGroup = getGenerateSVG(selectColor);
+            Group accountSvgGroup = getAccountSVG(javafx.scene.paint.Color.WHITE);
+            StackPane generatePane = new StackPane();
+            StackPane accountPane = new StackPane();
+            generatePane.getChildren().addAll(generateSectionButton, generateSvgGroup);
+            generatePane.setOnMouseClicked(mouseEvent -> {
+                if (section) {
+                    root.getChildren().addAll(getGenerateParts());
+                    root.getChildren().removeAll(getAccountParts());
+                    changeSectionColor(javafx.scene.paint.Color.WHITE, accountSvgGroup, accountLabel);
+                    changeSectionColor(selectColor, generateSvgGroup, generateLabel);
+                    section = false;
+                }
+            });
+            generatePane.setLayoutX(20);
+            generatePane.setLayoutY(10);
+            StackPane.setMargin(generateSvgGroup, new javafx.geometry.Insets(-9, 0, 0, -5));
+
+            Rectangle accountSectionButton = new Rectangle(0, 0, 60, 40);
+            accountSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            accountPane.getChildren().addAll(accountSectionButton, accountSvgGroup);
+            accountPane.setOnMouseClicked(mouseEvent -> {
+                if (!section) {
+                    root.getChildren().addAll(getAccountParts());
+                    root.getChildren().removeAll(getGenerateParts());
+                    changeSectionColor(javafx.scene.paint.Color.WHITE, generateSvgGroup, generateLabel);
+                    changeSectionColor(selectColor, accountSvgGroup, accountLabel);
+                    section = true;
+                }
+            });
+            accountPane.setLayoutX(90);
+            accountPane.setLayoutY(10);
+            StackPane.setMargin(accountSvgGroup, new javafx.geometry.Insets(-11, 0, 0, -17));
+
             root.getChildren().addAll(
                     optionsBackground,
                     optionsBackground2,
                     generateLabel,
-                    adjustmentsLabel,
-                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M11.5805 4.77604C12.2752 3.00516 12.6226 2.11971 13.349 2.01056C14.0755 1.90141 14.6999 2.64083 15.9488 4.11967L16.2719 4.50226C16.6268 4.9225 16.8042 5.13263 17.0455 5.25261C17.2868 5.37259 17.5645 5.38884 18.1201 5.42135L18.6258 5.45095C20.5808 5.56537 21.5583 5.62258 21.8975 6.26168C22.2367 6.90079 21.713 7.69853 20.6656 9.29403L20.3946 9.7068C20.097 10.1602 19.9482 10.3869 19.908 10.6457C19.8678 10.9045 19.9407 11.1662 20.0866 11.6895L20.2195 12.166C20.733 14.0076 20.9898 14.9284 20.473 15.4325C19.9562 15.9367 19.0081 15.6903 17.1118 15.1975L16.6213 15.07C16.0824 14.93 15.813 14.86 15.5469 14.8999C15.2808 14.9399 15.0481 15.0854 14.5828 15.3763L14.1591 15.6412C12.5215 16.6649 11.7027 17.1768 11.0441 16.8493C10.3854 16.5217 10.3232 15.5717 10.1987 13.6717L10.1665 13.1801C10.1311 12.6402 10.1134 12.3702 9.98914 12.1361C9.86488 11.902 9.64812 11.7302 9.21459 11.3867L8.8199 11.0739C7.29429 9.86506 6.53149 9.26062 6.64124 8.55405C6.751 7.84748 7.66062 7.50672 9.47988 6.8252L9.95054 6.64888C10.4675 6.45522 10.726 6.35839 10.9153 6.17371C11.1046 5.98903 11.2033 5.73742 11.4008 5.23419L11.5805 4.77604Z"),
-                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M5.31003 9.59277C2.87292 11.9213 1.27501 15.8058 2.33125 22.0002C3.27403 19.3966 5.85726 17.2407 8.91219 15.9528C8.80559 15.3601 8.7583 14.6364 8.70844 13.8733L8.66945 13.2782C8.66038 13.1397 8.65346 13.0347 8.64607 12.9443C8.643 12.9068 8.64012 12.8754 8.63743 12.8489C8.61421 12.829 8.58591 12.8053 8.55117 12.7769C8.47874 12.7177 8.39377 12.6503 8.28278 12.5623L7.80759 12.1858C7.11448 11.6368 6.46884 11.1254 6.02493 10.6538C5.77182 10.385 5.48876 10.0304 5.31003 9.59277Z"),
-                    svgPath(29, 12, javafx.scene.paint.Color.rgb(3, 181, 193), "M10.3466 15.4231C10.3415 15.3857 10.3365 15.3475 10.3316 15.3086L10.3877 15.41C10.374 15.4144 10.3603 15.4187 10.3466 15.4231Z"),
-                    svgPath(107, 7, 0.8f, javafx.scene.paint.Color.WHITE, "M23,13.4l-4.9,4.9c-0.2,0.2-0.5,0.3-0.7,0.3s-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l4.9-4.9c-1.5-1.2-3.5-2-5.6-2 c-5,0-9,4-9,9s4,9,9,9s9-4,9-9C25,16.9,24.3,14.9,23,13.4z"),
-                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M16,8c-0.6,0-1-0.4-1-1V5c0-0.6,0.4-1,1-1s1,0.4,1,1v2C17,7.6,16.6,8,16,8z"),
-                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M10,9.6c-0.3,0-0.7-0.2-0.9-0.5l-1-1.7C7.9,6.9,8,6.3,8.5,6C9,5.7,9.6,5.9,9.9,6.4l1,1.7c0.3,0.5,0.1,1.1-0.4,1.4 C10.3,9.6,10.2,9.6,10,9.6z"),
-                    svgPath(108, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M5.6,14c-0.2,0-0.3,0-0.5-0.1l-1.7-1C2.9,12.6,2.7,12,3,11.5c0.3-0.5,0.9-0.6,1.4-0.4l1.7,1c0.5,0.3,0.6,0.9,0.4,1.4 C6.3,13.8,6,14,5.6,14z"),
-                    svgPath(109, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M4,20H2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S4.6,20,4,20z"),
-                    svgPath(105, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M30,20h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S30.6,20,30,20z"),
-                    svgPath(106, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M26.4,14c-0.3,0-0.7-0.2-0.9-0.5c-0.3-0.5-0.1-1.1,0.4-1.4l1.7-1c0.5-0.3,1.1-0.1,1.4,0.4c0.3,0.5,0.1,1.1-0.4,1.4l-1.7,1 C26.7,14,26.6,14,26.4,14z"),
-                    svgPath(107, 9, 0.8f, javafx.scene.paint.Color.WHITE, "M22,9.6c-0.2,0-0.3,0-0.5-0.1c-0.5-0.3-0.6-0.9-0.4-1.4l1-1.7C22.4,5.9,23,5.7,23.5,6c0.5,0.3,0.6,0.9,0.4,1.4l-1,1.7 C22.7,9.4,22.3,9.6,22,9.6z"),
-                    languageLabel,
-                    languageComboBox,
-                    usagesLabel,
-                    creditsLabel,
-                    lengthLabel,
-                    amountSlider,
-                    logoutButton,
-                    generateButton,
+                    accountLabel,
+                    generatePane,
+                    accountPane,
                     resultBackground,
                     resultBackground2,
                     resultLabel,
@@ -1104,7 +1157,7 @@ public class GUI {
                     timelineBackground2,
                     timelineLabel
             );
-
+            root.getChildren().addAll(getGenerateParts());
             scene.setRoot(root);
             jfxPanel.setScene(scene);
             jfxPanel.setPreferredSize(new Dimension(1530, 920));
@@ -1117,6 +1170,76 @@ public class GUI {
         frame.setLocation(x, y);
         frame.pack(); // Adjust frame size to fit components
         frame.setVisible(true);
+    }
+    Rectangle loading;
+    private void startLoadingScreen(Scene scene) {
+        Group root = ((Group) scene.getRoot());
+        loading = new Rectangle(50, 20, javafx.scene.paint.Color.BLUE);
+        loading.setArcWidth(10);
+        loading.setArcHeight(10);
+        loading.setX(765);
+        loading.setY(400);
+
+        // Create a timeline for rotation animation
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(loading.rotateProperty(), 0)),
+                new KeyFrame(Duration.seconds(2), new KeyValue(loading.rotateProperty(), 360))
+        );
+        timeline.setCycleCount(Animation.INDEFINITE); // Repeat indefinitely
+
+        // Start the animation
+        timeline.play();
+
+        root.getChildren().addAll(loadingBackground, loading);
+        scene.setRoot(root);
+    }
+    private void stopLoadingScreen(Scene scene) {
+        Group root = ((Group) scene.getRoot());
+        root.getChildren().removeAll(loadingBackground, loading);
+        scene.setRoot(root);
+    }
+    private void changeSectionColor(javafx.scene.paint.Color color, Group Svg, Label label) {
+        for (Node node : Svg.getChildren())
+            ((SVGPath) node).setFill(color);
+        label.setTextFill(color);
+    }
+    private Group getGenerateSVG(javafx.scene.paint.Color color) {
+        int svgX = 0;
+        int svgY = 0;
+        return new Group(svgPath(svgX, svgY, color, "M11.5805 4.77604C12.2752 3.00516 12.6226 2.11971 13.349 2.01056C14.0755 1.90141 14.6999 2.64083 15.9488 4.11967L16.2719 4.50226C16.6268 4.9225 16.8042 5.13263 17.0455 5.25261C17.2868 5.37259 17.5645 5.38884 18.1201 5.42135L18.6258 5.45095C20.5808 5.56537 21.5583 5.62258 21.8975 6.26168C22.2367 6.90079 21.713 7.69853 20.6656 9.29403L20.3946 9.7068C20.097 10.1602 19.9482 10.3869 19.908 10.6457C19.8678 10.9045 19.9407 11.1662 20.0866 11.6895L20.2195 12.166C20.733 14.0076 20.9898 14.9284 20.473 15.4325C19.9562 15.9367 19.0081 15.6903 17.1118 15.1975L16.6213 15.07C16.0824 14.93 15.813 14.86 15.5469 14.8999C15.2808 14.9399 15.0481 15.0854 14.5828 15.3763L14.1591 15.6412C12.5215 16.6649 11.7027 17.1768 11.0441 16.8493C10.3854 16.5217 10.3232 15.5717 10.1987 13.6717L10.1665 13.1801C10.1311 12.6402 10.1134 12.3702 9.98914 12.1361C9.86488 11.902 9.64812 11.7302 9.21459 11.3867L8.8199 11.0739C7.29429 9.86506 6.53149 9.26062 6.64124 8.55405C6.751 7.84748 7.66062 7.50672 9.47988 6.8252L9.95054 6.64888C10.4675 6.45522 10.726 6.35839 10.9153 6.17371C11.1046 5.98903 11.2033 5.73742 11.4008 5.23419L11.5805 4.77604Z"), svgPath(svgX, svgY, color, "M5.31003 9.59277C2.87292 11.9213 1.27501 15.8058 2.33125 22.0002C3.27403 19.3966 5.85726 17.2407 8.91219 15.9528C8.80559 15.3601 8.7583 14.6364 8.70844 13.8733L8.66945 13.2782C8.66038 13.1397 8.65346 13.0347 8.64607 12.9443C8.643 12.9068 8.64012 12.8754 8.63743 12.8489C8.61421 12.829 8.58591 12.8053 8.55117 12.7769C8.47874 12.7177 8.39377 12.6503 8.28278 12.5623L7.80759 12.1858C7.11448 11.6368 6.46884 11.1254 6.02493 10.6538C5.77182 10.385 5.48876 10.0304 5.31003 9.59277Z"), svgPath(svgX, svgY, color, "M10.3466 15.4231C10.3415 15.3857 10.3365 15.3475 10.3316 15.3086L10.3877 15.41C10.374 15.4144 10.3603 15.4187 10.3466 15.4231Z"));
+    }
+    private Group getAccountSVG(javafx.scene.paint.Color color) {
+        return new Group(
+                svgPath(0, 0, 0.8f, color, "M23,13.4l-4.9,4.9c-0.2,0.2-0.5,0.3-0.7,0.3s-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l4.9-4.9c-1.5-1.2-3.5-2-5.6-2 c-5,0-9,4-9,9s4,9,9,9s9-4,9-9C25,16.9,24.3,14.9,23,13.4z"),
+                svgPath(0, 0, 0.8f, color, "M16,8c-0.6,0-1-0.4-1-1V5c0-0.6,0.4-1,1-1s1,0.4,1,1v2C17,7.6,16.6,8,16,8z"),
+                svgPath(0, 0, 0.8f, color, "M10,9.6c-0.3,0-0.7-0.2-0.9-0.5l-1-1.7C7.9,6.9,8,6.3,8.5,6C9,5.7,9.6,5.9,9.9,6.4l1,1.7c0.3,0.5,0.1,1.1-0.4,1.4 C10.3,9.6,10.2,9.6,10,9.6z"),
+                svgPath(0, 0, 0.8f, color, "M5.6,14c-0.2,0-0.3,0-0.5-0.1l-1.7-1C2.9,12.6,2.7,12,3,11.5c0.3-0.5,0.9-0.6,1.4-0.4l1.7,1c0.5,0.3,0.6,0.9,0.4,1.4 C6.3,13.8,6,14,5.6,14z"),
+                svgPath(0, 0, 0.8f, color, "M4,20H2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S4.6,20,4,20z"),
+                svgPath(0, 0, 0.8f, color, "M30,20h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S30.6,20,30,20z"),
+                svgPath(0, 0, 0.8f, color, "M26.4,14c-0.3,0-0.7-0.2-0.9-0.5c-0.3-0.5-0.1-1.1,0.4-1.4l1.7-1c0.5-0.3,1.1-0.1,1.4,0.4c0.3,0.5,0.1,1.1-0.4,1.4l-1.7,1 C26.7,14,26.6,14,26.4,14z"),
+                svgPath(0, 0, 0.8f, color, "M22,9.6c-0.2,0-0.3,0-0.5-0.1c-0.5-0.3-0.6-0.9-0.4-1.4l1-1.7C22.4,5.9,23,5.7,23.5,6c0.5,0.3,0.6,0.9,0.4,1.4l-1,1.7 C22.7,9.4,22.3,9.6,22,9.6z")
+        );
+    }
+    private Node[] getGenerateParts() {
+        return new Node[] {languageLabel, languageComboBox, lengthComboBox, lengthLabel, generateButton};
+    }
+    private Node[] getAccountParts() {
+        return new Node[] {usagesLabel, creditsLabel, logoutButton};
+    }
+    private Node[] getAccountParts(String key) {
+        if (usagesLabel == null) {
+            usagesLabel = new Label("Usages: " + api.usages(key));
+            usagesLabel.setLayoutX(22);
+            usagesLabel.setLayoutY(115);
+            usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+}
+        if (creditsLabel == null) {
+            creditsLabel = new Label("Credits: " + api.credits(key));
+            creditsLabel.setLayoutX(22);
+            creditsLabel.setLayoutY(155);
+            creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        }
+        return getAccountParts();
     }
     private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
         return svgPath(x, y, 1, color, path);
