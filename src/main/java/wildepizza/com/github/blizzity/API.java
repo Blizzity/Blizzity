@@ -1,14 +1,5 @@
 package wildepizza.com.github.blizzity;
 
-import com.teamdev.jxbrowser.browser.Browser;
-import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
-import com.teamdev.jxbrowser.engine.RenderingMode;
-import com.teamdev.jxbrowser.view.javafx.BrowserView;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;

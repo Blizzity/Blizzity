@@ -18,7 +18,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
@@ -86,7 +85,9 @@ public class GUI {
             exportTitle,
             shareBackground,
             shareTitle;
+    JfxSwitch discloseSwitch;
     private Label
+            discloseLabel,
             languageLabel,
             lengthLabel,
             generateLabel,
@@ -375,6 +376,18 @@ public class GUI {
         captionNameLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 20 + 65);
         captionNameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
+        discloseLabel = new Label("Disclose video content");
+        discloseLabel.setPrefSize(85, 20);
+        discloseLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        discloseLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 180 + 65 + 40);
+        discloseLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        discloseSwitch = new JfxSwitch(36, 20);
+        discloseSwitch.setBackground(javafx.scene.paint.Color.rgb(45, 45, 45));
+        discloseSwitch.setForeground(javafx.scene.paint.Color.rgb(220, 220, 220));
+        discloseSwitch.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
+        discloseSwitch.setLayoutY((double) 1000 /2- (double) 670 /2 + 183 + 65 + 40);
+
         captionNameTextField = new TextArea();
         captionNameTextField.setPromptText("Add a title that describes your video");
         captionNameTextField.setPrefSize(200, 60);
@@ -442,7 +455,7 @@ public class GUI {
         stitchCheckBox.setLayoutX((double) 1530 /2- (double) 640 /2 + 560);
         stitchCheckBox.setLayoutY((double) 1000 /2- (double) 670 /2 + 143 + 65 + 40);
 
-        settingsLabel = new Label("Allow users to:");
+        settingsLabel = new Label("Allow users to");
         settingsLabel.setPrefSize(85, 20);
         settingsLabel.setLayoutX((double) 1530 /2- (double) 640 /2 + 360);
         settingsLabel.setLayoutY((double) 1000 /2- (double) 670 /2 + 120 + 65 + 40);
@@ -644,22 +657,26 @@ public class GUI {
     }
     private Node[] getSpaceParts(String space) {
         List<Node> parts = new ArrayList<>();
-        ToggleButton myToggleSwitch = new ToggleButton();
-        myToggleSwitch.setStyle("-fx-background-color: white;");
-        myToggleSwitch.setStyle("-fx-background-color: white; -fx-border-color: green; -fx-border-width: 2px;");
+        /*Rectangle toggleButton = new Rectangle();
+        toggleButton.setStyle("-fx-background-color: white; -fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 10px; -fx-background-radius: 10px;");
+        toggleButton.setLayoutX(100);
+        toggleButton.setLayoutY(100);
         Circle knob = new Circle(5, javafx.scene.paint.Color.GREEN);  // Set size and color of the knob
 
-        myToggleSwitch.selectedProperty().addListener((observable, oldValue, isSelected) -> {
+        toggleButton.getOnMouseClicked(event -> {
             if (isSelected) {
                 // Move the knob to the right side when the button is selected
-                knob.setCenterX(myToggleSwitch.getWidth() - knob.getRadius());
+                knob.setCenterX(toggleButton.getLayoutX() + toggleButton.getWidth() - knob.getRadius());
             } else {
                 // Move the knob to the left side when the button is unselected
-                knob.setCenterX(knob.getRadius());
+                knob.setCenterX(toggleButton.getLayoutX() + knob.getRadius());
             }
         });
+        knob.setCenterX(toggleButton.getLayoutX() + knob.getRadius());
+        knob.setCenterY(toggleButton.getLayoutY());
+        toggleButton.setPrefSize(30, 30);*/
         if (space != null && space.equals("Tiktok"))
-            parts.addAll(List.of(myToggleSwitch, knob, captionNameLabel, captionNameTextField, privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel));
+            parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel));
         Node[] result = new Node[parts.size()];
         for (Node n : parts) {
             result[parts.indexOf(n)] = n;
