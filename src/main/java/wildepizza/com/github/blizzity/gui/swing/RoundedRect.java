@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.swing;
 
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Shape;

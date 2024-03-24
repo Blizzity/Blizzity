@@ -1,20 +1,18 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.javafx;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class JfxSwitch extends Region {
+public class Switch extends Region {
     public boolean selected;
     public Color background = Color.DARKGRAY;
     public Color activated = Color.LIGHTBLUE;
     public Color foreground = Color.BLACK;
     public double width;
     public double height;
-    public JfxSwitch(double width, double height) {
+    public Switch(double width, double height) {
         setPrefSize(width, height);
         updateStyle(width, height);
         this.width = width;

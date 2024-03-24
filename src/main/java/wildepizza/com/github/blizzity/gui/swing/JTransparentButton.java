@@ -1,20 +1,16 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.swing;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class JRoundedButton extends JButton {
+public class JTransparentButton extends JButton {
     boolean pressed;
     Color pressedColor;
     Color pressedBoxColor;
-    private final int arcWidth;
-    private final int arcHeight;
-    public JRoundedButton(int arcWidth, int arcHeight, String text) {
+    public JTransparentButton(String text) {
         super(text);
-        this.arcWidth = arcWidth;
-        this.arcHeight = arcHeight;
         setOpaque(false);
         MouseAdapter mouseHandler = new MouseAdapter() {
             @Override
@@ -28,13 +24,16 @@ public class JRoundedButton extends JButton {
                 repaint();
             }
         };
+
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
     }
+
     public void setPressedColor(Color pressed, Color pressedBox) {
         this.pressedColor = pressed;
         this.pressedBoxColor = pressedBox;
     }
+
     @Override
     protected void paintComponent(Graphics g) {
         try {
@@ -47,14 +46,11 @@ public class JRoundedButton extends JButton {
 
             if (pressed) {
                 g.setColor(pressedBoxColor);
-            } else
-                g.setColor(getBackground());
-            g.fillRoundRect(0, 0, getWidth(), getHeight(), arcWidth, arcHeight);
-            if (pressed) {
+                g.fillRoundRect(0, 0, getFontMetrics(getFont()).stringWidth(getText()), getFontMetrics(getFont()).getHeight(), 2, 2);
                 g.setColor(pressedColor);
             } else
                 g.setColor(getForeground());
-            g.drawString(text, getWidth()/2-getFontMetrics(getFont()).stringWidth(getText())/2, baseline);
+            g.drawString(text, 0, baseline);
         } finally {
             g.dispose();
         }

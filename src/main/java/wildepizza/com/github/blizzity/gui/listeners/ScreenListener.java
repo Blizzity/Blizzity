@@ -1,11 +1,16 @@
 package wildepizza.com.github.blizzity.gui.listeners;
 
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Node;
+import wildepizza.com.github.blizzity.gui.javafx.SimpleComboBox;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScreenListener {
     public static Point mouse;
@@ -30,11 +35,26 @@ public class ScreenListener {
         };
     }
 
-    public static void addMouseClickListener(JPanel panel, int x, int y) {
+    private static List<JPanel> jPanelList = new ArrayList<>();
+    private static List<JFXPanel> jfxPanelList = new ArrayList<>();
+
+    public static void addMouseListener(JPanel panel, int x, int y) {
         panel.addMouseMotionListener(getMouseListener(x, y));
+        jPanelList.add(panel);
     }
-    public static void addMouseClickListener(JFXPanel panel, int x, int y) {
+    public static void addMouseListener(JFXPanel panel, int x, int y) {
         panel.addMouseMotionListener(getMouseListener(x, y));
+        jfxPanelList.add(panel);
+    }
+    public static void addMouseListener(MouseListener mouseClickListener) {
+        for (JPanel panel : jPanelList) {
+            panel.addMouseListener(mouseClickListener);
+            panel.addMouseListener(mouseClickListener);
+        }
+        for (JFXPanel panel : jfxPanelList) {
+            panel.addMouseListener(mouseClickListener);
+            panel.addMouseListener(mouseClickListener);
+        }
     }
     public static boolean isSelected(JButton button) {
         if (mouse == null)

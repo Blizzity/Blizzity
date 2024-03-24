@@ -1,8 +1,6 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.swing;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class JSimpleButton extends JHoverButton {
     boolean a;

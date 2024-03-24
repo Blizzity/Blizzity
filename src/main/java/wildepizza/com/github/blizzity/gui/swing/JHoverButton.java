@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.swing;
 
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 

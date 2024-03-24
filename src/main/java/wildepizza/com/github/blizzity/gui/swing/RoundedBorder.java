@@ -1,4 +1,4 @@
-package wildepizza.com.github.blizzity.gui;
+package wildepizza.com.github.blizzity.gui.swing;
 
 import java.awt.*;
 import javax.swing.border.Border;
