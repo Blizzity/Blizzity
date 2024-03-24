@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 public class JfxSwitch extends Region {
     public boolean selected;
     public Color background = Color.DARKGRAY;
+    public Color activated = Color.LIGHTBLUE;
     public Color foreground = Color.BLACK;
     public double width;
     public double height;
@@ -32,11 +33,14 @@ public class JfxSwitch extends Region {
         this.foreground = foreground;
         updateStyle(width, height);
     }
+    public void setActivated(Color activated) {
+        this.activated = activated;
+        updateStyle(width, height);
+    }
 
     private void updateStyle(double width, double height) {
         // Create a rectangle
         Rectangle rectangle = new Rectangle(width, height);
-        rectangle.setFill(background);
         rectangle.setArcHeight(height);
         rectangle.setArcWidth(height);
 
@@ -47,14 +51,17 @@ public class JfxSwitch extends Region {
         if (selected) {
             circle = new Circle(width - height / 2, height / 2, height / minimize);
             circleShadow = new Circle(width - height / 2, height - height / (minimize-0.2), height / minimize);
+            rectangle.setFill(activated);
         } else {
             circle = new Circle(height / 2, height / 2, height / minimize);
             circleShadow = new Circle(height / 2, height - height / (minimize-0.2), height / minimize);
+            rectangle.setFill(background);
         }
         circleShadow.setFill(mixColors(foreground, background));
         circle.setFill(foreground);
 
         // Add shapes to the custom object
+        getChildren().clear();
         getChildren().addAll(rectangle, circleShadow, circle);
     }
     public static Color mixColors(Color color1, Color color2) {

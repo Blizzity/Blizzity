@@ -9,9 +9,11 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static wildepizza.com.github.blizzity.GUI.frame;
 
 public class API {
      String serverUrl;
@@ -77,6 +79,38 @@ public class API {
             e.printStackTrace();
             return false;
         }
+    }
+    public List<Map<String, String>> info(String space, String authToken) {
+        List<Map<String, String>> result = new ArrayList<>();
+        String apiUrl = serverUrl + "/api/info/" + space + "?key=" + URLEncoder.encode(authToken);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            Map<String, String> info = new HashMap<>();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                for (String body : response.body().split(";")) {
+                    info.put("display_name", jsonPart(body, "\"display_name\":\""));
+                    info.put("avatar", jsonPart(body, "\"avatar_url\":\"").replace("\\u0026", "&"));
+                    info.put("username", jsonPart(body, "\"username\":\""));
+                    result.add(info);
+                }
+                return result;
+            } else {
+                System.out.println("Response Code: " + response.statusCode());
+                System.out.println("Response Body: " + response.body());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static String jsonPart(String json, String start) {
+        int fromIndex = json.indexOf(start) + start.length();
+        return json.substring(fromIndex, json.indexOf("\"", fromIndex));
     }
     public Double<File, String> video(String authToken, String language, int length) {
 
@@ -150,6 +184,28 @@ public class API {
             e.printStackTrace();
         }
         return null;
+    }
+    public void youtubePost(String authToken, String video, String title, String description, String privacy_level) {
+        String apiUrl = serverUrl + "/api/upload/youtube?video=" + video + "&key=" + URLEncoder.encode(authToken) + "&title=" + title + "&description=" + description + "&privacy_level=" + privacy_level;
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Get response code
+            int responseCode = response.statusCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                System.out.println("Successfully posted video: " + apiUrl);
+            } else {
+                System.out.println("Response Code: " + response.statusCode());
+                System.out.println("Response Body: " + response.body());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public void tiktokPost(String authToken, String video, String title, String privacy_level, boolean disable_duet, boolean disable_comment, boolean disable_stitch, int video_cover_timestamp_ms) {
         String apiUrl = serverUrl + "/api/upload/tiktok?video=" + video + "&key=" + URLEncoder.encode(authToken) + "&title=" + title + "&privacy_level=" + privacy_level + "&disable_duet=" + disable_duet + "&disable_comment=" + disable_comment + "&disable_stitch=" + disable_stitch + "&video_cover_timestamp_ms=" + video_cover_timestamp_ms;
@@ -246,6 +302,17 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
+                    } else if (space.equals("snapchat")) {
+                        spark.Spark.get("/snapchat/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
                     } else if (space.equals("facebook")) {
                         spark.Spark.get("/facebook/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
@@ -272,6 +339,7 @@ public class API {
                     frame.add(panel);
                     frame.pack();*/
 
+                    System.out.println(url);
                     Desktop.getDesktop().browse(URI.create(url));
 
                     wait.waitForVariable();

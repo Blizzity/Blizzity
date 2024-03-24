@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JfxSwitch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JfxSwitch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/JfxSwitch.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +86,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Run.executor": "Run",
     "Gradle.Blizzity [:Main.main()].executor": "Run",
+    "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "com.google.cloudcode.ide_session_index": "20240316_0001",
@@ -133,16 +135,5 @@
       <updated>1709299553580</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java</url>
-          <line>366</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
