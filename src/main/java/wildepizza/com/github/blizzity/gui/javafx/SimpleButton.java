@@ -5,16 +5,17 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+@SuppressWarnings("unused")
 public class SimpleButton extends Pane {
     double height;
     double width;
@@ -23,6 +24,7 @@ public class SimpleButton extends Pane {
     private Color textFillColor = Color.BLACK;
     private boolean selected;
     private Rectangle rectangle;
+    private Label label;
     public SimpleButton(String text) {
         initializeComboBox(text, 100, 30);
     }
@@ -32,8 +34,23 @@ public class SimpleButton extends Pane {
     public SimpleButton(String text, int width, int height) {
         initializeComboBox(text, width, height);
     }
-    private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<EventHandler<ActionEvent>>() {
-        @Override protected void invalidated() {
+    public void setTextFill(Color color) {
+        label.setTextFill(color);
+        textFillColor = color;
+    }
+    public void setBackgroundColor(Color color) {
+        rectangle.setFill(color);
+    }
+    public void setStrokeColor(Color color) {
+        strokeColor = color;
+        rectangle.setStroke(color);
+    }
+    public void setSelectedStrokeColor(Color color) {
+        selectedStrokeColor = color;
+    }
+    private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
+        @Override
+        protected void invalidated() {
             setEventHandler(ActionEvent.ACTION, get());
         }
 
@@ -57,10 +74,12 @@ public class SimpleButton extends Pane {
         rectangle.setStroke(strokeColor);
         rectangle.setStrokeWidth(1);
 
-        Label label = new Label(text);
-        label.setTextFill(Color.BLACK);
-        label.setLayoutY(7);
-        label.setLayoutX(10);
+        label = new Label(text);
+        label.setTextFill(textFillColor);
+        Text font = new Text(text);
+        font.setFont(label.getFont());
+        label.setLayoutY((height - font.getBoundsInLocal().getHeight()) /2);
+        label.setLayoutX((width - font.getBoundsInLocal().getWidth()) /2);
 
         getChildren().addAll(rectangle, label);
         ScreenListener.addMouseListener(new MouseListener() {
@@ -72,9 +91,7 @@ public class SimpleButton extends Pane {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (!isHover()) {
-                    Platform.runLater(() -> {
-                        hide();
-                    });
+                    Platform.runLater(() -> hide());
                 }
             }
 
@@ -97,6 +114,7 @@ public class SimpleButton extends Pane {
             if (selected) {
                 hide();
             } else {
+                rectangle.setStrokeWidth(3);
                 rectangle.setStroke(selectedStrokeColor);
                 selected = true;
             }
@@ -105,6 +123,7 @@ public class SimpleButton extends Pane {
     }
     public void hide() {
         rectangle.setStroke(strokeColor);
+        rectangle.setStrokeWidth(1);
         selected = false;
     }
     public final void setOnAction(EventHandler<ActionEvent> var1) {

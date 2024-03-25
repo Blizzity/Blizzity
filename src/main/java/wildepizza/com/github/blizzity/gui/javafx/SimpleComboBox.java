@@ -10,6 +10,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 
 import java.awt.event.MouseEvent;
@@ -68,8 +69,6 @@ public class SimpleComboBox<T> extends Pane {
         rectangle.setStrokeWidth(1);
 
         selected = new Label();
-        selected.setTextFill(Color.BLACK);
-        selected.setLayoutY(7);
         selected.setLayoutX(10);
 
         arrow = new Polygon();
@@ -93,9 +92,7 @@ public class SimpleComboBox<T> extends Pane {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (!isHover()) {
-                    Platform.runLater(() -> {
-                        hide();
-                    });
+                    Platform.runLater(() -> hide());
                 }
             }
 
@@ -120,16 +117,19 @@ public class SimpleComboBox<T> extends Pane {
             }
         });
         setOnMouseClicked(event -> {
+            int id = selected.getText().isEmpty() ? 1 : 0;
             if (internalComboBox.isShowing()) {
-                int index = (int) (event.getY() / 30);
-                if (index < internalComboBox.getItems().size()) {
+                int index = (int) (event.getY() / height);
+                if (index < internalComboBox.getItems().size()+id) {
                     if (!(index == 0)) {
                         ObservableList<String> items = (ObservableList<String>) internalComboBox.getItems();
                         int i = 0;
                         for (String item : items)
                             if (!item.equals(selected.getText())) {
-                                if (i == index-1)
+                                if (i == index-1) {
                                     selected.setText(item);
+                                    getSelectionModel().select((T) item);
+                                }
                                 i++;
                             }
                     }
@@ -140,14 +140,16 @@ public class SimpleComboBox<T> extends Pane {
                 getChildren().remove(arrow);
                 rectangle.setStroke(selectedStrokeColor);
                 rectangle.setStrokeWidth(3);
-                rectangle.setHeight(height*internalComboBox.getItems().size());
+                rectangle.setHeight(height*(internalComboBox.getItems().size()+id));
                 int index = 0;
                 for (T item : internalComboBox.getItems()) {
                     if (!item.equals(selected.getText())) {
                         index++;
                         Label itemLabel = new Label((String) item);
                         itemLabel.setTextFill(textFillColor);
-                        itemLabel.setLayoutY(selected.getLayoutY() + index * height);
+                        Text newFont = new Text((String) item);
+                        newFont.setFont(selected.getFont());
+                        itemLabel.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2 + index * height);
                         itemLabel.setLayoutX(selected.getLayoutX());
                         getChildren().add(itemLabel);
                         items.add(itemLabel);
@@ -156,7 +158,14 @@ public class SimpleComboBox<T> extends Pane {
                 mouseEvent(event);
             }
         });
-        internalComboBox.getItems().addListener((ListChangeListener<? super T>) change -> {
+        getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    Text newFont = new Text((String) newValue);
+                    newFont.setFont(selected.getFont());
+                    selected.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2);
+                    selected.setText((String) newValue);
+                });
+        /*internalComboBox.getItems().addListener((ListChangeListener<? super T>) change -> {
             // Update the selected Text whenever the items change
             if (!change.getList().isEmpty()) {
                 String selectedText = change.getList().get(0).toString();
@@ -164,13 +173,14 @@ public class SimpleComboBox<T> extends Pane {
             } else {
                 selected.setText(""); // Handle the case when there are no items
             }
-        });
+        });*/
     }
     public void mouseEvent(javafx.scene.input.MouseEvent event) {
+        int id = selected.getText().isEmpty() ? 1 : 0;
         if (selection != null)
             getChildren().remove(selection);
-        int index = (int) (event.getY() / 30);
-        if (index < internalComboBox.getItems().size()) {
+        int index = (int) (event.getY() / height);
+        if (index < internalComboBox.getItems().size()+id) {
             int indent = 3;
             double arc = 2.5;
             Path path = new Path();
@@ -188,7 +198,7 @@ public class SimpleComboBox<T> extends Pane {
                 getChildren().add(selection);
                 selected.toFront();
             } else {
-                if (index+1 == internalComboBox.getItems().size()) {
+                if (index+1 == internalComboBox.getItems().size()+id) {
                     path.getElements().add(new MoveTo(indent, index * height));
                     path.getElements().add(new LineTo(width - indent, index * height));
                     path.getElements().add(new LineTo(width - indent, (index+1) * height - arc - indent));
