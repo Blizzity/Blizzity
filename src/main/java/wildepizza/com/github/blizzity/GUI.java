@@ -224,13 +224,13 @@ public class GUI {
         lengthComboBox.setLayoutX(87);
         lengthComboBox.setLayoutY(102);
 
-        logoutButton = new SimpleButton("Logout");
+        logoutButton = new SimpleButton("Logout", 72, 22);
         logoutButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
         logoutButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         logoutButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         logoutButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-        logoutButton.setLayoutX(22);
-        logoutButton.setLayoutY(275);
+        logoutButton.setLayoutX(590);
+        logoutButton.setLayoutY(470);
         logoutButton.setOnAction(actionEvent -> {
             variables.deleteVariable("key");
             frame.remove(jfxPanel);
@@ -311,34 +311,34 @@ public class GUI {
 
         exportBackground = new Rectangle(640, 540);
         exportBackground.setLayoutX(x);
-        exportBackground.setLayoutY(x - 40 + 65);
+        exportBackground.setLayoutY(y - 40 + 65);
         exportBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
         shareBackground = new Rectangle(640, 540);
         shareBackground.setLayoutX(x);
-        shareBackground.setLayoutY(x - 40 + 65);
+        shareBackground.setLayoutY(y - 40 + 65);
         shareBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
         exportTitle = new Rectangle(640, 40);
         exportTitle.setLayoutX(x);
-        exportTitle.setLayoutY(x - 80 + 65);
+        exportTitle.setLayoutY(y - 80 + 65);
         exportTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
         shareTitle = new Rectangle(640, 40);
         shareTitle.setLayoutX(x);
-        shareTitle.setLayoutY(x - 80 + 65);
+        shareTitle.setLayoutY(y - 80 + 65);
         shareTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
         exportTitleLabel = new Label("Export");
         exportTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
         exportTitleLabel.setLayoutX(x + 15);
-        exportTitleLabel.setLayoutY(x - 70 + 65);
+        exportTitleLabel.setLayoutY(y - 70 + 65);
         exportTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         shareTitleLabel = new Label("Share");
         shareTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
         shareTitleLabel.setLayoutX(x + 15);
-        shareTitleLabel.setLayoutY(x - 70 + 65);
+        shareTitleLabel.setLayoutY(y - 70 + 65);
         shareTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         generateButton = new SimpleButton("Generate", 72, 22);
@@ -379,7 +379,7 @@ public class GUI {
             exportLabel = new Label("Export to");
             exportLabel.setPrefSize(85, 20);
             exportLabel.setLayoutX(x + 360);
-            exportLabel.setLayoutY(x + 20 + 65);
+            exportLabel.setLayoutY(y + 20 + 65);
             exportLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
             File defaultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getParent() + "\\Videos");
@@ -399,7 +399,7 @@ public class GUI {
             folderButton.setPrefSize(36, 26);
             folderButton.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
             folderButton.setLayoutX(x + 425 + 159 + 5);
-            folderButton.setLayoutY(x + 17 + 65);
+            folderButton.setLayoutY(y + 17 + 65);
             folderButton.setOnAction(event -> {
                 JFileChooser fileChooser = new JFileChooser(defaultDir);
                 // Set to directories only for folder selection
@@ -468,43 +468,35 @@ public class GUI {
             {
                 titleLabel = new Label("Title");
 
-                Text newFont = new Text(titleLabel.getText());
-                newFont.setFont(titleLabel.getFont());
-                double textSize = newFont.getBoundsInLocal().getHeight()/2;
+                Text font = new Text(titleLabel.getText());
+                font.setFont(titleLabel.getFont());
+                double textSize = font.getBoundsInLocal().getHeight()/2;
 
                 titleTextField = new TextArea();
                 titleTextField.setPromptText("Add a title that describes your video");
                 titleTextField.setPrefSize(200, 40);
-                titleTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); " +
-                        "-fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
+                titleTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
                 titleTextField.setLayoutX(x + 425);
-                titleTextField.setLayoutY(y + 20 + 65 + 82);
+                titleTextField.setLayoutY(y + 167);
 
                 titleLabel.setPrefSize(85, 20);
                 titleLabel.setLayoutX(x + 360);
-                titleLabel.setLayoutY(y + 20 + 65 + 82 + titleTextField.getHeight()/2 - textSize);
+                titleLabel.setLayoutY(y + 167 + titleTextField.getPrefHeight()/2 - textSize);
                 titleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 descriptionTextField = new TextArea();
                 descriptionTextField.setPromptText("You can add an detailed description of your video here");
                 descriptionTextField.setPrefSize(200, 60);
-                descriptionTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); " +
-                        "-fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
+                descriptionTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
                 descriptionTextField.setLayoutX(x + 425);
                 descriptionTextField.setLayoutY(y + 232);
 
                 descriptionLabel = new Label("Description");
                 descriptionLabel.setPrefSize(85, 20);
                 descriptionLabel.setLayoutX(x + 360);
-                descriptionLabel.setLayoutY(y + 232 + descriptionTextField.getHeight()/2 - textSize);
+                descriptionLabel.setLayoutY(y + 232 + descriptionTextField.getPrefHeight()/2 - textSize);
                 descriptionLabel.setTextFill(javafx.scene.paint.Color.WHITE);
                 descriptionLabel.setStyle("-fx-font-size: 11px;");
-
-                youtubePrivacyLabel = new Label("Visibility");
-                youtubePrivacyLabel.setPrefSize(200, 20);
-                youtubePrivacyLabel.setLayoutX(x + 360);
-                youtubePrivacyLabel.setLayoutY(y + 20 + 65 + 82 + 145);
-                youtubePrivacyLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 String[] privacy = {"Public", "Unlisted", "Private"};
                 youtubePrivacyComboBox = new SimpleComboBox<>(100, 25);
@@ -516,30 +508,41 @@ public class GUI {
                 youtubePrivacyComboBox.getItems().addAll(privacy);
                 youtubePrivacyComboBox.setPrefSize(265, 20);
                 youtubePrivacyComboBox.setLayoutX(x + 425);
-                youtubePrivacyComboBox.setLayoutY(y + 20 + 65 + 82 + 65 + 85);
+                youtubePrivacyComboBox.setLayoutY(y + 317);
+
+                youtubePrivacyLabel = new Label("Visibility");
+                youtubePrivacyLabel.setPrefSize(200, 20);
+                youtubePrivacyLabel.setLayoutX(x + 360);
+                youtubePrivacyLabel.setLayoutY(y + 317 + youtubePrivacyComboBox.getNewHeight()/2 - textSize);
+                youtubePrivacyLabel.setTextFill(javafx.scene.paint.Color.WHITE);
             }
 
             // tiktok
 
             {
-                captionNameLabel = new Label("Caption");
-                captionNameLabel.setPrefSize(85, 20);
-                captionNameLabel.setLayoutX(x + 360);
-                captionNameLabel.setLayoutY(y + 20 + 65 + 82 + 15);
-                captionNameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
                 captionNameTextField = new TextArea();
                 captionNameTextField.setPromptText("Add a title that describes your video");
                 captionNameTextField.setPrefSize(200, 60);
                 captionNameTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); " +
                         "-fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
                 captionNameTextField.setLayoutX(x + 425);
-                captionNameTextField.setLayoutY(y + 20 + 65 + 82);
+                captionNameTextField.setLayoutY(y + 167);
+
+                captionNameLabel = new Label("Caption");
+
+                Text font = new Text(captionNameLabel.getText());
+                font.setFont(captionNameLabel.getFont());
+                double textSize = font.getBoundsInLocal().getHeight()/2;
+
+                captionNameLabel.setPrefSize(85, 20);
+                captionNameLabel.setLayoutX(x + 360);
+                captionNameLabel.setLayoutY(y + 167 + captionNameTextField.getPrefHeight()/2 - textSize);
+                captionNameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 privacyLabel = new Label("Who can watch this video");
                 privacyLabel.setPrefSize(200, 20);
                 privacyLabel.setLayoutX(x + 360);
-                privacyLabel.setLayoutY(y + 62 + 65 + 40 + 82);
+                privacyLabel.setLayoutY(y + 252);
                 privacyLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 String[] privacy = {"Public", "Friends", "Private"};
@@ -552,64 +555,64 @@ public class GUI {
                 privacyComboBox.getItems().addAll(privacy);
                 privacyComboBox.setPrefSize(265, 20);
                 privacyComboBox.setLayoutX(x + 360);
-                privacyComboBox.setLayoutY(y + 85 + 65 + 40 + 82);
+                privacyComboBox.setLayoutY(y + 262 + privacyLabel.getPrefHeight());
 
                 settingsLabel = new Label("Allow users to");
                 settingsLabel.setPrefSize(85, 20);
                 settingsLabel.setLayoutX(x + 360);
-                settingsLabel.setLayoutY(y + 120 + 65 + 40 + 82);
+                settingsLabel.setLayoutY(y  + 307 + privacyLabel.getPrefHeight());
                 settingsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 commentCheckBox = new CheckBox();
                 commentCheckBox.setStyle("-fx-background-color: blue");
                 commentCheckBox.setLayoutX(x + 360);
-                commentCheckBox.setLayoutY(x + 143 + 65 + 40 + 82);
+                commentCheckBox.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
 
                 commentLabel = new Label("Comment");
                 commentLabel.setPrefSize(60, 20);
                 commentLabel.setLayoutX(x + 390);
-                commentLabel.setLayoutY(x + 143 + 65 + 40 + 82);
+                commentLabel.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
                 commentLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 duetCheckBox = new CheckBox();
                 duetCheckBox.setStyle("-fx-background-color: blue");
                 duetCheckBox.setLayoutX(x + 470);
-                duetCheckBox.setLayoutY(x + 143 + 65 + 40 + 82);
+                duetCheckBox.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
 
                 duetLabel = new Label("Duet");
                 duetLabel.setPrefSize(50, 20);
                 duetLabel.setLayoutX(x + 500);
-                duetLabel.setLayoutY(x + 143 + 65 + 40 + 82);
+                duetLabel.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
                 duetLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 stitchCheckBox = new CheckBox();
                 stitchCheckBox.setStyle("-fx-background-color: blue");
                 stitchCheckBox.setLayoutX(x + 560);
-                stitchCheckBox.setLayoutY(x + 143 + 65 + 40 + 82);
+                stitchCheckBox.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
 
                 stitchLabel = new Label("Stitch");
                 stitchLabel.setPrefSize(50, 20);
                 stitchLabel.setLayoutX(x + 590);
-                stitchLabel.setLayoutY(x + 143 + 65 + 40 + 82);
+                stitchLabel.setLayoutY(y  + 330 + privacyLabel.getPrefHeight());
                 stitchLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-                discloseLabel = new Label("Disclose video content");
-                discloseLabel.setPrefSize(150, 20);
-                discloseLabel.setLayoutX(x + 360);
-                discloseLabel.setLayoutY(this.y + 180 + 65 + 44 + 82);
-                discloseLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 discloseSwitch = new Switch(36, 20);
                 discloseSwitch.setBackground(javafx.scene.paint.Color.rgb(45, 45, 45));
                 discloseSwitch.setForeground(javafx.scene.paint.Color.rgb(220, 220, 220));
                 discloseSwitch.setLayoutX(x + 585);
                 discloseSwitch.setActivated(javafx.scene.paint.Color.rgb(3, 181, 193));
-                discloseSwitch.setLayoutY(this.y + 183 + 65 + 40 + 82);
+                discloseSwitch.setLayoutY(this.y + 375 + privacyLabel.getPrefHeight());
+
+                discloseLabel = new Label("Disclose video content");
+                discloseLabel.setPrefSize(150, 20);
+                discloseLabel.setLayoutX(x + 360);
+                discloseLabel.setLayoutY(this.y + 375 + privacyLabel.getPrefHeight() + discloseSwitch.getPrefHeight()/2 - textSize);
+                discloseLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
                 discloseDescribtionLabel = new Label("Turn on to disclose that this video promotes goods or\nservices in exchange for something of value. Your video\ncould promote yourself, a third party, or both.");
                 discloseDescribtionLabel.setPrefSize(250, 60);
                 discloseDescribtionLabel.setLayoutX(x + 360);
-                discloseDescribtionLabel.setLayoutY(this.y + 205 + 65 + 40 + 82);
+                discloseDescribtionLabel.setLayoutY(this.y + 398 + privacyLabel.getPrefHeight() + discloseSwitch.getPrefHeight()/2 - textSize);
                 discloseDescribtionLabel.setTextFill(javafx.scene.paint.Color.rgb(200, 200, 200));
                 discloseDescribtionLabel.setStyle("-fx-font-size: 10px;");
             }
@@ -822,7 +825,7 @@ public class GUI {
         List<Node> parts = new ArrayList<>();
         if (space != null) {
             if (space.equals("TikTok"))
-                parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyComboBox, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel));
+                parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox));
             else if (space.equals("Youtube"))
                 parts.addAll(List.of(titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox));
         }
@@ -1100,12 +1103,14 @@ public class GUI {
 
         usagesLabel = new Label("Usages: " + api.usages(key));
         usagesLabel.setLayoutX(22);
-        usagesLabel.setLayoutY(115);
+        usagesLabel.setLayoutY(65);
+        usagesLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         usagesLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         creditsLabel = new Label("Credits: " + api.credits(key));
         creditsLabel.setLayoutX(22);
-        creditsLabel.setLayoutY(155);
+        creditsLabel.setLayoutY(90);
+        creditsLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         creditsLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
@@ -1439,15 +1444,18 @@ public class GUI {
         return new Group(svgPath(svgX, svgY, color, "M11.5805 4.77604C12.2752 3.00516 12.6226 2.11971 13.349 2.01056C14.0755 1.90141 14.6999 2.64083 15.9488 4.11967L16.2719 4.50226C16.6268 4.9225 16.8042 5.13263 17.0455 5.25261C17.2868 5.37259 17.5645 5.38884 18.1201 5.42135L18.6258 5.45095C20.5808 5.56537 21.5583 5.62258 21.8975 6.26168C22.2367 6.90079 21.713 7.69853 20.6656 9.29403L20.3946 9.7068C20.097 10.1602 19.9482 10.3869 19.908 10.6457C19.8678 10.9045 19.9407 11.1662 20.0866 11.6895L20.2195 12.166C20.733 14.0076 20.9898 14.9284 20.473 15.4325C19.9562 15.9367 19.0081 15.6903 17.1118 15.1975L16.6213 15.07C16.0824 14.93 15.813 14.86 15.5469 14.8999C15.2808 14.9399 15.0481 15.0854 14.5828 15.3763L14.1591 15.6412C12.5215 16.6649 11.7027 17.1768 11.0441 16.8493C10.3854 16.5217 10.3232 15.5717 10.1987 13.6717L10.1665 13.1801C10.1311 12.6402 10.1134 12.3702 9.98914 12.1361C9.86488 11.902 9.64812 11.7302 9.21459 11.3867L8.8199 11.0739C7.29429 9.86506 6.53149 9.26062 6.64124 8.55405C6.751 7.84748 7.66062 7.50672 9.47988 6.8252L9.95054 6.64888C10.4675 6.45522 10.726 6.35839 10.9153 6.17371C11.1046 5.98903 11.2033 5.73742 11.4008 5.23419L11.5805 4.77604Z"), svgPath(svgX, svgY, color, "M5.31003 9.59277C2.87292 11.9213 1.27501 15.8058 2.33125 22.0002C3.27403 19.3966 5.85726 17.2407 8.91219 15.9528C8.80559 15.3601 8.7583 14.6364 8.70844 13.8733L8.66945 13.2782C8.66038 13.1397 8.65346 13.0347 8.64607 12.9443C8.643 12.9068 8.64012 12.8754 8.63743 12.8489C8.61421 12.829 8.58591 12.8053 8.55117 12.7769C8.47874 12.7177 8.39377 12.6503 8.28278 12.5623L7.80759 12.1858C7.11448 11.6368 6.46884 11.1254 6.02493 10.6538C5.77182 10.385 5.48876 10.0304 5.31003 9.59277Z"), svgPath(svgX, svgY, color, "M10.3466 15.4231C10.3415 15.3857 10.3365 15.3475 10.3316 15.3086L10.3877 15.41C10.374 15.4144 10.3603 15.4187 10.3466 15.4231Z"));
     }
     private Group getAccountSVG(javafx.scene.paint.Color color) {
+        Circle circle = new Circle(12, 7.25, 5.73);
+        circle.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        circle.setStroke(color);
+        circle.setStrokeWidth(1.91);
+        SVGPath path = new SVGPath();
+        path.setContent("M1.5,23.48l.37-2.05A10.3,10.3,0,0,1,12,13h0a10.3,10.3,0,0,1,10.13,8.45l.37,2.05");
+        path.setStroke(color);
+        path.setStrokeWidth(1.91);
+        path.setFill(javafx.scene.paint.Color.TRANSPARENT);
         return new Group(
-                svgPath(0, 0, 0.8f, color, "M23,13.4l-4.9,4.9c-0.2,0.2-0.5,0.3-0.7,0.3s-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l4.9-4.9c-1.5-1.2-3.5-2-5.6-2 c-5,0-9,4-9,9s4,9,9,9s9-4,9-9C25,16.9,24.3,14.9,23,13.4z"),
-                svgPath(0, 0, 0.8f, color, "M16,8c-0.6,0-1-0.4-1-1V5c0-0.6,0.4-1,1-1s1,0.4,1,1v2C17,7.6,16.6,8,16,8z"),
-                svgPath(0, 0, 0.8f, color, "M10,9.6c-0.3,0-0.7-0.2-0.9-0.5l-1-1.7C7.9,6.9,8,6.3,8.5,6C9,5.7,9.6,5.9,9.9,6.4l1,1.7c0.3,0.5,0.1,1.1-0.4,1.4 C10.3,9.6,10.2,9.6,10,9.6z"),
-                svgPath(0, 0, 0.8f, color, "M5.6,14c-0.2,0-0.3,0-0.5-0.1l-1.7-1C2.9,12.6,2.7,12,3,11.5c0.3-0.5,0.9-0.6,1.4-0.4l1.7,1c0.5,0.3,0.6,0.9,0.4,1.4 C6.3,13.8,6,14,5.6,14z"),
-                svgPath(0, 0, 0.8f, color, "M4,20H2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S4.6,20,4,20z"),
-                svgPath(0, 0, 0.8f, color, "M30,20h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S30.6,20,30,20z"),
-                svgPath(0, 0, 0.8f, color, "M26.4,14c-0.3,0-0.7-0.2-0.9-0.5c-0.3-0.5-0.1-1.1,0.4-1.4l1.7-1c0.5-0.3,1.1-0.1,1.4,0.4c0.3,0.5,0.1,1.1-0.4,1.4l-1.7,1 C26.7,14,26.6,14,26.4,14z"),
-                svgPath(0, 0, 0.8f, color, "M22,9.6c-0.2,0-0.3,0-0.5-0.1c-0.5-0.3-0.6-0.9-0.4-1.4l1-1.7C22.4,5.9,23,5.7,23.5,6c0.5,0.3,0.6,0.9,0.4,1.4l-1,1.7 C22.7,9.4,22.3,9.6,22,9.6z")
+                path,
+                circle
         );
     }
     private Node[] getGenerateParts() {

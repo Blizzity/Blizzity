@@ -175,6 +175,12 @@ public class SimpleComboBox<T> extends Pane {
             }
         });*/
     }
+    public double getNewHeight() {
+        return height;
+    }
+    public double getNewWidth() {
+        return width;
+    }
     public void mouseEvent(javafx.scene.input.MouseEvent event) {
         int id = selected.getText().isEmpty() ? 1 : 0;
         if (selection != null)
