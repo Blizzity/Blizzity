@@ -27,6 +27,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import wildepizza.com.github.blizzity.gui.javafx.SVGButton;
 import wildepizza.com.github.blizzity.gui.javafx.SimpleButton;
 import wildepizza.com.github.blizzity.gui.javafx.SimpleComboBox;
 import wildepizza.com.github.blizzity.gui.javafx.Switch;
@@ -65,7 +66,6 @@ public class GUI {
     private Point lastClick; // Used for dragging
     public static JSimpleButton closeButton;
     public static JSimpleButton minimizeButton;
-    int account;
     public static Variables variables = new Variables("variables.dat");
     Color color1 = new Color(19, 19, 20);
     public static Color color2 = new Color(30, 31, 32);
@@ -164,7 +164,6 @@ public class GUI {
             shareButton;
     ImageView imageView;
     List<Node> accountParts = new ArrayList<>();
-    private boolean section;
     double x = (double) 1530 /2- (double) 640 /2;
     double y = (double) 1000 / 2 - (double) 670 / 2;
     GUI (API api) {
@@ -439,7 +438,7 @@ public class GUI {
             spaceLabel.setLayoutY(y - 25 + 65);
             spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-            String[] spaces = {"TikTok", "Youtube", "Snapchat"/*, "Instagram", "Facebook"*/};
+            String[] spaces = {"TikTok", "Youtube", "Snapchat"/*, "X", "Instagram", "Facebook"*/};
             spaceComboBox = new SimpleComboBox<>(117, 25);
             spaceComboBox.getItems().addAll(spaces);
             spaceComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
@@ -1321,47 +1320,47 @@ public class GUI {
             }
         });
         Platform.runLater(() -> {
-            javafx.scene.paint.Color selectColor = javafx.scene.paint.Color.rgb(3, 181, 193);
             Group root = new Group();
             Scene scene = new Scene(root, 0, 0);
             scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
-            Rectangle generateSectionButton = new Rectangle(0, 0, 60, 40);
-            generateSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            Group generateSvgGroup = getGenerateSVG(selectColor);
+
             SVGPath accountSvgGroup = getAccountSVG(javafx.scene.paint.Color.WHITE);
-            StackPane generatePane = new StackPane();
-            StackPane accountPane = new StackPane();
-            generatePane.getChildren().addAll(generateSectionButton, generateSvgGroup);
-            generatePane.setOnMouseClicked(mouseEvent -> {
-                if (section) {
+            SVGButton accountPane = new SVGButton(new Group(accountSvgGroup), 40, 40);
+            Group generateSvgGroup = getGenerateSVG(javafx.scene.paint.Color.WHITE);
+            SVGButton generatePane = new SVGButton(generateSvgGroup, 40, 40);
+            generatePane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
+            generatePane.setSelected(true);
+            generatePane.setOnAction(actionEvent -> {
+                if (!generatePane.selected) {
                     root.getChildren().addAll(getGenerateParts());
                     root.getChildren().removeAll(getAccountParts());
-                    accountSvgGroup.setFill(javafx.scene.paint.Color.WHITE);
-                    changeSectionColor(selectColor, generateSvgGroup);
-                    section = false;
+                    accountPane.setSelected(false);
+                    generatePane.setSelected(true);
                 }
             });
             generatePane.setLayoutX(20);
             generatePane.setLayoutY(10);
-            generatePane.setScaleX(0.9);
-            generatePane.setScaleY(0.9);
-            StackPane.setMargin(generateSvgGroup, new javafx.geometry.Insets(0, 0, 0, -5));
+            generateSvgGroup.setScaleX(0.7);
+            generateSvgGroup.setScaleY(0.7);
+            generateSvgGroup.setLayoutX(8);
+            generateSvgGroup.setLayoutY(6);
 
-            Rectangle accountSectionButton = new Rectangle(0, 0, 60, 40);
-            accountSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            accountPane.getChildren().addAll(accountSectionButton, accountSvgGroup);
-            accountPane.setOnMouseClicked(mouseEvent -> {
-                if (!section) {
-                    root.getChildren().addAll(getAccountParts());
+            accountPane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
+            accountPane.setSelected(false);
+            accountPane.setOnAction(actionEvent -> {
+                if (!accountPane.selected) {
                     root.getChildren().removeAll(getGenerateParts());
-                    changeSectionColor(javafx.scene.paint.Color.WHITE, generateSvgGroup);
-                    accountSvgGroup.setFill(selectColor);
-                    section = true;
+                    root.getChildren().addAll(getAccountParts());
+                    accountPane.setSelected(true);
+                    generatePane.setSelected(false);
                 }
             });
-            accountPane.setLayoutX(90);
+            accountPane.setLayoutX(60);
             accountPane.setLayoutY(10);
-            StackPane.setMargin(accountSvgGroup, new javafx.geometry.Insets(-2, 0, 0, -17));
+            accountSvgGroup.setScaleX(0.9);
+            accountSvgGroup.setScaleY(0.9);
+            accountSvgGroup.setLayoutX(10);
+            accountSvgGroup.setLayoutY(7);
 
             root.getChildren().addAll(
                     optionsBackground,
@@ -1419,11 +1418,6 @@ public class GUI {
         Group root = ((Group) scene.getRoot());
         root.getChildren().removeAll(loadingBackground, loading);
         scene.setRoot(root);
-    }
-    private void changeSectionColor(javafx.scene.paint.Color color, Group Svg) {
-        for (Node node : Svg.getChildren()) {
-            ((SVGPath) node).setStroke(color);
-        }
     }
     private Group getGenerateSVG(javafx.scene.paint.Color color) {
         int svgX = 0;

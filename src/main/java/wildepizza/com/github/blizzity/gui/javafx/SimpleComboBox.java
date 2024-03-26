@@ -1,7 +1,6 @@
 package wildepizza.com.github.blizzity.gui.javafx;
 
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -165,15 +164,6 @@ public class SimpleComboBox<T> extends Pane {
                     selected.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2);
                     selected.setText((String) newValue);
                 });
-        /*internalComboBox.getItems().addListener((ListChangeListener<? super T>) change -> {
-            // Update the selected Text whenever the items change
-            if (!change.getList().isEmpty()) {
-                String selectedText = change.getList().get(0).toString();
-                selected.setText(selectedText);
-            } else {
-                selected.setText(""); // Handle the case when there are no items
-            }
-        });*/
     }
     public double getNewHeight() {
         return height;

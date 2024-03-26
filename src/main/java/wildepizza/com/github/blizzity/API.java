@@ -279,6 +279,7 @@ public class API {
                     return true;
                 } else {
                     Wait wait = new Wait();
+                    AtomicReference<String> verifier = new AtomicReference<>();
                     AtomicReference<String> code = new AtomicReference<>();
                     if (space.equals("youtube")) {
                         spark.Spark.get("/google/callback", (req, res) -> {
@@ -324,20 +325,22 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
+                    } else if (space.equals("x")) {
+                        spark.Spark.get("/x/callback", (req, res) -> {
+                            code.set(req.queryParams("oauth_token"));
+                            verifier.set(req.queryParams("oauth_verifier"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
                     } else
                         return false;
 
                     String url = response.body();
-                    /*Engine engine = Engine.newInstance(RenderingMode.HARDWARE_ACCELERATED);
-                    Browser browser = engine.newBrowser();
-                    browser.navigation().loadUrl(url);
-                    BrowserView view = BrowserView.newInstance(browser);
-                    BorderPane root = new BorderPane(view);
-                    Scene scene = new Scene(root, 800, 600);
-                    JFXPanel panel = new JFXPanel();
-                    panel.setScene(scene);
-                    frame.add(panel);
-                    frame.pack();*/
 
                     System.out.println(url);
                     Desktop.getDesktop().browse(URI.create(url));
@@ -345,7 +348,7 @@ public class API {
                     wait.waitForVariable();
                     System.out.println(code.get());
                     spark.Spark.stop();
-                    apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get();
+                    apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get() + (verifier.get() == null ? "" : "&verifier=" + verifier.get());
                     client = HttpClient.newHttpClient();
                     request = HttpRequest.newBuilder()
                             .uri(URI.create(apiUrl))

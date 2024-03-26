@@ -1,8 +1,6 @@
 package wildepizza.com.github.blizzity.gui.listeners;
 
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Node;
-import wildepizza.com.github.blizzity.gui.javafx.SimpleComboBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,8 +33,8 @@ public class ScreenListener {
         };
     }
 
-    private static List<JPanel> jPanelList = new ArrayList<>();
-    private static List<JFXPanel> jfxPanelList = new ArrayList<>();
+    private static final List<JPanel> jPanelList = new ArrayList<>();
+    private static final List<JFXPanel> jfxPanelList = new ArrayList<>();
 
     public static void addMouseListener(JPanel panel, int x, int y) {
         panel.addMouseMotionListener(getMouseListener(x, y));

@@ -1,40 +1,23 @@
 package wildepizza.com.github.blizzity.gui.javafx;
 
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
-
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 @SuppressWarnings("unused")
 public class SVGButton extends Pane {
     double height;
     double width;
-    private Color svgColor = Color.WHITE;
-    private Color selectedSvgColor = Color.BLUE;
-    private Color textFillColor = Color.BLACK;
-    private boolean selected;
-    private Rectangle rectangle;
+    public boolean selected = false;
+    private final Rectangle rectangle;
+    private final Group group;
     public void setBackgroundColor(Color color) {
         rectangle.setFill(color);
-    }
-    public void setSVGColor(Color color) {
-        svgColor = color;
-    }
-    public void setSelectedSVGColor(Color color) {
-        selectedSvgColor = color;
     }
     private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
         @Override
@@ -52,37 +35,52 @@ public class SVGButton extends Pane {
             return "onAction";
         }
     };
-    private void initializeComboBox(Group group, int width, int height) {
+    public SVGButton(Group group, int width, int height) {
+        this.group = group;
         this.height = height;
         this.width = width;
-        Rectangle generateSectionButton = new Rectangle(0, 0, 60, 40);
+        Rectangle generateSectionButton = new Rectangle(0, 0, width, height);
         generateSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
-        rectangle = new Rectangle(width, height);
+        rectangle = new Rectangle(width-10, height-10);
         rectangle.setFill(Color.WHITE);
         rectangle.setArcWidth(10);
         rectangle.setArcHeight(10);
+        rectangle.setLayoutX(5);
+        rectangle.setLayoutY(5);
 
         getChildren().addAll(generateSectionButton, group);
         setOnMouseEntered(event -> {
-
+            if (!selected) {
+                getChildren().add(rectangle);
+                group.toFront();
+            }
         });
         setOnMouseExited(event -> {
-
+            if (!selected) {
+                getChildren().remove(rectangle);
+                group.toFront();
+            }
         });
         setOnMouseClicked(event -> {
-            changeSvgColor(group, selectedSvgColor);
             onAction.getValue().handle(new ActionEvent());
+            selected = true;
         });
     }
-    public void changeSvgColor(Group group, Color color) {
-        if (((SVGPath) group.getChildren().get(0)).getFill().equals(Color.TRANSPARENT))
-            for (Node node : group.getChildren()) {
-                ((SVGPath) node).setStroke(color);
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        if (selected) {
+            if (!getChildren().contains(rectangle)) {
+                getChildren().add(rectangle);
+                group.toFront();
             }
-        else
-            ((SVGPath) group.getChildren().get(0)).setFill(javafx.scene.paint.Color.WHITE);
+        } else {
+            getChildren().remove(rectangle);
+        }
+
     }
+
     public final void setOnAction(EventHandler<ActionEvent> var1) {
         this.onAction.set(var1);
     }
