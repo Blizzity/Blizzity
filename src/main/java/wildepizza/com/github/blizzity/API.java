@@ -3,9 +3,11 @@ package wildepizza.com.github.blizzity;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+@SuppressWarnings("deprecation")
 public class API {
      String serverUrl;
     API(String serverUrl) {
@@ -36,7 +39,7 @@ public class API {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             return false;
         }
     }
@@ -56,7 +59,7 @@ public class API {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             return false;
         }
     }
@@ -76,7 +79,7 @@ public class API {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             return false;
         }
     }
@@ -104,7 +107,7 @@ public class API {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             return null;
         }
     }
@@ -181,7 +184,7 @@ public class API {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
         }
         return null;
     }
@@ -204,7 +207,7 @@ public class API {
                 System.out.println("Response Body: " + response.body());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
         }
     }
     public void tiktokPost(String authToken, String video, String title, String privacy_level, boolean disable_duet, boolean disable_comment, boolean disable_stitch, int video_cover_timestamp_ms) {
@@ -227,7 +230,7 @@ public class API {
                 System.out.println("Response Body: " + response.body());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
         }
     }
     public String usages(String key) {
@@ -241,7 +244,7 @@ public class API {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return response.body();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             assert response != null;
             System.out.println("Response Code: " + response.statusCode());
             System.out.println("Response Body: " + response.body());
@@ -259,7 +262,7 @@ public class API {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return response.body();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             assert response != null;
             System.out.println("Response Code: " + response.statusCode());
             System.out.println("Response Body: " + response.body());
@@ -281,8 +284,8 @@ public class API {
                     Wait wait = new Wait();
                     AtomicReference<String> verifier = new AtomicReference<>();
                     AtomicReference<String> code = new AtomicReference<>();
-                    if (space.equals("youtube")) {
-                        spark.Spark.get("/google/callback", (req, res) -> {
+                    switch (space) {
+                        case "youtube" -> spark.Spark.get("/google/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -292,8 +295,7 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
-                    } else if (space.equals("tiktok")) {
-                        spark.Spark.get("/tiktok/callback", (req, res) -> {
+                        case "tiktok" -> spark.Spark.get("/tiktok/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -303,8 +305,7 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
-                    } else if (space.equals("snapchat")) {
-                        spark.Spark.get("/snapchat/callback", (req, res) -> {
+                        case "snapchat" -> spark.Spark.get("/snapchat/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -314,8 +315,7 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
-                    } else if (space.equals("facebook")) {
-                        spark.Spark.get("/facebook/callback", (req, res) -> {
+                        case "facebook" -> spark.Spark.get("/facebook/callback", (req, res) -> {
                             code.set(req.queryParams("code"));
                             res.redirect("https://blizzity.de?close=true");
                             wait.setVariable(true);
@@ -325,8 +325,7 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
-                    } else if (space.equals("x")) {
-                        spark.Spark.get("/x/callback", (req, res) -> {
+                        case "x" -> spark.Spark.get("/x/callback", (req, res) -> {
                             code.set(req.queryParams("oauth_token"));
                             verifier.set(req.queryParams("oauth_verifier"));
                             res.redirect("https://blizzity.de?close=true");
@@ -337,8 +336,10 @@ public class API {
                                 return "No code parameter found in the URL";
                             }
                         });
-                    } else
-                        return false;
+                        default -> {
+                            return false;
+                        }
+                    }
 
                     String url = response.body();
 
@@ -362,34 +363,8 @@ public class API {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.exception(e);
             return false;
-        }
-    }
-    public static void openURLInNewWindow(String url, int width, int height) {
-        try {
-            if (Desktop.isDesktopSupported()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    URI uri = new URI(url);
-                    desktop.browse(uri);
-
-                    // Get screen size
-                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-                    // Calculate position for the window to be centered
-                    int x = (screenSize.width - width) / 2;
-                    int y = (screenSize.height - height) / 2;
-
-                    // Create and set the custom size for the frame
-                    Frame frame = new Frame();
-                    frame.setSize(width, height);
-                    frame.setLocation(x, y);
-                    frame.setVisible(true);
-                }
-            }
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
         }
     }
 }

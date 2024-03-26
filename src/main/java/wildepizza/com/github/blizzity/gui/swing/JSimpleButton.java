@@ -3,7 +3,6 @@ package wildepizza.com.github.blizzity.gui.swing;
 import java.awt.*;
 
 public class JSimpleButton extends JHoverButton {
-    boolean a;
     public JSimpleButton(String text) {
         super();
         setText(text);

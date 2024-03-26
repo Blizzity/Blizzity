@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+    <option name="SCOPE_TYPE" value="8" />
+    <option name="CUSTOM_SCOPE_NAME" value="Module 'Blizzity'" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Logger.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SVGButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SVGButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Double.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Double.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/CustomAlignedTextField.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedPasswordField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedPasswordField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedTextField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedTextField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JSimpleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JSimpleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/RoundedBorder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/RoundedRect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/utils/StringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/utils/StringUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +89,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/17.0.6/54e98c9eccf17a9359ba83fb45cc15b28936814d/javafx-controls-17.0.6-sources.jar!/javafx/scene/control/ButtonBase.java" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -98,6 +112,7 @@
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "F:/Github/BlizzityCore",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class StringUtils {
     public static List<String[]> parseData(List<String> inputData) {
         List<String[]> result = new ArrayList<>();

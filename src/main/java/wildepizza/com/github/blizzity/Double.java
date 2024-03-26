@@ -1,5 +1,6 @@
 package wildepizza.com.github.blizzity;
 
+@SuppressWarnings("unused")
 public class Double<K, V> {
     private K key;
     private V value;

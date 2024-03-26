@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class JRoundedPasswordField extends JTextField {
     private final int arcWidth;
     private final int arcHeight;
@@ -66,14 +67,14 @@ public class JRoundedPasswordField extends JTextField {
     }
 
     private MouseAdapter getMouseAdapter() { //TODO fix selection system
-        MouseAdapter mouseHandler = new MouseAdapter() {
+        return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 Point point = e.getPoint();
                 point.x -= alignmentOffset;
                 int clickOffset = (point.x+6)/10;
                 dragStart = point;
-                adjustCaretPosition(e, clickOffset);
+                adjustCaretPosition(clickOffset);
                 repaint();
             }
 
@@ -94,13 +95,12 @@ public class JRoundedPasswordField extends JTextField {
                     }
                 }
             }
-            private void adjustCaretPosition(MouseEvent e, int clickOffset) {
+            private void adjustCaretPosition(int clickOffset) {
                 int textLength = getText().length();
                 int adjustedOffset = Math.min(Math.max(clickOffset, 0), textLength);
                 setCaretPosition(adjustedOffset);
             }
         };
-        return mouseHandler;
     }
 
     public int getAlignmentOffset() {

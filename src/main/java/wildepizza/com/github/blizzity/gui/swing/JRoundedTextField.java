@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class JRoundedTextField extends JTextField {
     private final int arcWidth;
     private final int arcHeight;
@@ -61,7 +62,7 @@ public class JRoundedTextField extends JTextField {
                 point.x -= alignmentOffset;
                 int clickOffset = viewToModel2D(point);
                 dragStart = point;
-                adjustCaretPosition(e, clickOffset);
+                adjustCaretPosition(clickOffset);
                 repaint();
             }
 
@@ -81,7 +82,7 @@ public class JRoundedTextField extends JTextField {
                     }
                 }
             }
-            private void adjustCaretPosition(MouseEvent e, int clickOffset) {
+            private void adjustCaretPosition(int clickOffset) {
                 int textLength = getText().length();
                 int adjustedOffset = Math.min(Math.max(clickOffset, 0), textLength);
                 setCaretPosition(adjustedOffset);
