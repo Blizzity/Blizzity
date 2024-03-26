@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SVGButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,6 +106,7 @@
       <recent name="F:\Github\Blizzity\lib" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="wildepizza.com.github.blizzity.gui.javafx" />
       <recent name="wildepizza.com.github.blizzity" />
       <recent name="wildepizza.com.github.blizzity.gui" />
       <recent name="wildepizza.com.github.blizzity.custom" />
