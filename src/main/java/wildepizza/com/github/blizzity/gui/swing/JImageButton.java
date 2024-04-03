@@ -5,9 +5,9 @@ import java.awt.*;
 import wildepizza.com.github.blizzity.GUI;
 
 public class JImageButton extends JHoverButton {
-    private final int arcWidth;
-    private final int arcHeight;
-    public JImageButton(int arcWidth, int arcHeight, ImageIcon icon) {
+    private final double arcWidth;
+    private final double arcHeight;
+    public JImageButton(double arcWidth, double arcHeight, ImageIcon icon) {
         super();
         this.setIcon(icon);
         this.arcWidth = arcWidth;
@@ -18,19 +18,24 @@ public class JImageButton extends JHoverButton {
     protected void paintComponent(Graphics g, boolean color) {
         int width = getWidth();
         int height = getHeight();
-        int size = Math.max(getIcon().getIconWidth(), getIcon().getIconHeight());
+        double multiplier = (double) Math.min(height, width) /40;
+        double size = Math.max(getIcon().getIconWidth(), getIcon().getIconHeight())*multiplier;
         g.setColor(GUI.color2);
         g.fillRect(0, 0, width, height);
         if (color)
             g.setColor(this.hoverBoxColor);
         else
             g.setColor(getBackground());
-        g.fillRoundRect(width/2-size/2 - 5, height/2-size/2 - 5, size+10, size+10, arcWidth, arcHeight);
+        g.fillRoundRect((int) (width/2-size/2 - 5*multiplier), (int) (height/2-size/2 - 5*multiplier), (int) (size+10*multiplier), (int) (size+10*multiplier), (int) arcWidth, (int) arcHeight);
         Image image = ((ImageIcon) getIcon()).getImage();
+        int iconWidth = getIcon().getIconWidth();
+        int iconHeight = getIcon().getIconHeight();
+        if (multiplier != 1)
+            image = image.getScaledInstance((int) (iconWidth*multiplier), (int) (iconHeight*multiplier), Image.SCALE_REPLICATE);
         if (color)
             g.setColor(this.hoverTextColor);
         else
             g.setColor(getForeground());
-        g.drawImage(image, width/2-getIcon().getIconWidth()/2, height/2-getIcon().getIconHeight()/2, this);
+        g.drawImage(image, (int) (width/2-iconWidth*multiplier/2), (int) (height/2-iconHeight*multiplier/2), this);
     }
 }

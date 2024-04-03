@@ -9,6 +9,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 
@@ -34,10 +35,13 @@ public class SimpleComboBox<T> extends Pane {
     private Color selectedBackground = Color.BLACK;
 
     public SimpleComboBox() {
-        initializeComboBox(100, 30);
+        initializeComboBox(100, 30, 10);
     }
-    public SimpleComboBox(int width, int height) {
-        initializeComboBox(width, height);
+    public SimpleComboBox(double width, double height) {
+        initializeComboBox(width, height, 10);
+    }
+    public SimpleComboBox(double width, double height, double arc) {
+        initializeComboBox(width, height, arc);
     }
     public void setBackgroundColor(Color color) {
         rectangle.setFill(color);
@@ -56,28 +60,31 @@ public class SimpleComboBox<T> extends Pane {
     public void setSelectedStrokeColor(Color color) {
         selectedStrokeColor = color;
     }
-    private void initializeComboBox(int width, int height) {
+    private void initializeComboBox(double width, double height, double arc) {
         internalComboBox = new ComboBox<>();
         this.height = height;
         this.width = width;
+        double multiplier = Math.min(height, width)/25;
         rectangle = new Rectangle(width, height);
         rectangle.setFill(Color.WHITE);
-        rectangle.setArcWidth(10);
-        rectangle.setArcHeight(10);
+        rectangle.setArcWidth(arc);
+        rectangle.setArcHeight(arc);
         rectangle.setStroke(strokeColor);
         rectangle.setStrokeWidth(1);
 
         selected = new Label();
-        selected.setLayoutX(10);
+        Font font = new Font(selected.getFont().getFamily(), selected.getFont().getSize()*multiplier);
+        selected.setFont(font);
+        selected.setLayoutX(10*multiplier);
 
         arrow = new Polygon();
         arrow.getPoints().addAll(
-                width-10.0, height/2-2.5,
-                width-15.0, height/2+2.5,
-                width-20.0, height/2-2.5,
-                width-21.0, height/2-1.5,
-                width-15.0, height/2+4.5,
-                width-9.0, height/2-1.5
+                width-10.0*multiplier, height/2-2.5*multiplier,
+                width-15.0*multiplier, height/2+2.5*multiplier,
+                width-20.0*multiplier, height/2-2.5*multiplier,
+                width-21.0*multiplier, height/2-1.5*multiplier,
+                width-15.0*multiplier, height/2+4.5*multiplier,
+                width-9.0*multiplier, height/2-1.5*multiplier
         );
         arrow.setFill(Color.rgb(147,163,170));
 
@@ -146,8 +153,9 @@ public class SimpleComboBox<T> extends Pane {
                         index++;
                         Label itemLabel = new Label((String) item);
                         itemLabel.setTextFill(textFillColor);
+                        itemLabel.setFont(font);
                         Text newFont = new Text((String) item);
-                        newFont.setFont(selected.getFont());
+                        newFont.setFont(font);
                         itemLabel.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2 + index * height);
                         itemLabel.setLayoutX(selected.getLayoutX());
                         getChildren().add(itemLabel);

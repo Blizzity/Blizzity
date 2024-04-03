@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -15,7 +16,7 @@ public class SVGButton extends Pane {
     double width;
     public boolean selected = false;
     private final Rectangle rectangle;
-    private final Group group;
+    private final Node group;
     public void setBackgroundColor(Color color) {
         rectangle.setFill(color);
     }
@@ -35,19 +36,21 @@ public class SVGButton extends Pane {
             return "onAction";
         }
     };
-    public SVGButton(Group group, int width, int height) {
+    public SVGButton(Node group, double width, double height, double arc) {
         this.group = group;
         this.height = height;
         this.width = width;
         Rectangle generateSectionButton = new Rectangle(0, 0, width, height);
         generateSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
-        rectangle = new Rectangle(width-10, height-10);
+        double multiplier = Math.min(height, width)/40;
+
+        rectangle = new Rectangle(width-10*multiplier, height-10*multiplier);
         rectangle.setFill(Color.WHITE);
-        rectangle.setArcWidth(10);
-        rectangle.setArcHeight(10);
-        rectangle.setLayoutX(5);
-        rectangle.setLayoutY(5);
+        rectangle.setArcWidth(arc);
+        rectangle.setArcHeight(arc);
+        rectangle.setLayoutX(5*multiplier);
+        rectangle.setLayoutY(5*multiplier);
 
         getChildren().addAll(generateSectionButton, group);
         setOnMouseEntered(event -> {

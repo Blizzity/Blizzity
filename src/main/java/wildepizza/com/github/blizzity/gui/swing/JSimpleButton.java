@@ -13,6 +13,7 @@ public class JSimpleButton extends JHoverButton {
         int width = getWidth();
         int height = getHeight();
         String text = getText();
+        double multiplier = (double) Math.min(height, width) /40;
 
         // Calculate baseline for text drawing to align text properly
         int baseline = getBaseline(width, height);
@@ -25,14 +26,14 @@ public class JSimpleButton extends JHoverButton {
             g.setColor(hoverTextColor);
         else
             g.setColor(getForeground());
-        int size = 10;
+        double size = 10*multiplier;
         if (text.equals("X")) {
             // Draw the "X" lines
-            g.drawLine(width / 2 - size / 2, height / 2 - size / 2, width / 2 + size / 2, height / 2 + size / 2);
-            g.drawLine(width / 2 - size / 2, height / 2 + size / 2, width / 2 + size / 2, height / 2 - size / 2);
+            g.drawLine((int) (width / 2 - size / 2), (int) (height / 2 - size / 2), (int) (width / 2 + size / 2), (int) (height / 2 + size / 2));
+            g.drawLine((int) (width / 2 - size / 2), (int) (height / 2 + size / 2), (int) (width / 2 + size / 2), (int) (height / 2 - size / 2));
         } else if (text.equals("-")) {
             // Draw the "-" lines
-            g.drawLine(width / 2 - size / 2, height / 2, width / 2 + size / 2, height / 2);
+            g.drawLine((int) (width / 2 - size / 2), height / 2, (int) (width / 2 + size / 2), height / 2);
         } else {
             g.drawString(text, getWidth()/2-getFontMetrics(getFont()).stringWidth(getText())/2, baseline);
         }

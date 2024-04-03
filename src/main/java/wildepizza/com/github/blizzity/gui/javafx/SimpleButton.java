@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 
@@ -25,14 +26,20 @@ public class SimpleButton extends Pane {
     private boolean selected;
     private Rectangle rectangle;
     private Label label;
+    public SimpleButton(String text, double arc) {
+        initializeComboBox(text, 100, 30, arc);
+    }
     public SimpleButton(String text) {
-        initializeComboBox(text, 100, 30);
+        initializeComboBox(text, 100, 30, 10);
     }
     public SimpleButton() {
-        initializeComboBox("", 100, 30);
+        initializeComboBox("", 100, 30, 10);
     }
-    public SimpleButton(String text, int width, int height) {
-        initializeComboBox(text, width, height);
+    public SimpleButton(String text, double width, double height) {
+        initializeComboBox(text, width, height, 10);
+    }
+    public SimpleButton(String text, double width, double height, double arc) {
+        initializeComboBox(text, width, height, arc);
     }
     public void setTextFill(Color color) {
         label.setTextFill(color);
@@ -64,22 +71,24 @@ public class SimpleButton extends Pane {
             return "onAction";
         }
     };
-    private void initializeComboBox(String text, int width, int height) {
+    private void initializeComboBox(String text, double width, double height, double arc) {
         this.height = height;
         this.width = width;
         rectangle = new Rectangle(width, height);
         rectangle.setFill(Color.WHITE);
-        rectangle.setArcWidth(10);
-        rectangle.setArcHeight(10);
+        rectangle.setArcWidth(arc);
+        rectangle.setArcHeight(arc);
         rectangle.setStroke(strokeColor);
         rectangle.setStrokeWidth(1);
 
         label = new Label(text);
         label.setTextFill(textFillColor);
-        Text font = new Text(text);
-        font.setFont(label.getFont());
-        label.setLayoutY((height - font.getBoundsInLocal().getHeight()) /2);
-        label.setLayoutX((width - font.getBoundsInLocal().getWidth()) /2);
+        Font font = new Font(label.getFont().getFamily(), label.getFont().getSize()*(Math.min(height, width)/22));
+        label.setFont(font);
+        Text fontText = new Text(text);
+        fontText.setFont(font);
+        label.setLayoutY((height - fontText.getBoundsInLocal().getHeight()) /2);
+        label.setLayoutX((width - fontText.getBoundsInLocal().getWidth()) /2);
 
         getChildren().addAll(rectangle, label);
         ScreenListener.addMouseListener(new MouseListener() {
@@ -128,5 +137,15 @@ public class SimpleButton extends Pane {
     }
     public final void setOnAction(EventHandler<ActionEvent> var1) {
         this.onAction.set(var1);
+    }
+    public final Font getFont() {
+        return label.getFont();
+    }
+    public final void setFont(Font font) {
+        label.setFont(font);
+        Text fontText = new Text(label.getText());
+        fontText.setFont(label.getFont());
+        label.setLayoutY((height - fontText.getBoundsInLocal().getHeight()) /2);
+        label.setLayoutX((width - fontText.getBoundsInLocal().getWidth()) /2);
     }
 }
