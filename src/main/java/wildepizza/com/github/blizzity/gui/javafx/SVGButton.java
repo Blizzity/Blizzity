@@ -4,11 +4,12 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
 public class SVGButton extends Pane {
@@ -40,8 +41,8 @@ public class SVGButton extends Pane {
         this.group = group;
         this.height = height;
         this.width = width;
-        Rectangle generateSectionButton = new Rectangle(0, 0, width, height);
-        generateSectionButton.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        Rectangle hitbox = new Rectangle(0, 0, width, height);
+        hitbox.setFill(javafx.scene.paint.Color.TRANSPARENT);
 
         double multiplier = Math.min(height, width)/40;
 
@@ -52,20 +53,23 @@ public class SVGButton extends Pane {
         rectangle.setLayoutX(5*multiplier);
         rectangle.setLayoutY(5*multiplier);
 
-        getChildren().addAll(generateSectionButton, group);
-        setOnMouseEntered(event -> {
-            if (!selected) {
+        getChildren().addAll(group, hitbox);
+        hitbox.setOnMouseEntered(event -> {
+            if (!selected && !getChildren().contains(rectangle)) {
                 getChildren().add(rectangle);
                 group.toFront();
+                hitbox.toFront();
             }
         });
-        setOnMouseExited(event -> {
-            if (!selected) {
+        hitbox.setOnMouseExited(event -> {
+            if (!selected && getChildren().contains(rectangle) && (!group.isHover() || !hitbox.isHover() || !rectangle.isHover())) {
                 getChildren().remove(rectangle);
                 group.toFront();
+                hitbox.toFront();
             }
+
         });
-        setOnMouseClicked(event -> {
+        hitbox.setOnMouseClicked(event -> {
             onAction.getValue().handle(new ActionEvent());
             selected = true;
         });

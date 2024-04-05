@@ -233,6 +233,24 @@ public class API {
             Logger.exception(e);
         }
     }
+    public boolean admin(String key) {
+        String apiUrl = serverUrl + "/api/admin?key=" + URLEncoder.encode(key);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return Boolean.parseBoolean(response.body());
+        } catch (Exception e) {
+            Logger.exception(e);
+            assert response != null;
+            System.out.println("Response Code: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+            return false;
+        }
+    }
     public String usages(String key) {
         String apiUrl = serverUrl + "/api/usages?key=" + URLEncoder.encode(key);
         HttpClient client = HttpClient.newHttpClient();
