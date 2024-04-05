@@ -167,7 +167,6 @@ public class GUI {
             exportButton,
             shareButton;
     ImageView imageView;
-    List<Node> accountParts = new ArrayList<>();
     int screenWidth = 1530;
     int screenHeight = 1000;
     double x = (double) screenWidth /2- (double) 640 /2;
@@ -1112,17 +1111,15 @@ public class GUI {
         frame.pack(); // Adjust frame size to fit components
         frame.setVisible(true);
     }
-    boolean first = true;
+    boolean init = true;
     Scene scene;
     private void showContentPanel(String key) {
-        if (first) {
-            first = false;
-//            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-//            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-            int frameWidth = (int) (1530 * sizeMultiplier);
-            int frameHeight = (int) (960 * sizeMultiplier);
-            int x = (screenWidth - frameWidth) / 2;
-            int y = (screenHeight - frameHeight) / 2;
+        if (init) {
+            init = false;
+            int frameWidth = (int) (screenWidth * sizeMultiplier);
+            int frameHeight = (int) ((screenHeight-40) * sizeMultiplier);
+            int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frameWidth) / 2;
+            int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frameHeight) / 2;
 
             int videoWidth = 1080;
             int videoHeight = 1920;
@@ -1461,13 +1458,11 @@ public class GUI {
             });
             // Set the location of the JFrame
             frame.setLocation(x, y);
-            frame.pack(); // Adjust frame size to fit components
-            frame.setVisible(true);
         } else {
             frame.add(jfxPanel); //TODO fix white screen
-            frame.pack();
-            frame.setVisible(true);
         }
+        frame.pack(); // Adjust frame size to fit components
+        frame.setVisible(true);
     }
 
     Rectangle loading;
