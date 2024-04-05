@@ -21,9 +21,6 @@ public class Variables {
             }
             try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(new File(filePath).getAbsoluteFile()))) {
                 return (HashMap<String, Object>) inputStream.readObject();
-            } catch (FileNotFoundException e) {
-                System.out.println("Variable file not found. Creating new variable file.");
-                return new HashMap<>();
             } catch (IOException | ClassNotFoundException e) {
                 return new HashMap<>();
             }

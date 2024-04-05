@@ -34,8 +34,7 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("success");
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return false;
             }
         } catch (Exception e) {
@@ -54,8 +53,7 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("success");
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return false;
             }
         } catch (Exception e) {
@@ -74,8 +72,7 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("true");
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return false;
             }
         } catch (Exception e) {
@@ -102,8 +99,7 @@ public class API {
                 }
                 return result;
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return null;
             }
         } catch (Exception e) {
@@ -169,18 +165,15 @@ public class API {
                     outputStream.close();
                     inputStream.close();
 
-                    System.out.println("Video file received successfully.");
                     connection.disconnect();
                     return new Double<>(outputFile, video);
                 } else {
-                    System.out.println("Response Code: " + connection.getResponseCode());
-                    System.out.println("Response Body: " + connection.getResponseMessage());
+                    Logger.response(response);
                     connection.disconnect();
                     return null;
                 }
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return null;
             }
         } catch (Exception e) {
@@ -200,11 +193,8 @@ public class API {
 
             // Get response code
             int responseCode = response.statusCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                System.out.println("Successfully posted video: " + apiUrl);
-            } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Logger.response(response);
             }
         } catch (Exception e) {
             Logger.exception(e);
@@ -223,11 +213,8 @@ public class API {
 
             // Get response code
             int responseCode = response.statusCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                System.out.println("Successfully posted video: " + apiUrl);
-            } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Logger.response(response);
             }
         } catch (Exception e) {
             Logger.exception(e);
@@ -264,8 +251,7 @@ public class API {
         } catch (Exception e) {
             Logger.exception(e);
             assert response != null;
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
+            Logger.response(response);
             return null;
         }
     }
@@ -282,8 +268,7 @@ public class API {
         } catch (Exception e) {
             Logger.exception(e);
             assert response != null;
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
+            Logger.response(response);
             return null;
         }
     }
@@ -360,12 +345,9 @@ public class API {
                     }
 
                     String url = response.body();
-
-                    System.out.println(url);
                     Desktop.getDesktop().browse(URI.create(url));
 
                     wait.waitForVariable();
-                    System.out.println(code.get());
                     spark.Spark.stop();
                     apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get() + (verifier.get() == null ? "" : "&verifier=" + verifier.get());
                     client = HttpClient.newHttpClient();
@@ -376,8 +358,7 @@ public class API {
                     return response.body().equals("success");
                 }
             } else {
-                System.out.println("Response Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
+                Logger.response(response);
                 return false;
             }
         } catch (Exception e) {

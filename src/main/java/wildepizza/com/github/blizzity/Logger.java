@@ -1,5 +1,6 @@
 package wildepizza.com.github.blizzity;
 
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 
 public class Logger {
@@ -9,5 +10,9 @@ public class Logger {
                 + "\nMessage" + exception.getMessage()
                 + "\nStacktrace:" + Arrays.toString(exception.getStackTrace())
         );
+    }
+    public static void response(HttpResponse<String> response) {
+        System.out.println("Response Code: " + response.statusCode());
+        System.out.println("Response Body: " + response.body());
     }
 }

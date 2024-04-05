@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"SameParameterValue", "deprecation"})
 public class GUI {
-    public static double sizeMultiplier = 0.8;
+    public static double sizeMultiplier = 1;
     public static JFrame frame;
     private SVGButton selectedSectionButton;
     private JPanel panel;
@@ -1117,9 +1117,9 @@ public class GUI {
     private void showContentPanel(String key) {
         if (first) {
             first = false;
-            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-            int frameWidth = (int) (screenWidth * sizeMultiplier);
+//            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+//            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+            int frameWidth = (int) (1530 * sizeMultiplier);
             int frameHeight = (int) (960 * sizeMultiplier);
             int x = (screenWidth - frameWidth) / 2;
             int y = (screenHeight - frameHeight) / 2;
@@ -1459,7 +1459,6 @@ public class GUI {
                 frame.add(jfxPanel);
                 frame.pack();
             });
-
             // Set the location of the JFrame
             frame.setLocation(x, y);
             frame.pack(); // Adjust frame size to fit components
