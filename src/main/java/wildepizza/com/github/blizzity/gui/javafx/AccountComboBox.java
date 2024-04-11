@@ -1,7 +1,11 @@
 package wildepizza.com.github.blizzity.gui.javafx;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -11,8 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import wildepizza.com.github.blizzity.gui.listeners.ScreenListener;
 
 import java.awt.event.MouseEvent;
@@ -21,21 +23,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings("unused")
 public class AccountComboBox extends Pane {
-    private ComboBox<Map<String, String>> internalComboBox;
-    private Rectangle rectangle;
+    private final ComboBox<Map<String, String>> internalComboBox;
+    private final Rectangle rectangle;
     private Node selection;
-    private final List<Label> items = new ArrayList<>();
-    private Polygon arrow;
+    private final List<Pane> items = new ArrayList<>();
+    private final Polygon arrow;
     double height;
     double width;
     private Map<String, String> selected;
+    private Pane plusShape;
     private Pane selectedPane;
-    private double sizeMultiplier = 1;
+    private final double sizeMultiplier;
     private Color strokeColor = Color.WHITE;
     private Color selectedStrokeColor = Color.BLUE;
-    private Color textFillColor = Color.BLACK;
     private Color selectedBackground = Color.BLACK;
     public void setBackgroundColor(Color color) {
         rectangle.setFill(color);
@@ -56,30 +58,40 @@ public class AccountComboBox extends Pane {
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(50);
         imageView.setFitWidth(50);
-        imageView.setLayoutX(360 * sizeMultiplier);
-        imageView.setLayoutY(20 + 65 * sizeMultiplier);
+        imageView.setLayoutX(10 * sizeMultiplier);
+        imageView.setLayoutY(10 * sizeMultiplier);
         Circle clip = new Circle(imageView.getFitHeight() / 2, imageView.getFitHeight() / 2, imageView.getFitHeight() / 2);
         imageView.setClip(clip);
         Label displayName = new Label(info.get("display_name"));
         displayName.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
         displayName.setPrefSize(85 * sizeMultiplier, 20 * sizeMultiplier);
-        displayName.setLayoutX(425 * sizeMultiplier);
-        displayName.setLayoutY(20 + 55 + imageView.getFitHeight() / 2);
+        displayName.setLayoutX(75 * sizeMultiplier);
+        displayName.setLayoutY(imageView.getFitHeight() / 2);
         displayName.setTextFill(javafx.scene.paint.Color.WHITE);
         Label username = new Label("@" + info.get("username"));
         username.setStyle("-fx-font-weight: bold; -fx-font-size: 9px;");
         username.setPrefSize(85 * sizeMultiplier, 20 * sizeMultiplier);
-        username.setLayoutX(425 * sizeMultiplier);
-        username.setLayoutY(20 + 55 + 10 + imageView.getFitHeight() / 2);
+        username.setLayoutX(75 * sizeMultiplier);
+        username.setLayoutY(10 * sizeMultiplier + imageView.getFitHeight() / 2);
         username.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
         pane.getChildren().addAll(imageView, displayName, username);
         return pane;
     }
     public AccountComboBox(List<Map<String, String>> data, double width, double height, double arc) {
+        sizeMultiplier = width/265;
         internalComboBox = new ComboBox<>();
+        internalComboBox.getItems().setAll(data);
+        for (Map<String, String> entry : data) {
+            if (entry.get("selected").equals("true")) {
+                selected = internalComboBox.getItems().get(data.indexOf(entry));
+                break;
+            }
+        }
+        if (selected == null)
+            selected = internalComboBox.getItems().get(0);
+        internalComboBox.getSelectionModel().select(selected);
         this.height = height;
         this.width = width;
-        double multiplier = Math.min(height, width)/25;
         rectangle = new Rectangle(width, height);
         rectangle.setFill(Color.WHITE);
         rectangle.setArcWidth(arc);
@@ -87,16 +99,16 @@ public class AccountComboBox extends Pane {
         rectangle.setStroke(strokeColor);
         rectangle.setStrokeWidth(1);
 
-        selectedPane = generateAccountPane(data.get(0));
+        selectedPane = generateAccountPane(selected);
 
         arrow = new Polygon();
         arrow.getPoints().addAll(
-                width-10.0*multiplier, height/2-2.5*multiplier,
-                width-15.0*multiplier, height/2+2.5*multiplier,
-                width-20.0*multiplier, height/2-2.5*multiplier,
-                width-21.0*multiplier, height/2-1.5*multiplier,
-                width-15.0*multiplier, height/2+4.5*multiplier,
-                width-9.0*multiplier, height/2-1.5*multiplier
+                width-20.0*sizeMultiplier, height/2-2.5*sizeMultiplier,
+                width-25.0*sizeMultiplier, height/2+2.5*sizeMultiplier,
+                width-30.0*sizeMultiplier, height/2-2.5*sizeMultiplier,
+                width-31.0*sizeMultiplier, height/2-1.5*sizeMultiplier,
+                width-25.0*sizeMultiplier, height/2+4.5*sizeMultiplier,
+                width-19.0*sizeMultiplier, height/2-1.5*sizeMultiplier
         );
         arrow.setFill(Color.rgb(147,163,170));
 
@@ -137,7 +149,7 @@ public class AccountComboBox extends Pane {
         setOnMouseClicked(event -> {
             if (internalComboBox.isShowing()) {
                 int index = (int) (event.getY() / height);
-                if (index < internalComboBox.getItems().size()) {
+                if (index < internalComboBox.getItems().size()+1) {
                     if (!(index == 0)) {
                         ObservableList<Map<String, String>> items = internalComboBox.getItems();
                         int i = 0;
@@ -146,31 +158,44 @@ public class AccountComboBox extends Pane {
                                 if (i == index-1) {
                                     selected = item;
                                     getSelectionModel().select(item);
+                                    onSelect.getValue().handle(new ActionEvent());
                                 }
                                 i++;
                             }
+                        if (index == internalComboBox.getItems().size()) {
+                            onAction.getValue().handle(new ActionEvent());
+                        }
                     }
                 }
                 hide();
             } else {
+                double size = 10;
+                double thickness = size/5;
+                plusShape = new Pane();
+                Rectangle horizontal = new Rectangle(size, thickness);
+                Rectangle vertical = new Rectangle(thickness, size);
+                horizontal.relocate(0, (size - thickness) / 2); // Y-position centers the horizontal line
+                vertical.relocate((size - thickness) / 2, 0); // X-position centers the vertical line
+                horizontal.setFill(Color.WHITE);
+                vertical.setFill(Color.WHITE);
+                plusShape.getChildren().addAll(horizontal, vertical);
+                plusShape.setLayoutY(height*(internalComboBox.getItems().size()+0.5)-size/2);
+                plusShape.setLayoutX(width/2-size/2);
+                getChildren().add(plusShape);
                 internalComboBox.show();
                 getChildren().remove(arrow);
                 rectangle.setStroke(selectedStrokeColor);
                 rectangle.setStrokeWidth(3);
-                rectangle.setHeight(height*(internalComboBox.getItems().size()));
+                rectangle.setHeight(height*(internalComboBox.getItems().size()+1));
                 int index = 0;
                 for (Map<String, String> item : internalComboBox.getItems()) {
                     if (!item.equals(selected)) {
-                        /*index++;
-                        Label itemLabel = new Label((String) item);
-                        itemLabel.setTextFill(textFillColor);
-                        itemLabel.setFont(font);
-                        Text newFont = new Text((String) item);
-                        newFont.setFont(font);
-                        itemLabel.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2 + index * height);
-                        itemLabel.setLayoutX(selected.getLayoutX());
+                        index++;
+                        Pane itemLabel = generateAccountPane(item);
+                        itemLabel.setLayoutY(index * height);
+                        itemLabel.setLayoutX(selectedPane.getLayoutX());
                         getChildren().add(itemLabel);
-                        items.add(itemLabel);*/
+                        items.add(itemLabel);
                     }
                 }
                 mouseEvent(event);
@@ -178,14 +203,54 @@ public class AccountComboBox extends Pane {
         });
         getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    /*Text newFont = new Text((String) newValue);
-                    newFont.setFont(selected.getFont());
-                    selected.setLayoutY((height - newFont.getBoundsInLocal().getHeight()) /2);
-                    selected.setText((String) newValue);*/
+                    if (newValue != null) {
+                        selected = newValue;
+                        getChildren().remove(selectedPane);
+                        selectedPane = generateAccountPane(newValue);
+                        getChildren().add(selectedPane);
+                    }
                 });
     }
     public double getNewHeight() {
         return height;
+    }
+    private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
+        @Override
+        protected void invalidated() {
+            setEventHandler(ActionEvent.ACTION, get());
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "onAction";
+        }
+    };
+    private final ObjectProperty<EventHandler<ActionEvent>> onSelect = new ObjectPropertyBase<>() {
+        @Override
+        protected void invalidated() {
+            setEventHandler(ActionEvent.ACTION, get());
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "onSelect";
+        }
+    };
+    public final void setOnAction(EventHandler<ActionEvent> var1) {
+        this.onAction.set(var1);
+    }
+    public final void setOnSelect(EventHandler<ActionEvent> var1) {
+        this.onSelect.set(var1);
     }
     public double getNewWidth() {
         return width;
@@ -194,7 +259,7 @@ public class AccountComboBox extends Pane {
         if (selection != null)
             getChildren().remove(selection);
         int index = (int) (event.getY() / height);
-        if (index < internalComboBox.getItems().size()) {
+        if (index <= internalComboBox.getItems().size()) {
             int indent = 3;
             double arc = 2.5;
             Path path = new Path();
@@ -212,7 +277,7 @@ public class AccountComboBox extends Pane {
                 getChildren().add(selection);
                 selectedPane.toFront();
             } else {
-                if (index+1 == internalComboBox.getItems().size()) {
+                if (index+1 >= internalComboBox.getItems().size()) {
                     path.getElements().add(new MoveTo(indent, index * height));
                     path.getElements().add(new LineTo(width - indent, index * height));
                     path.getElements().add(new LineTo(width - indent, (index+1) * height - arc - indent));
@@ -230,7 +295,10 @@ public class AccountComboBox extends Pane {
                     selection = rectangle;
                     getChildren().add(selection);
                 }
-                items.get(index - 1).toFront();
+                if (internalComboBox.getItems().size() == index)
+                    plusShape.toFront();
+                else
+                    items.get(index - 1).toFront();
             }
         }
     }
@@ -241,8 +309,9 @@ public class AccountComboBox extends Pane {
         rectangle.setStroke(strokeColor);
         rectangle.setStrokeWidth(1);
         rectangle.setHeight(height);
-        for (Label label : items)
-            getChildren().remove(label);
+        getChildren().remove(plusShape);
+        for (Pane pane : items)
+            getChildren().remove(pane);
         if (!getChildren().contains(arrow))
             getChildren().add(arrow);
         items.clear();

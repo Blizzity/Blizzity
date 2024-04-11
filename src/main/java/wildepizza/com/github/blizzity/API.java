@@ -61,7 +61,7 @@ public class API {
             return false;
         }
     }
-    public boolean verify(String username) {
+    public boolean connect(String username) {
         String apiUrl = serverUrl + "/api/username/available?username=" + username;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -80,41 +80,49 @@ public class API {
             return false;
         }
     }
+    private final Map<String, List<Map<String, String>>> info = new HashMap<>();
     public List<Map<String, String>> info(String space, String authToken) {
-        List<Map<String, String>> result = new ArrayList<>();
-        String apiUrl = serverUrl + "/api/info/" + space + "?key=" + URLEncoder.encode(authToken);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .build();
-        try {
-            Map<String, String> info = new HashMap<>();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                for (String body : response.body().split(";")) {
-                    info.put("display_name", jsonPart(body, "\"display_name\":\""));
-                    info.put("avatar", jsonPart(body, "\"avatar_url\":\"").replace("\\u0026", "&"));
-                    info.put("username", jsonPart(body, "\"username\":\""));
-                    result.add(info);
+        return info(space, authToken, false);
+    }
+    public List<Map<String, String>> info(String space, String authToken, boolean refresh) {
+        if (info.get(space) == null || info.get(space).isEmpty() || refresh) {
+            List<Map<String, String>> result = new ArrayList<>();
+            String apiUrl = serverUrl + "/api/social/info?key=" + URLEncoder.encode(authToken) + "&space=" + space;
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .build();
+            try {
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                    for (String body : response.body().split(";")) {
+                        Map<String, String> info = new HashMap<>();
+                        info.put("display_name", jsonPart(body, "\"display_name\":\""));
+                        info.put("avatar", jsonPart(body, "\"avatar_url\":\"").replace("\\u0026", "&"));
+                        info.put("username", jsonPart(body, "\"username\":\""));
+                        info.put("id", jsonPart(body, "\"id\":\""));
+                        info.put("selected", jsonPart(body, "\"selected\":\"").replace("[TRUE]", "true").replace("[FALSE]", "false"));
+                        result.add(info);
+                    }
+                    info.put(space, result);
+                    return result;
+                } else {
+                    Logger.response(response);
+                    return null;
                 }
-                return result;
-            } else {
-                Logger.response(response);
+            } catch (Exception e) {
+                Logger.exception(e);
                 return null;
             }
-        } catch (Exception e) {
-            Logger.exception(e);
-            return null;
-        }
+        } else
+            return info.get(space);
     }
     public static String jsonPart(String json, String start) {
         int fromIndex = json.indexOf(start) + start.length();
         return json.substring(fromIndex, json.indexOf("\"", fromIndex));
     }
     public Double<File, String> video(String authToken, String language, int length) {
-
         String apiUrl = serverUrl + "/api/generate?language=" + language + "&length=" + length;
-
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -122,49 +130,26 @@ public class API {
                     .header("Authorization", URLEncoder.encode(authToken))
                     .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // Get response code
             int responseCode = response.statusCode();
             String video = response.body();
-
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 apiUrl = serverUrl + "/api/video?video=" + video;
-
-                // Create URL object
                 URL url = new URL(apiUrl);
-
-                // Create connection
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                // Set request method
                 connection.setRequestMethod("GET");
-
-                // Set request headers
                 connection.setRequestProperty("Authorization", URLEncoder.encode(authToken));
-
-                // Get response code
                 responseCode = connection.getResponseCode();
-
-
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Get input stream from the connection
                     InputStream inputStream = connection.getInputStream();
-
                     File outputFile = File.createTempFile("received_video", ".mp4");
-                    // Create a file output stream to save the video file
                     FileOutputStream outputStream = new FileOutputStream(outputFile);
-
-                    // Read data from input stream and write to output stream
                     byte[] buffer = new byte[1024];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
-
-                    // Close streams
                     outputStream.close();
                     inputStream.close();
-
                     connection.disconnect();
                     return new Double<>(outputFile, video);
                 } else {
@@ -183,6 +168,25 @@ public class API {
     }
     public void youtubePost(String authToken, String video, String title, String description, String privacy_level) {
         String apiUrl = serverUrl + "/api/upload/youtube?video=" + video + "&key=" + URLEncoder.encode(authToken) + "&title=" + title + "&description=" + description + "&privacy_level=" + privacy_level;
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Get response code
+            int responseCode = response.statusCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Logger.response(response);
+            }
+        } catch (Exception e) {
+            Logger.exception(e);
+        }
+    }
+    public void snapchatPost(String authToken, String video, String title) {
+        String apiUrl = serverUrl + "/api/upload/snapchat?video=" + video + "&key=" + URLEncoder.encode(authToken) + "&title=" + title;
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -272,8 +276,8 @@ public class API {
             return null;
         }
     }
-    public boolean verify(String space, String key) {
-        String apiUrl = serverUrl + "/api/verify/" + space + "?key=" + URLEncoder.encode(key);
+    public boolean check(String space, String key) {
+        String apiUrl = serverUrl + "/api/social/check?key=" + URLEncoder.encode(key) + "&space=" + space;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
@@ -281,82 +285,129 @@ public class API {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                if (response.body().equals("true")) {
-                    return true;
-                } else {
-                    Wait wait = new Wait();
-                    AtomicReference<String> verifier = new AtomicReference<>();
-                    AtomicReference<String> code = new AtomicReference<>();
-                    switch (space) {
-                        case "youtube" -> spark.Spark.get("/google/callback", (req, res) -> {
-                            code.set(req.queryParams("code"));
-                            res.redirect("https://blizzity.de?close=true");
-                            wait.setVariable(true);
-                            if (code.get() != null) {
-                                return "Received code: " + code.get();
-                            } else {
-                                return "No code parameter found in the URL";
-                            }
-                        });
-                        case "tiktok" -> spark.Spark.get("/tiktok/callback", (req, res) -> {
-                            code.set(req.queryParams("code"));
-                            res.redirect("https://blizzity.de?close=true");
-                            wait.setVariable(true);
-                            if (code.get() != null) {
-                                return "Received code: " + code.get();
-                            } else {
-                                return "No code parameter found in the URL";
-                            }
-                        });
-                        case "snapchat" -> spark.Spark.get("/snapchat/callback", (req, res) -> {
-                            code.set(req.queryParams("code"));
-                            res.redirect("https://blizzity.de?close=true");
-                            wait.setVariable(true);
-                            if (code.get() != null) {
-                                return "Received code: " + code.get();
-                            } else {
-                                return "No code parameter found in the URL";
-                            }
-                        });
-                        case "facebook" -> spark.Spark.get("/facebook/callback", (req, res) -> {
-                            code.set(req.queryParams("code"));
-                            res.redirect("https://blizzity.de?close=true");
-                            wait.setVariable(true);
-                            if (code.get() != null) {
-                                return "Received code: " + code.get();
-                            } else {
-                                return "No code parameter found in the URL";
-                            }
-                        });
-                        case "x" -> spark.Spark.get("/x/callback", (req, res) -> {
-                            code.set(req.queryParams("oauth_token"));
-                            verifier.set(req.queryParams("oauth_verifier"));
-                            res.redirect("https://blizzity.de?close=true");
-                            wait.setVariable(true);
-                            if (code.get() != null) {
-                                return "Received code: " + code.get();
-                            } else {
-                                return "No code parameter found in the URL";
-                            }
-                        });
-                        default -> {
-                            return false;
+                return Boolean.parseBoolean(response.body());
+            }
+            return false;
+        } catch (Exception e) {
+            Logger.exception(e);
+            return false;
+        }
+    }
+    public boolean select(String space, String key, String id) {
+        String apiUrl = serverUrl + "/api/social/select?key=" + URLEncoder.encode(key) + "&space=" + space + "&id=" + id;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                return response.body().equals("success");
+            }
+            return false;
+        } catch (Exception e) {
+            Logger.exception(e);
+            return false;
+        }
+    }
+    public boolean admin(String space, String language, String key, String channel) {
+        String apiUrl = serverUrl + "/api/social/admin?key=" + URLEncoder.encode(key) + "&language=" + language + "&space=" + space + "&channel=" + channel;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                return response.body().equals("success");
+            }
+            return false;
+        } catch (Exception e) {
+            Logger.exception(e);
+            return false;
+        }
+    }
+    public boolean connect(String space, String key) {
+        String apiUrl = serverUrl + "/api/social/url?key=" + URLEncoder.encode(key) + "&space=" + space;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                Wait wait = new Wait();
+                AtomicReference<String> verifier = new AtomicReference<>();
+                AtomicReference<String> code = new AtomicReference<>();
+                switch (space) {
+                    case "youtube" -> spark.Spark.get("/google/callback", (req, res) -> {
+                        code.set(req.queryParams("code"));
+                        res.redirect("https://blizzity.de?close=true");
+                        wait.setVariable(true);
+                        if (code.get() != null) {
+                            return "Received code: " + code.get();
+                        } else {
+                            return "No code parameter found in the URL";
                         }
+                    });
+                    case "tiktok" -> spark.Spark.get("/tiktok/callback", (req, res) -> {
+                        code.set(req.queryParams("code"));
+                        res.redirect("https://blizzity.de?close=true");
+                        wait.setVariable(true);
+                        if (code.get() != null) {
+                            return "Received code: " + code.get();
+                        } else {
+                            return "No code parameter found in the URL";
+                        }
+                    });
+                    case "snapchat" -> spark.Spark.get("/snapchat/callback", (req, res) -> {
+                        code.set(req.queryParams("code"));
+                        res.redirect("https://blizzity.de?close=true");
+                        wait.setVariable(true);
+                        if (code.get() != null) {
+                            return "Received code: " + code.get();
+                        } else {
+                            return "No code parameter found in the URL";
+                        }
+                    });
+                    case "facebook" -> spark.Spark.get("/facebook/callback", (req, res) -> {
+                        code.set(req.queryParams("code"));
+                        res.redirect("https://blizzity.de?close=true");
+                        wait.setVariable(true);
+                        if (code.get() != null) {
+                            return "Received code: " + code.get();
+                        } else {
+                            return "No code parameter found in the URL";
+                        }
+                    });
+                    case "x" -> spark.Spark.get("/x/callback", (req, res) -> {
+                        code.set(req.queryParams("oauth_token"));
+                        verifier.set(req.queryParams("oauth_verifier"));
+                        res.redirect("https://blizzity.de?close=true");
+                        wait.setVariable(true);
+                        if (code.get() != null) {
+                            return "Received code: " + code.get();
+                        } else {
+                            return "No code parameter found in the URL";
+                        }
+                    });
+                    default -> {
+                        return false;
                     }
-
-                    String url = response.body();
-                    Desktop.getDesktop().browse(URI.create(url));
-
-                    wait.waitForVariable();
-                    spark.Spark.stop();
-                    apiUrl = serverUrl + "/api/verify/" + space + "/key?key=" + URLEncoder.encode(key) + "&code=" + code.get() + (verifier.get() == null ? "" : "&verifier=" + verifier.get());
-                    client = HttpClient.newHttpClient();
-                    request = HttpRequest.newBuilder()
-                            .uri(URI.create(apiUrl))
-                            .build();
-                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                    return response.body().equals("success");
                 }
+
+                String url = response.body();
+                Desktop.getDesktop().browse(URI.create(url));
+
+                wait.waitForVariable();
+                spark.Spark.stop();
+                apiUrl = serverUrl + "/api/social/verify?key=" + URLEncoder.encode(key) + "&space=" + space + "&code=" + code.get() + (verifier.get() == null ? "" : "&verifier=" + verifier.get());
+                client = HttpClient.newHttpClient();
+                request = HttpRequest.newBuilder()
+                        .uri(URI.create(apiUrl))
+                        .build();
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                return response.body().equals("success");
             } else {
                 Logger.response(response);
                 return false;
