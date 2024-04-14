@@ -120,6 +120,8 @@ public class GUI {
             usagesLabel,
             creditsLabel,
             tiktokLabel,
+            snapchatLabel,
+            adminLabel,
             youtubeLabel,
             fpsLabel,
             fpsLabel2,
@@ -130,7 +132,9 @@ public class GUI {
             privacyComboBox,
             lengthComboBox,
             youtubePrivacyComboBox,
-            youtubeComboBox;
+            youtubeComboBox,
+            tiktokComboBox,
+            snapchatComboBox;
     private Label
             privacyLabel,
             stitchLabel,
@@ -851,12 +855,13 @@ public class GUI {
     private Node[] getSpaceParts(String space) {
         List<Node> parts = new ArrayList<>();
         if (space != null) {
-            if (space.equals("TikTok"))
-                parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox));
-            else if (space.equals("Youtube"))
-                parts.addAll(List.of(titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox));
-            else if (space.equals("Snapchat"))
-                parts.addAll(List.of(titleTextField));
+            switch (space) {
+                case "TikTok" ->
+                        parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox));
+                case "Youtube" ->
+                        parts.addAll(List.of(titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox));
+                case "Snapchat" -> parts.addAll(List.of(titleTextField));
+            }
         }
         return convert(parts);
     }
@@ -1152,36 +1157,18 @@ public class GUI {
             youtubeComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             youtubeComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             youtubeComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-            String space = "youtube";
             AtomicReference<AccountComboBox> adminAccountComboBox = new AtomicReference<>();
+
+            adminLabel = new Label("");
+            adminLabel.setLayoutX(400 * sizeMultiplier);
+            adminLabel.setLayoutY(140 * sizeMultiplier);
+            adminLabel.setFont(new javafx.scene.text.Font(adminLabel.getFont().getFamily(), adminLabel.getFont().getSize() * sizeMultiplier));
+            adminLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+
             youtubeComboBox.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        adminAccountComboBox.set(new AccountComboBox(api.info(space, key), 265 * sizeMultiplier, 70 * sizeMultiplier, 10 * sizeMultiplier));
-                        adminAccountComboBox.get().setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-                        adminAccountComboBox.get().setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-                        adminAccountComboBox.get().setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-                        adminAccountComboBox.get().setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-                        adminAccountComboBox.get().setLayoutX(this.x + 360 * sizeMultiplier);
-                        adminAccountComboBox.get().setLayoutY(this.y + 20 + 55 * sizeMultiplier);
-                        adminAccountComboBox.get().setOnSelect(actionEvent -> {
-                            api.admin(space, newValue, space, adminAccountComboBox.get().getSelectionModel().getSelectedItem().get("id"));
-                        });
-                        adminAccountComboBox.get().setOnAction(actionEvent -> {
-                            /*if (api.connect(space, key)) {
-                                List<Map<String, String>> data = api.info(space, key);
-                                adminAccountComboBox.getItems().setAll(data);
-                                for (Map<String, String> entry : data) {
-                                    if (entry.get("selected").equals("true")) {
-                                        adminAccountComboBox.getSelectionModel().select(adminAccountComboBox.getItems().get(data.indexOf(entry)));
-                                        break;
-                                    }
-                                }
-                            }*/
-                        });
-                        Platform.runLater(() -> {
-                            Group root = ((Group) scene.getRoot());
-                            root.getChildren().add(adminAccountComboBox.get());
-                        });
+                    adminLabel.setText("Youtube - " + newValue);
+                        admin(adminAccountComboBox, "youtube", key, newValue);
                     });
             youtubeComboBox.getItems().addAll(languages);
 
@@ -1190,6 +1177,42 @@ public class GUI {
             tiktokLabel.setLayoutY(115 * sizeMultiplier);
             tiktokLabel.setFont(new javafx.scene.text.Font(tiktokLabel.getFont().getFamily(), tiktokLabel.getFont().getSize() * sizeMultiplier));
             tiktokLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+
+            tiktokComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
+            tiktokComboBox.setLayoutX(22 * sizeMultiplier);
+            tiktokComboBox.setLayoutY(135 * sizeMultiplier);
+            tiktokComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+            tiktokComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+            tiktokComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+            tiktokComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+            tiktokComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+            tiktokComboBox.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        adminLabel.setText("TikTok - " + newValue);
+                        admin(adminAccountComboBox, "tiktok", key, newValue);
+                    });
+            tiktokComboBox.getItems().addAll(languages);
+
+            snapchatLabel = new Label("Snapchat:");
+            snapchatLabel.setLayoutX(22 * sizeMultiplier);
+            snapchatLabel.setLayoutY(165 * sizeMultiplier);
+            snapchatLabel.setFont(new javafx.scene.text.Font(snapchatLabel.getFont().getFamily(), snapchatLabel.getFont().getSize() * sizeMultiplier));
+            snapchatLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+
+            snapchatComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
+            snapchatComboBox.setLayoutX(22 * sizeMultiplier);
+            snapchatComboBox.setLayoutY(185 * sizeMultiplier);
+            snapchatComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+            snapchatComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+            snapchatComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+            snapchatComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+            snapchatComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+            snapchatComboBox.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        adminLabel.setText("Snapchat - " + newValue);
+                        admin(adminAccountComboBox, "snapchat", key, newValue);
+                    });
+            snapchatComboBox.getItems().addAll(languages);
 
             AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
             generateButton.setOnAction(actionEvent -> {
@@ -1336,7 +1359,7 @@ public class GUI {
                             if (imageView != null)
                                 Platform.runLater(() -> root.getChildren().removeAll(imageView));
                             if (api.check(newValue.toLowerCase(), key) || api.connect(newValue.toLowerCase(), key)) {
-                                accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265*sizeMultiplier, 70*sizeMultiplier, 10*sizeMultiplier);
+                                accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265*sizeMultiplier, 70*sizeMultiplier, 10*sizeMultiplier, true);
                                 accountComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
                                 accountComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
                                 accountComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
@@ -1349,8 +1372,8 @@ public class GUI {
                                         List<Map<String, String>> data = api.info(newValue.toLowerCase(), key, true);
                                         accountComboBox.getItems().setAll(data);
                                         for (Map<String, String> entry : data) {
-                                            if (entry.get("selected").equals("true")) {
-                                                accountComboBox.getSelectionModel().select(accountComboBox.getItems().get(data.indexOf(entry)));
+                                            if (entry.get("selected").equalsIgnoreCase("true")) {
+                                                accountComboBox.getSelectionModel().select(entry);
                                                 break;
                                             }
                                         }
@@ -1538,6 +1561,41 @@ public class GUI {
         root.getChildren().addAll(loadingBackground, loading);
         scene.setRoot(root);
     }
+    private void admin(AtomicReference<AccountComboBox> adminAccountComboBox, String space, String key, String language) {
+        if (adminAccountComboBox.get() == null)
+            Platform.runLater(() -> {
+                Group root = ((Group) scene.getRoot());
+                root.getChildren().remove(adminAccountComboBox.get());
+            });
+        adminAccountComboBox.set(new AccountComboBox(api.info(space, key), 265 * sizeMultiplier, 70 * sizeMultiplier, 10 * sizeMultiplier, false));
+        adminAccountComboBox.get().setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+        adminAccountComboBox.get().setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+        adminAccountComboBox.get().setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+        adminAccountComboBox.get().setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+        adminAccountComboBox.get().setLayoutX(400 * sizeMultiplier);
+        adminAccountComboBox.get().setLayoutY(65 * sizeMultiplier);
+        adminAccountComboBox.get().setOnSelect(actionEvent -> api.admin(space, language, key, adminAccountComboBox.get().getSelectionModel().getSelectedItem().get("id")));
+        adminAccountComboBox.get().setOnAction(actionEvent -> {
+            if (api.connect(space, key)) {
+                List<Map<String, String>> data = api.info(space, key, true);
+                adminAccountComboBox.get().getItems().setAll(data);
+                for (Map<String, String> entry : data) {
+                    if (entry.get("selected").equalsIgnoreCase("true")) {
+                        adminAccountComboBox.get().getSelectionModel().select(entry);
+                        api.admin(space, language, key, entry.get("id"));
+                        break;
+                    }
+                }
+            }
+        });
+        Map<String, String> admin = api.adminCheck(space, language, key);
+        if (admin != null)
+            adminAccountComboBox.get().getSelectionModel().select(admin);
+        Platform.runLater(() -> {
+            Group root = ((Group) scene.getRoot());
+            root.getChildren().add(adminAccountComboBox.get());
+        });
+    }
     private void stopLoadingScreen(Scene scene) {
         Group root = ((Group) scene.getRoot());
         root.getChildren().removeAll(loadingBackground, loading);
@@ -1580,7 +1638,7 @@ public class GUI {
         return new Node[] {usagesLabel, creditsLabel, logoutButton};
     }
     private Node[] getAdminParts() {
-        return new Node[] {tiktokLabel, youtubeLabel, youtubeComboBox};
+        return new Node[] {snapchatComboBox, snapchatLabel, tiktokLabel, youtubeLabel, tiktokComboBox, youtubeComboBox, adminLabel};
     }
     private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
         return svgPath(x, y, 1, color, path);

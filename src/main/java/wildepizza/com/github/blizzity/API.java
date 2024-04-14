@@ -101,14 +101,14 @@ public class API {
                         info.put("avatar", jsonPart(body, "\"avatar_url\":\"").replace("\\u0026", "&"));
                         info.put("username", jsonPart(body, "\"username\":\""));
                         info.put("id", jsonPart(body, "\"id\":\""));
-                        info.put("selected", jsonPart(body, "\"selected\":\"").replace("[TRUE]", "true").replace("[FALSE]", "false"));
+                        info.put("selected", jsonPart(body, "\"selected\":\""));
                         result.add(info);
                     }
                     info.put(space, result);
                     return result;
                 } else {
                     Logger.response(response);
-                    return null;
+                    return new ArrayList<>();
                 }
             } catch (Exception e) {
                 Logger.exception(e);
@@ -235,10 +235,9 @@ public class API {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return Boolean.parseBoolean(response.body());
         } catch (Exception e) {
-            Logger.exception(e);
             assert response != null;
-            System.out.println("Response Code: " + response.statusCode());
-            System.out.println("Response Body: " + response.body());
+            Logger.response(response);
+            Logger.exception(e);
             return false;
         }
     }
@@ -310,8 +309,8 @@ public class API {
             return false;
         }
     }
-    public boolean admin(String space, String language, String key, String channel) {
-        String apiUrl = serverUrl + "/api/social/admin?key=" + URLEncoder.encode(key) + "&language=" + language + "&space=" + space + "&channel=" + channel;
+    public Map<String, String> adminCheck(String space, String language, String key) {
+        String apiUrl = serverUrl + "/api/admin/check?key=" + URLEncoder.encode(key) + "&language=" + language + "&space=" + space;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
@@ -319,7 +318,36 @@ public class API {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                if (!response.body().isEmpty()) {
+                    Map<String, String> info = new HashMap<>();
+                    info.put("display_name", jsonPart(response.body(), "\"display_name\":\""));
+                    info.put("avatar", jsonPart(response.body(), "\"avatar_url\":\"").replace("\\u0026", "&"));
+                    info.put("username", jsonPart(response.body(), "\"username\":\""));
+                    info.put("id", jsonPart(response.body(), "\"id\":\""));
+                    info.put("selected", jsonPart(response.body(), "\"selected\":\""));
+                    return info;
+                }
+            } else {
+                Logger.response(response);
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public boolean admin(String space, String language, String key, String channel) {
+        String apiUrl = serverUrl + "/api/admin/add?key=" + URLEncoder.encode(key) + "&language=" + language + "&space=" + space + "&channel=" + channel;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK || response.body().equals("success")) {
                 return response.body().equals("success");
+            } else {
+                Logger.response(response);
             }
             return false;
         } catch (Exception e) {
