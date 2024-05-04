@@ -861,22 +861,23 @@ public class GUI {
         List<Node> parts = new ArrayList<>();
         if (space != null) {
             switch (space) {
-                case "TikTok" ->
+                case "TikTok":
                         parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox));
-                case "Youtube" ->
+                case "Youtube":
                         parts.addAll(List.of(titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox));
-                case "Snapchat" -> parts.addAll(List.of(titleTextField));
+                case "Snapchat":
+                    parts.addAll(List.of(titleTextField));
             }
         }
         return convert(parts);
     }
     private Node[] getSectionParts(int section) {
-        return switch (section) {
-            case 1 -> getGenerateParts();
-            case 2 -> getAccountParts();
-            case 3 -> getAdminParts();
-            default -> null;
-        };
+        switch (section) {
+            case 1: return getGenerateParts();
+            case 2: return getAccountParts();
+            case 3: return getAdminParts();
+            default: return null;
+        }
     }
     private Node[] convert(List<Node> parts) {
         Node[] result = new Node[parts.size()];
@@ -1408,16 +1409,20 @@ public class GUI {
                     Thread thread = new Thread(() -> {
                         if (api.check(spaceComboBox.getValue().toLowerCase(), key)) {
                             if (spaceComboBox.getValue().equals("TikTok")) {
-                                String privacy = switch (privacyComboBox.getValue()) {
+                                String privacy;
+                                switch (privacyComboBox.getValue()) {
                                     case "Private":
-                                        yield "SELF_ONLY";
+                                        privacy = "SELF_ONLY";
+                                        break;
                                     case "Friends":
-                                        yield "MUTUAL_FOLLOW_FRIENDS";
+                                        privacy = "MUTUAL_FOLLOW_FRIENDS";
+                                        break;
                                     case "Public":
-                                        yield "PUBLIC_TO_EVERYONE";
+                                        privacy = "PUBLIC_TO_EVERYONE";
+                                        break;
                                     default:
                                         throw new IllegalStateException("Unexpected value: " + privacyComboBox.getValue());
-                                };
+                                }
                                 api.tiktokPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(nameTextField.getText()), privacy, duetCheckBox.isSelected(), commentCheckBox.isSelected(), stitchCheckBox.isSelected(), 1000);
                             } else if (spaceComboBox.getValue().equals("Youtube")) {
                                 api.youtubePost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(titleTextField.getText()), URLEncoder.encode(descriptionTextField.getText()), youtubePrivacyComboBox.getValue());

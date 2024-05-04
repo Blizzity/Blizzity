@@ -46,7 +46,7 @@ public class StringUtils {
         int i = 0;
         for (String l : (string+" .").split(" ")) {
             i++;
-            if (line.isEmpty()) {
+            if (line.toString().isEmpty()) {
                 line.append(l);
             } else if (line.length()+l.length()+1 <= 22 && string.split(" ").length+1 != i) {
                 line.append(" ").append(l);

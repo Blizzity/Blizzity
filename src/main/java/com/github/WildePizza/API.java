@@ -373,58 +373,68 @@ public class API {
                 AtomicReference<String> verifier = new AtomicReference<>();
                 AtomicReference<String> code = new AtomicReference<>();
                 switch (space) {
-                    case "youtube" -> Spark.get("/google/callback", (req, res) -> {
-                        code.set(req.queryParams("code"));
-                        res.redirect("https://blizzity.de?close=true");
-                        wait.setVariable(true);
-                        if (code.get() != null) {
-                            return "Received code: " + code.get();
-                        } else {
-                            return "No code parameter found in the URL";
-                        }
-                    });
-                    case "tiktok" -> Spark.get("/tiktok/callback", (req, res) -> {
-                        code.set(req.queryParams("code"));
-                        res.redirect("https://blizzity.de?close=true");
-                        wait.setVariable(true);
-                        if (code.get() != null) {
-                            return "Received code: " + code.get();
-                        } else {
-                            return "No code parameter found in the URL";
-                        }
-                    });
-                    case "snapchat" -> Spark.get("/snapchat/callback", (req, res) -> {
-                        code.set(req.queryParams("code"));
-                        res.redirect("https://blizzity.de?close=true");
-                        wait.setVariable(true);
-                        if (code.get() != null) {
-                            return "Received code: " + code.get();
-                        } else {
-                            return "No code parameter found in the URL";
-                        }
-                    });
-                    case "facebook" -> Spark.get("/facebook/callback", (req, res) -> {
-                        code.set(req.queryParams("code"));
-                        res.redirect("https://blizzity.de?close=true");
-                        wait.setVariable(true);
-                        if (code.get() != null) {
-                            return "Received code: " + code.get();
-                        } else {
-                            return "No code parameter found in the URL";
-                        }
-                    });
-                    case "x" -> Spark.get("/x/callback", (req, res) -> {
-                        code.set(req.queryParams("oauth_token"));
-                        verifier.set(req.queryParams("oauth_verifier"));
-                        res.redirect("https://blizzity.de?close=true");
-                        wait.setVariable(true);
-                        if (code.get() != null) {
-                            return "Received code: " + code.get();
-                        } else {
-                            return "No code parameter found in the URL";
-                        }
-                    });
-                    default -> {
+                    case "youtube":
+                        Spark.get("/google/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                        break;
+                    case "tiktok":
+                            Spark.get("/tiktok/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                        break;
+                    case "snapchat":
+                        Spark.get("/snapchat/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                        break;
+                    case "facebook":
+                        Spark.get("/facebook/callback", (req, res) -> {
+                            code.set(req.queryParams("code"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                        break;
+                    case "x":
+                        Spark.get("/x/callback", (req, res) -> {
+                            code.set(req.queryParams("oauth_token"));
+                            verifier.set(req.queryParams("oauth_verifier"));
+                            res.redirect("https://blizzity.de?close=true");
+                            wait.setVariable(true);
+                            if (code.get() != null) {
+                                return "Received code: " + code.get();
+                            } else {
+                                return "No code parameter found in the URL";
+                            }
+                        });
+                        break;
+                    default: {
                         return false;
                     }
                 }
