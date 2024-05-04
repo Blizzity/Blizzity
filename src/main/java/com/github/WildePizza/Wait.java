@@ -1,0 +1,32 @@
+package com.github.WildePizza;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Wait {
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
+    private boolean variable = false;
+
+    public void waitForVariable() throws InterruptedException {
+        lock.lock();
+        try {
+            while (!variable) {
+                condition.await();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void setVariable(boolean value) {
+        lock.lock();
+        try {
+            variable = value;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+}

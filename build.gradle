@@ -2,20 +2,40 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'com.teamdev.jxbrowser' version '1.0.1'
+    id 'edu.sc.seis.launch4j' version '3.0.5'
 }
 
-group = 'wildepizza.com.github.blizzity'
-version = '1.0'
+group = 'com.github.WildePizza'
 description = 'blizzity'
+def name = 'Blizzity'
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven {
-        url = uri('https://repo.maven.apache.org/maven2/')
+        url "https://jitpack.io"
     }
 }
+
+launch4j {
+    mainClassName = "${group}.Main"
+    icon = "${projectDir}/blizzity-logo.ico"
+    outputDir = "libs"
+    restartOnCrash = true
+    jarTask = project.tasks.shadowJar
+}
+
+shadowJar {
+    archiveFileName = "${name}-standalone.jar"
+    manifest {
+        attributes 'Main-Class': "${group}.Main"
+    }
+}
+build.dependsOn(shadowJar)
+build.dependsOn(createExe)
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -38,10 +58,11 @@ jxbrowser {
     version '7.37.2'
 }
 dependencies {
-    implementation jxbrowser.javafx
-    implementation jxbrowser.core
-    implementation 'org.apache.httpcomponents:httpclient:latest.release'
-    implementation 'org.json:json:latest.release'
-    implementation "com.sparkjava:spark-core:latest.release"
-    implementation "org.apache.spark:spark-core_2.12:latest.release"
+//    implementation jxbrowser.javafx
+//    implementation jxbrowser.core
+//    implementation 'org.apache.httpcomponents:httpclient:+'
+    implementation 'org.json:json:+'
+    implementation "com.sparkjava:spark-core:+"
+//    implementation "org.apache.spark:spark-core_2.12:+"
+    implementation 'com.github.WildePizza:SimpleVariables:+'
 }

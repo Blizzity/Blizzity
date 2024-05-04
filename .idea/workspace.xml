@@ -10,10 +10,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/blizzity-logo.ico" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/AccountComboBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/AccountComboBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/API.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Double.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Double.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Logger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Spark.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Spark.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Variables.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/Wait.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Wait.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/AccountComboBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/AccountComboBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SVGButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/SVGButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SimpleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/SimpleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/SimpleComboBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/SimpleComboBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/javafx/Switch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/Switch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/listeners/LoginListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/listeners/LoginListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/listeners/ScreenListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/listeners/ScreenListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JDarkenedPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JDarkenedPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JHoverButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JHoverButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JImageButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JImageButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JRoundedButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedPasswordField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JRoundedPasswordField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JRoundedTextField.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JRoundedTextField.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JSimpleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JSimpleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/gui/swing/JTransparentButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JTransparentButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wildepizza/com/github/blizzity/utils/StringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/StringUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,12 +51,26 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="Blizzity" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Blizzity" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Blizzity" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -70,20 +107,26 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Run.executor": "Run",
+    "Gradle.Blizzity [:Blizzity.main()].executor": "Run",
     "Gradle.Blizzity [:Main.main()].executor": "Run",
+    "Gradle.Blizzity [build].executor": "Run",
     "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240408_0000",
+    "com.google.cloudcode.ide_session_index": "20240504_0000",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/wilde/Documents/Github/BlizzityServer",
+    "last_opened_file_path": "F:/Github/BlizzityAPI",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\Github\Blizzity\jar" />
+      <recent name="F:\Github\Blizzity" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="F:\Github\Blizzity" />
       <recent name="F:\Github\Blizzity\lib" />
@@ -95,14 +138,45 @@
       <recent name="wildepizza.com.github.blizzity.custom" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Gradle.Blizzity [build]">
     <configuration name="Run" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="wildepizza.com.github.blizzity.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.github.WildePizza.Blizzity" />
       <module name="Blizzity.main" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Blizzity [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.Run" />
+      <item itemvalue="Gradle.Blizzity [build]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.Blizzity [build]" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
