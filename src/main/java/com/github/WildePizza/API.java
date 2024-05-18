@@ -1,5 +1,6 @@
 package com.github.WildePizza;
 
+import com.github.WildePizza.utils.LoggerUtils;
 import spark.Spark;
 
 import java.awt.*;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings("deprecation")
 public class API {
      String serverUrl;
+    public static SimpleLogger logger = new SimpleLogger();
     API(String serverUrl) {
         this.serverUrl = serverUrl;
     }
@@ -36,11 +38,11 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("success");
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
                 return false;
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -55,11 +57,11 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("success");
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
                 return false;
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -74,11 +76,11 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 return response.body().equals("true");
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
                 return false;
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -109,11 +111,11 @@ public class API {
                     info.put(space, result);
                     return result;
                 } else {
-                    Logger.response(response);
+                    LoggerUtils.response(logger, response);
                     return new ArrayList<>();
                 }
             } catch (Exception e) {
-                Logger.exception(e);
+                logger.exception(e);
                 return null;
             }
         } else
@@ -156,18 +158,18 @@ public class API {
                     connection.disconnect();
                     return new Double<>(outputFile, video);
                 } else {
-                    Logger.response(response);
+                    LoggerUtils.response(logger, response);
                     connection.disconnect();
                     return null;
                 }
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
                 return null;
             }
         } catch (Exception e) {
             if (response != null)
-                Logger.response(response);
-            Logger.exception(e);
+                LoggerUtils.response(logger, response);
+            logger.exception(e);
         }
         return null;
     }
@@ -184,10 +186,10 @@ public class API {
             // Get response code
             int responseCode = response.statusCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
         }
     }
     public void snapchatPost(String authToken, String video, String title) {
@@ -203,10 +205,10 @@ public class API {
             // Get response code
             int responseCode = response.statusCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
         }
     }
     public void tiktokPost(String authToken, String video, String title, String privacy_level, boolean disable_duet, boolean disable_comment, boolean disable_stitch, int video_cover_timestamp_ms) {
@@ -223,10 +225,10 @@ public class API {
             // Get response code
             int responseCode = response.statusCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
         }
     }
     public boolean admin(String key) {
@@ -241,8 +243,8 @@ public class API {
             return Boolean.parseBoolean(response.body());
         } catch (Exception e) {
             assert response != null;
-            Logger.response(response);
-            Logger.exception(e);
+            LoggerUtils.response(logger, response);
+            logger.exception(e);
             return false;
         }
     }
@@ -257,9 +259,9 @@ public class API {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return response.body();
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             assert response != null;
-            Logger.response(response);
+            LoggerUtils.response(logger, response);
             return null;
         }
     }
@@ -274,9 +276,9 @@ public class API {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return response.body();
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             assert response != null;
-            Logger.response(response);
+            LoggerUtils.response(logger, response);
             return null;
         }
     }
@@ -293,7 +295,7 @@ public class API {
             }
             return false;
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -310,7 +312,7 @@ public class API {
             }
             return false;
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -333,7 +335,7 @@ public class API {
                     return info;
                 }
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
             }
             return null;
         } catch (Exception e) {
@@ -352,11 +354,11 @@ public class API {
             if (response.statusCode() == HttpURLConnection.HTTP_OK || response.body().equals("success")) {
                 return response.body().equals("success");
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
             }
             return false;
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }
@@ -452,11 +454,11 @@ public class API {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 return response.body().equals("success");
             } else {
-                Logger.response(response);
+                LoggerUtils.response(logger, response);
                 return false;
             }
         } catch (Exception e) {
-            Logger.exception(e);
+            logger.exception(e);
             return false;
         }
     }

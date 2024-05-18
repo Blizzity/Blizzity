@@ -33,3 +33,4 @@ jobs:
             gh release upload ${{ github.ref_name }} build/libs/Blizzity.jar
             gh release upload ${{ github.ref_name }} build/libs/Blizzity-standalone.jar
             gh release upload ${{ github.ref_name }} build/libs/Blizzity.exe
+            gh release upload ${{ github.ref_name }} build/libs/Blizzity-standalone.exe

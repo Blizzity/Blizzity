@@ -1016,9 +1016,9 @@ public class GUI {
             if (!userText.getText().isEmpty()) {
                 if (api.login(username, passText.getText())) {
                     frame.remove(panel);
-                    variables.setVariable("key", StringUtils.encrypt(userText.getText(), passText.getText()));
+                    variables.setVariable("key", StringUtils.generateUniqueString(StringUtils.encrypt(userText.getText(), passText.getText())));
                     frame.pack();
-                    showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
+                    showContentPanel(StringUtils.generateUniqueString(StringUtils.encrypt(userText.getText(), passText.getText())));
                 } else
                     JOptionPane.showMessageDialog(frame, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -1101,8 +1101,8 @@ public class GUI {
         createButton.addActionListener(e -> {
             if (api.register(userText.getText(), passText.getText())) {
                 frame.remove(panel);
-                variables.setVariable("key", StringUtils.encrypt(userText.getText(), passText.getText()));
-                showContentPanel(StringUtils.encrypt(userText.getText(), passText.getText()));
+                variables.setVariable("key", StringUtils.generateUniqueString(StringUtils.encrypt(userText.getText(), passText.getText())));
+                showContentPanel(StringUtils.generateUniqueString(StringUtils.encrypt(userText.getText(), passText.getText())));
             } else
                 JOptionPane.showMessageDialog(frame, "This username is already taken", "Error", JOptionPane.ERROR_MESSAGE);
         });

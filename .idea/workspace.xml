@@ -10,7 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/LoggerUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/API.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Logger.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/StringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/StringUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/variables.dat" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +52,12 @@
                 <item name="Blizzity" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Blizzity" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="launch4j" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -84,10 +97,13 @@
     "Gradle.Blizzity [:Blizzity.main()].executor": "Run",
     "Gradle.Blizzity [:Main.main()].executor": "Run",
     "Gradle.Blizzity [build].executor": "Run",
+    "Gradle.Blizzity [createAllExecutables].executor": "Run",
+    "Gradle.Blizzity [createExe].executor": "Run",
+    "Gradle.Blizzity.executor": "Run",
     "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240504_0000",
+    "com.google.cloudcode.ide_session_index": "20240517_0003",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -146,13 +162,61 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="Blizzity [createAllExecutables]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--stacktrace" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="createAllExecutables" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="Blizzity [createExe]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="createExe" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Application.Run" />
+      <item itemvalue="Gradle.Blizzity [createAllExecutables]" />
+      <item itemvalue="Gradle.Blizzity [createExe]" />
       <item itemvalue="Gradle.Blizzity [build]" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.Blizzity [build]" />
+        <item itemvalue="Gradle.Blizzity [createAllExecutables]" />
+        <item itemvalue="Gradle.Blizzity [createExe]" />
       </list>
     </recent_temporary>
   </component>
