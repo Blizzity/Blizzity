@@ -10,14 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/LoggerUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/API.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Logger.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/StringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/utils/StringUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/variables.dat" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +73,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/17.0.6/54e98c9eccf17a9359ba83fb45cc15b28936814d/javafx-controls-17.0.6-sources.jar!/javafx/scene/control/ButtonBase.java" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -103,7 +100,7 @@
     "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240517_0003",
+    "com.google.cloudcode.ide_session_index": "20240518_0001",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",

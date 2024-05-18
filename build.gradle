@@ -21,9 +21,6 @@ repositories {
 }
 
 launch4j {
-}
-
-launch4j {
     mainClassName = "${group}.Main"
     icon = "${projectDir}/blizzity-logo.ico"
     outputDir = "libs"
