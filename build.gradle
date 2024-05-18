@@ -24,7 +24,6 @@ launch4j {
     mainClassName = "${group}.Main"
     icon = "${projectDir}/blizzity-logo.ico"
     outputDir = "libs"
-    restartOnCrash = true
 }
 
 tasks.register('createExeStandalone', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
@@ -64,6 +63,6 @@ jxbrowser {
 dependencies {
     implementation 'org.json:json:latest.release'
     implementation "com.sparkjava:spark-core:latest.release"
-    implementation 'com.github.WildePizza:SimpleVariables:latest.release'
+    implementation 'com.github.WildePizza:SimpleVariables:1.4.1'
     implementation 'com.github.WildePizza:SimpleLogger:1.9.3'
 }

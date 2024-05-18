@@ -32,8 +32,6 @@ import com.github.WildePizza.gui.listeners.LoginListener;
 import com.github.WildePizza.gui.listeners.ScreenListener;
 
 import javafx.scene.media.Media;
-import wildepizza.com.github.simplevariables.SimpleVariables;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -178,10 +176,7 @@ public class GUI {
         this.api = api;
     }
     void init() {
-        File appdata = new File(System.getenv("APPDATA") + File.separator + "Blizzity");
-        if (!appdata.exists())
-            appdata.mkdirs();
-        variables = new SimpleVariables(new File(appdata + File.separator + "variables.dat"));
+        variables = new VariablesBuilder().withProjectName("Blizzity").build();
         String signInText = "Sign in";
         signInLabel = new JLabel(signInText);
         signInLabel.setForeground(color6);
