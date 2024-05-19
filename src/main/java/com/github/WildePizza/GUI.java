@@ -744,7 +744,7 @@ public class GUI {
 
         if (advanced) {
             try {
-                UploadIcon uploadIcon = new UploadIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier));
+                ScalableIcon uploadIcon = new ScalableIcon(new UploadIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3);
                 exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
                 shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
 //                exportButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("export.png")))));
