@@ -28,19 +28,17 @@ public class JIconButton extends JHoverButton {
         else
             g.setColor(getBackground());
         g.fillRoundRect((int) (5*multiplier), (int) (5*multiplier), (int) (size-10*multiplier), (int) (size-10*multiplier), (int) arcWidth, (int) arcHeight);
-//        Icon icon = getIcon();
-//        int iconWidth = getIcon().getIconWidth();
-//        int iconHeight = getIcon().getIconHeight();
-//        if (multiplier != 1)
-//            icon = icon.getScaledInstance((int) (iconWidth*multiplier), (int) (iconHeight*multiplier), Image.SCALE_REPLICATE);
-        if (color)
-            g.setColor(this.hoverTextColor);
-        else
-            g.setColor(getForeground());
-        if (getIcon() != null) {
-            int x = (getWidth() - getIcon().getIconWidth()) / 2;
-            int y = (getHeight() - getIcon().getIconHeight()) / 2;
-            getIcon().paintIcon(this, g, x, y);
+        Icon icon = getIcon();
+        if (icon != null) {
+            if (multiplier != 1)
+                icon = new ScalableIcon(icon, multiplier);
+            if (color)
+                g.setColor(this.hoverTextColor);
+            else
+                g.setColor(getForeground());
+            int x = (getWidth() - icon.getIconWidth()) / 2;
+            int y = (getHeight() - icon.getIconHeight()) / 2;
+            icon.paintIcon(this, g, x, y);
         }
     }
 }

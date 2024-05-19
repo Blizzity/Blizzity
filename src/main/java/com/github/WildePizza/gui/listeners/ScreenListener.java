@@ -57,6 +57,6 @@ public class ScreenListener {
     public static boolean isSelected(JButton button) {
         if (mouse == null)
             return false;
-        return button.getX() <= mouse.x && button.getX()+button.getWidth() > mouse.x && button.getY() < mouse.y && button.getY()+button.getHeight() > mouse.y;
+        return button.getX() <= mouse.x && button.getX()+button.getWidth() > mouse.x && button.getY() <= mouse.y && button.getY()+button.getHeight() > mouse.y;
     }
 }

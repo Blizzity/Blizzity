@@ -32,7 +32,7 @@ import com.github.WildePizza.gui.listeners.LoginListener;
 import com.github.WildePizza.gui.listeners.ScreenListener;
 
 import javafx.scene.media.Media;
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
@@ -46,7 +46,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -744,14 +745,13 @@ public class GUI {
 
         if (advanced) {
             try {
-                ScalableIcon uploadIcon = new ScalableIcon(new UploadIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3);
-                exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
-                shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
-//                exportButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("export.png")))));
-//                shareButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("share.png")))));
+                ScalableIcon exportIcon = new ScalableIcon(new ExportIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3.3);
+                exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, exportIcon);
+                MovableIcon shareIcon = new MovableIcon(new ScalableIcon(new ShareIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3.85), 2, 2);
+                shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, shareIcon);
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
-                exportButton.setForeground(color7);
+                exportButton.setForeground(color3);
                 exportButton.setHoverBackground(color4);
                 exportButton.addActionListener(e -> {
                     Scene scene = jfxPanel.getScene();
@@ -776,7 +776,7 @@ public class GUI {
                 titleBarPanel.add(exportButton, gbc2);
                 shareButton.setBackground(color2);
                 shareButton.setHoverForeground(color6);
-                shareButton.setForeground(color7);
+                shareButton.setForeground(color3);
                 shareButton.setHoverBackground(color4);
                 shareButton.addActionListener(e -> {
                     Scene scene = jfxPanel.getScene();
@@ -1385,7 +1385,6 @@ public class GUI {
                                 });
                                 Platform.runLater(() -> {
                                     stopLoadingScreen(scene);
-//                                    root.getChildren().addAll(accountParts.get(0), accountParts.get(1), accountParts.get(2));
                                     root.getChildren().addAll(getSpaceParts(newValue));
                                     root.getChildren().removeAll(getSpaceParts(oldValue));
                                     root.getChildren().add(accountComboBox);
@@ -1626,7 +1625,7 @@ public class GUI {
         path.setScaleX(0.34 * sizeMultiplier);
         path.setScaleY(0.34 * sizeMultiplier);
         path.setLayoutX(31 * sizeMultiplier / 2 - path.getLayoutBounds().getWidth() / 2);
-        path.setLayoutY(40 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2);
+        path.setLayoutY(38 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2);
         return path;
     }
     private SVGPath getAccountSVG(javafx.scene.paint.Color color) {
@@ -1636,7 +1635,7 @@ public class GUI {
         path.setScaleX(0.9 * sizeMultiplier);
         path.setScaleY(0.9 * sizeMultiplier);
         path.setLayoutX(40 * sizeMultiplier / 2 - path.getLayoutBounds().getWidth() / 2);
-        path.setLayoutY(40 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2 - 1.5 / sizeMultiplier);
+        path.setLayoutY(38 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2 - 1.5 / sizeMultiplier);
         return path;
     }
     private Node[] getGenerateParts() {

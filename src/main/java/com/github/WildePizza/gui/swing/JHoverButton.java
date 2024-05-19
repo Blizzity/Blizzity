@@ -1,5 +1,7 @@
 package com.github.WildePizza.gui.swing;
 
+import com.github.WildePizza.Blizzity;
+import com.github.WildePizza.GUI;
 import com.github.WildePizza.gui.listeners.ScreenListener;
 
 import javax.swing.*;
@@ -31,7 +33,8 @@ public class JHoverButton extends JButton implements MouseMotionListener {
     @Override
     protected void paintComponent(Graphics g) {
         try {
-            paintComponent(g, !ScreenListener.change && ScreenListener.isSelected(this)); //TODO fix top
+            Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+            paintComponent(g, !ScreenListener.change && ScreenListener.isSelected(this) && GUI.frame.getBounds().contains(mousePoint));
             if (isDarkened) {
                 g.setColor(new Color(0, 0, 0, 128));
                 g.fillRect(0, 0, getWidth(), getHeight()); // Draw rectangle (x, y, width, height)
