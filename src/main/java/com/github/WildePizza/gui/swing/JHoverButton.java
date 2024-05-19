@@ -24,6 +24,10 @@ public class JHoverButton extends JButton implements MouseMotionListener {
         super();
         addMouseMotionListener(this);
     }
+    public JHoverButton(Icon icon) {
+        super(icon);
+        addMouseMotionListener(this);
+    }
     @Override
     protected void paintComponent(Graphics g) {
         try {

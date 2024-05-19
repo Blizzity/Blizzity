@@ -164,8 +164,8 @@ public class GUI {
             mediaView,
             mediaViewClone;
     public static JFXPanel jfxPanel;
-    private JUploadIconComponent exportButton;
-    private JImageButton shareButton;
+    private JIconButton exportButton;
+    private JIconButton shareButton;
     ImageView imageView;
     int screenWidth = 1530;
     int screenHeight = 1000;
@@ -744,9 +744,11 @@ public class GUI {
 
         if (advanced) {
             try {
-                exportButton = new JUploadIconComponent();
+                UploadIcon uploadIcon = new UploadIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier));
+                exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
+                shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, uploadIcon);
 //                exportButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("export.png")))));
-                shareButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("share.png")))));
+//                shareButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("share.png")))));
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
                 exportButton.setForeground(color7);
