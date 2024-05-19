@@ -10,9 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/swing/JUploadIconComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/export.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/export.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/received_video2.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/share.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/share2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/share3.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/share.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,6 +60,12 @@
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="launch4j" type="c8890929:TasksNode$1" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Blizzity" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="shadow" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -90,37 +101,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Run.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity [:Blizzity.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity [createAllExecutables].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity [createExe].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Blizzity.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build Blizzity.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;com.google.cloudcode.ide_session_index&quot;: &quot;20240518_0001&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/wilde/Documents/Github/BlizzityAPI&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Run.executor": "Run",
+    "Gradle.Blizzity [:Blizzity.main()].executor": "Run",
+    "Gradle.Blizzity [:Main.main()].executor": "Run",
+    "Gradle.Blizzity [build].executor": "Run",
+    "Gradle.Blizzity [createAllExecutables].executor": "Run",
+    "Gradle.Blizzity [createExe].executor": "Run",
+    "Gradle.Blizzity [shadowJar].executor": "Run",
+    "Gradle.Blizzity.executor": "Run",
+    "Gradle.Build Blizzity.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.google.cloudcode.ide_session_index": "20240518_0001",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/wilde/Documents/Github/Blizzity/build/libs",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\wilde\Documents\Github\Blizzity\build\libs" />
       <recent name="F:\Github\Blizzity\.github\workflows" />
       <recent name="F:\Github\Blizzity\jar" />
       <recent name="F:\Github\Blizzity" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\wilde\Documents\Github\Blizzity\src\main\resources" />
+      <recent name="C:\Users\wilde\Documents\Github\Blizzity\lib" />
+      <recent name="C:\Users\wilde\Documents\Github\Blizzity\libs" />
       <recent name="F:\Github\Blizzity" />
       <recent name="F:\Github\Blizzity\lib" />
     </key>
@@ -131,7 +147,7 @@
       <recent name="wildepizza.com.github.blizzity.custom" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Run">
+  <component name="RunManager" selected="Gradle.Blizzity [build]">
     <configuration name="Run" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.github.WildePizza.Blizzity" />
       <module name="Blizzity.main" />
@@ -166,7 +182,7 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--stacktrace" />
+        <option name="scriptParameters" value="--scan --info" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -205,8 +221,31 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="Blizzity [shadowJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="shadowJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Application.Run" />
+      <item itemvalue="Gradle.Blizzity [shadowJar]" />
       <item itemvalue="Gradle.Blizzity [createAllExecutables]" />
       <item itemvalue="Gradle.Blizzity [createExe]" />
       <item itemvalue="Gradle.Blizzity [build]" />
@@ -215,6 +254,7 @@
       <list>
         <item itemvalue="Gradle.Blizzity [build]" />
         <item itemvalue="Gradle.Blizzity [createAllExecutables]" />
+        <item itemvalue="Gradle.Blizzity [shadowJar]" />
         <item itemvalue="Gradle.Blizzity [createExe]" />
       </list>
     </recent_temporary>

@@ -46,6 +46,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -163,9 +164,8 @@ public class GUI {
             mediaView,
             mediaViewClone;
     public static JFXPanel jfxPanel;
-    private JImageButton
-            exportButton,
-            shareButton;
+    private JUploadIconComponent exportButton;
+    private JImageButton shareButton;
     ImageView imageView;
     int screenWidth = 1530;
     int screenHeight = 1000;
@@ -744,8 +744,9 @@ public class GUI {
 
         if (advanced) {
             try {
-                exportButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(new File("export.png"))));
-                shareButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(new File("share3.png"))));
+                exportButton = new JUploadIconComponent();
+//                exportButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("export.png")))));
+                shareButton = new JImageButton(10*sizeMultiplier, 10*sizeMultiplier, new ImageIcon(ImageIO.read(Objects.requireNonNull(GUI.class.getClassLoader().getResourceAsStream("share.png")))));
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
                 exportButton.setForeground(color7);
@@ -805,7 +806,7 @@ public class GUI {
                 shareButton.setMinimumSize(new Dimension((int) (40*sizeMultiplier), (int) (40*sizeMultiplier)));
                 titleBarPanel.add(shareButton, gbc);
             } catch (Exception e) {
-                throw new RuntimeException();
+                throw new RuntimeException(e);
             }
         }
 

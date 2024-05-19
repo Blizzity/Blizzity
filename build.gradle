@@ -1,3 +1,5 @@
+import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -11,6 +13,7 @@ plugins {
 group = 'com.github.WildePizza'
 description = 'blizzity'
 def name = 'Blizzity'
+def main = 'com.github.WildePizza.Blizzity'
 
 repositories {
     mavenLocal()
@@ -21,12 +24,11 @@ repositories {
 }
 
 launch4j {
-    mainClassName = "${group}.Main"
+    mainClassName = main
     icon = "${projectDir}/blizzity-logo.ico"
     outputDir = "libs"
 }
-
-tasks.register('createExeStandalone', edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+tasks.register('createExeStandalone', Launch4jLibraryTask) {
     mustRunAfter("createExe")
     outfile = "${name}-standalone.exe"
     jarTask = project.tasks.shadowJar
@@ -35,7 +37,13 @@ tasks.register('createExeStandalone', edu.sc.seis.launch4j.tasks.Launch4jLibrary
 shadowJar {
     archiveFileName = "${name}-standalone.jar"
     manifest {
-        attributes 'Main-Class': "${group}.Main"
+        attributes 'Main-Class': main
+    }
+}
+jar {
+    archiveFileName = "${name}.jar"
+    manifest {
+        attributes 'Main-Class': main
     }
 }
 build.dependsOn(createAllExecutables)
