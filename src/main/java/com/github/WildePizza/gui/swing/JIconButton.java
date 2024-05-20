@@ -4,6 +4,7 @@ import com.github.WildePizza.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class JIconButton extends JHoverButton {
     private final double arcWidth;

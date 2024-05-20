@@ -53,7 +53,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"SameParameterValue", "deprecation"})
 public class GUI {
-    public static double sizeMultiplier = 1;
+    public static boolean autoScale = true;
+    public static double sizeMultiplier = 0.9;
     public static JFrame frame;
     private SVGButton selectedSectionButton;
     private JPanel panel;
@@ -193,7 +194,7 @@ public class GUI {
         descriptionJLabel.setBounds(frame.getWidth()/2-width/2, 130, width, 15);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if (screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight())
+        if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight()) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/screenHeight, screenSize.getWidth()/screenWidth);
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
@@ -745,15 +746,15 @@ public class GUI {
 
         if (advanced) {
             try {
-                ScalableIcon exportIcon = new ScalableIcon(new ExportIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3.3);
+                ExportIcon exportIcon = new ExportIcon(25, 25);
                 exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, exportIcon);
-                MovableIcon shareIcon = new MovableIcon(new ScalableIcon(new ShareIcon((int) (10*sizeMultiplier), (int) (10*sizeMultiplier)), 3.85), 2, 2);
+                MovableIcon shareIcon = new MovableIcon(new ShareIcon(30, 30), (int) (2.5*sizeMultiplier), (int) (3.5*sizeMultiplier));
                 shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, shareIcon);
                 exportButton.setBackground(color2);
                 exportButton.setHoverForeground(color6);
                 exportButton.setForeground(color3);
                 exportButton.setHoverBackground(color4);
-                exportButton.addActionListener(e -> {
+                exportButton.addActionListener((ConditionalEventListener) e -> {
                     Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
@@ -764,7 +765,7 @@ public class GUI {
                         root.getChildren().addAll(getExportParts());
                         frame.add(jfxPanel);
                         frame.pack();
-                        titleBarPanel.setDarkened(true); //TODO fix interactible
+                        titleBarPanel.setDarkened(true);
                         exportButton.setDarkened(true);
                         minimizeButton.setDarkened(true);
                         closeButton.setDarkened(true);
@@ -778,7 +779,7 @@ public class GUI {
                 shareButton.setHoverForeground(color6);
                 shareButton.setForeground(color3);
                 shareButton.setHoverBackground(color4);
-                shareButton.addActionListener(e -> {
+                shareButton.addActionListener((ConditionalEventListener) e -> {
                     Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
@@ -817,7 +818,7 @@ public class GUI {
         minimizeButton.setHoverForeground(color6);
         minimizeButton.setForeground(color7);
         minimizeButton.setHoverBackground(color4);
-        minimizeButton.addActionListener(e -> {
+        minimizeButton.addActionListener((ConditionalEventListener) e -> {
             frame.setState(JFrame.ICONIFIED); // Close the window
         });
         minimizeButton.setPreferredSize(new Dimension((int) (50*sizeMultiplier), (int) (40*sizeMultiplier)));
@@ -831,7 +832,7 @@ public class GUI {
         closeButton.setForeground(color7);
         closeButton.setHoverForeground(color6);
         closeButton.setHoverBackground(new Color(201, 79, 79));
-        closeButton.addActionListener(e -> {
+        closeButton.addActionListener((ConditionalEventListener) e -> {
             frame.dispose(); // Close the window
         });
         closeButton.setPreferredSize(new Dimension((int) (50*sizeMultiplier), (int) (40*sizeMultiplier)));
@@ -1247,6 +1248,7 @@ public class GUI {
                                 );
 
                             nameLabel2 = new Label(file.getKey().getName());
+                            nameLabel2.setFont(new javafx.scene.text.Font(nameLabel2.getFont().getFamily(), nameLabel2.getFont().getSize() * sizeMultiplier));
                             nameLabel2.setLayoutX(1250 * sizeMultiplier);
                             nameLabel2.setLayoutY(60 * sizeMultiplier);
                             nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
@@ -1258,16 +1260,19 @@ public class GUI {
                             pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                             pathLabel2 = new Label(file.getKey().getAbsolutePath().replace("\\" + file.getKey().getName(), ""));
+                            pathLabel2.setFont(new javafx.scene.text.Font(pathLabel2.getFont().getFamily(), pathLabel2.getFont().getSize() * sizeMultiplier));
                             pathLabel2.setLayoutX(1250 * sizeMultiplier);
                             pathLabel2.setLayoutY(83 * sizeMultiplier);
                             pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
+                            double moveY = 205;
+                            double moveX = 130;
                             mediaPlayer.set(new MediaPlayer(media));
                             mediaView = new MediaView(mediaPlayer.get());
                             mediaView.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
                             mediaView.setScaleY((double) videoPreviewHeight / videoHeight * sizeMultiplier);
-                            mediaView.setLayoutY(-705 * sizeMultiplier);
-                            mediaView.setLayoutX(363.5 * sizeMultiplier);
+                            mediaView.setLayoutY((-755-moveY) + (50+moveY) * sizeMultiplier);
+                            mediaView.setLayoutX((-414.5-moveX) + (780+moveX) * sizeMultiplier);
 
                             mediaViewClone = new MediaView(mediaPlayer.get());
                             mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
