@@ -18,7 +18,7 @@ public class JDarkenedPanel extends JPanel {
         }
         if (isDarkened) {
             g.setColor(new Color(0, 0, 0, 128));
-            g.fillRect(0, 0, getWidth(), getHeight()); // Draw rectangle (x, y, width, height)
+            g.fillRect(0, 0, (int) getMaximumSize().getWidth(), (int) getMaximumSize().getHeight());
         }
     }
 }

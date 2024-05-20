@@ -93,6 +93,8 @@ public class ShareIcon implements Icon {
         g2d.translate(x, y);
         g2d.scale((double) width / 24, (double) height / 24);
         g2d.fill(path);
+        g2d.setStroke(new BasicStroke(0.1f));
+        g2d.draw(path);
         g2d.dispose();
     }
 

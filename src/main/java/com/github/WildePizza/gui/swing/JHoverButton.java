@@ -1,6 +1,5 @@
 package com.github.WildePizza.gui.swing;
 
-import com.github.WildePizza.Blizzity;
 import com.github.WildePizza.GUI;
 import com.github.WildePizza.gui.listeners.ScreenListener;
 
@@ -9,6 +8,7 @@ import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 
+@SuppressWarnings("unused")
 public class JHoverButton extends JButton implements MouseMotionListener {
     Color hoverTextColor;
     Color hoverBoxColor;
@@ -41,6 +41,7 @@ public class JHoverButton extends JButton implements MouseMotionListener {
     public JHoverButton() {
         super();
         addMouseMotionListener(this);
+        super.addActionListener(e -> fireAction(new ConditionalEvent(this), !isDarkened));
     }
     public JHoverButton(Icon icon) {
         super(icon);
@@ -54,7 +55,7 @@ public class JHoverButton extends JButton implements MouseMotionListener {
             paintComponent(g, !ScreenListener.change && ScreenListener.isSelected(this) && GUI.frame.getBounds().contains(mousePoint) && !isDarkened);
             if (isDarkened) {
                 g.setColor(new Color(0, 0, 0, 128));
-                g.fillRect(0, 0, getWidth(), getHeight()); // Draw rectangle (x, y, width, height)
+                g.fillRect(0, 0, Math.max((int) getMaximumSize().getWidth(), getWidth()), Math.max((int) getMaximumSize().getHeight(), getWidth()));
             }
         } finally {
             g.dispose();

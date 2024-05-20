@@ -54,7 +54,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings({"SameParameterValue", "deprecation"})
 public class GUI {
     public static boolean autoScale = true;
-    public static double sizeMultiplier = 0.9;
+    public static double sizeMultiplier = 0.3;
     public static JFrame frame;
     private SVGButton selectedSectionButton;
     private JPanel panel;
@@ -149,7 +149,6 @@ public class GUI {
             duetCheckBox;
     private Double<File, String> file;
     private Button
-            jfxCloseButton,
             folderButton;
     private SimpleButton
             logoutButton,
@@ -158,6 +157,7 @@ public class GUI {
             resetButton,
             shareCompleteButton;
     private TextField nameTextField;
+    private SimpleSVGButton jfxCloseButton;
     private TextArea
             captionNameTextField,
             titleTextField,
@@ -171,6 +171,10 @@ public class GUI {
     ImageView imageView;
     int screenWidth = 1530;
     int screenHeight = 1000;
+    int videoWidth = 1080;
+    int videoHeight = 1920;
+    int videoPreviewWidth = 230;
+    int videoPreviewHeight = 410;
     String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
     double x = (double) screenWidth /2- (double) 640 /2;
     double y = (double) screenHeight / 2 - (double) 670 / 2;
@@ -195,7 +199,7 @@ public class GUI {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight()) && autoScale)
-            sizeMultiplier = Math.min(screenSize.getHeight()/screenHeight, screenSize.getWidth()/screenWidth);
+            sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
         optionsBackground = new Rectangle(670*sizeMultiplier, 490*sizeMultiplier);
@@ -326,36 +330,34 @@ public class GUI {
 
         exportBackground = new Rectangle(640*sizeMultiplier, 540*sizeMultiplier);
         exportBackground.setLayoutX(x*sizeMultiplier);
-        exportBackground.setLayoutY(y - 40 + 65*sizeMultiplier);
+        exportBackground.setLayoutY((y + 25)*sizeMultiplier);
         exportBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
         shareBackground = new Rectangle(640*sizeMultiplier, 540*sizeMultiplier);
         shareBackground.setLayoutX(x*sizeMultiplier);
-        shareBackground.setLayoutY(y - 40 + 65*sizeMultiplier);
+        shareBackground.setLayoutY((y - 15)*sizeMultiplier);
         shareBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
         exportTitle = new Rectangle(640*sizeMultiplier, 40*sizeMultiplier);
         exportTitle.setLayoutX(x*sizeMultiplier);
-        exportTitle.setLayoutY(y - 80 + 65*sizeMultiplier);
+        exportTitle.setLayoutY((y - 15)*sizeMultiplier);
         exportTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
         shareTitle = new Rectangle(640*sizeMultiplier, 40*sizeMultiplier);
         shareTitle.setLayoutX(x*sizeMultiplier);
-        shareTitle.setLayoutY(y - 80 + 65*sizeMultiplier);
+        shareTitle.setLayoutY((y - 15)*sizeMultiplier);
         shareTitle.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
         exportTitleLabel = new Label("Export");
-        exportTitleLabel.setFont(new javafx.scene.text.Font(exportTitleLabel.getFont().getFamily(), exportTitleLabel.getFont().getSize()*sizeMultiplier));
-        exportTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
-        exportTitleLabel.setLayoutX(x + 15*sizeMultiplier);
-        exportTitleLabel.setLayoutY(y - 70 + 65*sizeMultiplier);
+        exportTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16*sizeMultiplier));
+        exportTitleLabel.setLayoutX((x + 15)*sizeMultiplier);
+        exportTitleLabel.setLayoutY((y - 5)*sizeMultiplier);
         exportTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         shareTitleLabel = new Label("Share");
-        shareTitleLabel.setFont(new javafx.scene.text.Font(shareTitleLabel.getFont().getFamily(), shareTitleLabel.getFont().getSize()*sizeMultiplier));
-        shareTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16));
-        shareTitleLabel.setLayoutX(x + 15*sizeMultiplier);
-        shareTitleLabel.setLayoutY(y - 70 + 65*sizeMultiplier);
+        shareTitleLabel.setFont(javafx.scene.text.Font.font("Arial", FontPosture.REGULAR, 16*sizeMultiplier));
+        shareTitleLabel.setLayoutX((x + 15)*sizeMultiplier);
+        shareTitleLabel.setLayoutY((y - 5)*sizeMultiplier);
         shareTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         generateButton = new SimpleButton("Generate", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
@@ -384,42 +386,46 @@ public class GUI {
             nameLabel = new Label("Name");
             nameLabel.setFont(new javafx.scene.text.Font(nameLabel.getFont().getFamily(), nameLabel.getFont().getSize()*sizeMultiplier));
             nameLabel.setPrefSize(85*sizeMultiplier, 20*sizeMultiplier);
-            nameLabel.setLayoutX(x + 360*sizeMultiplier);
-            nameLabel.setLayoutY(y - 25 + 65*sizeMultiplier);
+            nameLabel.setLayoutX((x + 360)*sizeMultiplier);
+            nameLabel.setLayoutY((y + 40)*sizeMultiplier);
             nameLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
             nameTextField = new TextField("output");
+            nameTextField.setFont(new javafx.scene.text.Font(nameTextField.getFont().getFamily(),nameTextField.getFont().getSize()*sizeMultiplier));
             nameTextField.setPrefSize(200*sizeMultiplier, 20*sizeMultiplier);
             nameTextField.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
-            nameTextField.setLayoutX(x + 425*sizeMultiplier);
-            nameTextField.setLayoutY(y - 25 + 65*sizeMultiplier);
+            nameTextField.setLayoutX((x + 425)*sizeMultiplier);
+            nameTextField.setLayoutY((y + 40)*sizeMultiplier);
 
             exportLabel = new Label("Export to");
             exportLabel.setFont(new javafx.scene.text.Font(    exportLabel.getFont().getFamily(),     exportLabel.getFont().getSize()*sizeMultiplier));
             exportLabel.setPrefSize(85*sizeMultiplier, 20*sizeMultiplier);
-            exportLabel.setLayoutX(x + 360*sizeMultiplier);
-            exportLabel.setLayoutY(y + 20 + 65*sizeMultiplier);
+            exportLabel.setLayoutX((x + 360)*sizeMultiplier);
+            exportLabel.setLayoutY((y + 85)*sizeMultiplier);
             exportLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
             File defaultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getParent() + "\\Videos");
             exportFieldLabel = new Label("  " + defaultDir);
-            exportFieldLabel.setFont(new javafx.scene.text.Font(    exportFieldLabel.getFont().getFamily(),     exportFieldLabel.getFont().getSize()*sizeMultiplier));
+            exportFieldLabel.setFont(new javafx.scene.text.Font(exportFieldLabel.getFont().getFamily(), exportFieldLabel.getFont().getSize()*sizeMultiplier));
             exportFieldLabel.setPrefSize(159*sizeMultiplier, 26*sizeMultiplier);
             exportFieldLabel.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
-            exportFieldLabel.setLayoutX(x + 425*sizeMultiplier);
-            exportFieldLabel.setLayoutY(y + 17 + 65*sizeMultiplier);
+            exportFieldLabel.setLayoutX((x + 425)*sizeMultiplier);
+            exportFieldLabel.setLayoutY((y + 82)*sizeMultiplier);
 
             folderButton = new Button();
             SVGPath path = new SVGPath();
             path.setContent("M3 8.2C3 7.07989 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H9.67452C10.1637 5 10.4083 5 10.6385 5.05526C10.8425 5.10425 11.0376 5.18506 11.2166 5.29472C11.4184 5.4184 11.5914 5.59135 11.9373 5.93726L12.0627 6.06274C12.4086 6.40865 12.5816 6.5816 12.7834 6.70528C12.9624 6.81494 13.1575 6.89575 13.3615 6.94474C13.5917 7 13.8363 7 14.3255 7H17.8C18.9201 7 19.4802 7 19.908 7.21799C20.2843 7.40973 20.5903 7.71569 20.782 8.09202C21 8.51984 21 9.0799 21 10.2V15.8C21 16.9201 21 17.4802 20.782 17.908C20.5903 18.2843 20.2843 18.5903 19.908 18.782C19.4802 19 18.9201 19 17.8 19H6.2C5.07989 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2Z");
-            path.setStrokeWidth(1.3);
+            path.setStrokeWidth(1.3*sizeMultiplier);
+            path.setScaleX(sizeMultiplier);
+            path.setScaleY(sizeMultiplier);
             path.setStroke(javafx.scene.paint.Color.WHITE);
             path.setFill(javafx.scene.paint.Color.rgb(45, 45, 45));
             folderButton.setGraphic(path);
             folderButton.setPrefSize(36*sizeMultiplier, 26*sizeMultiplier);
+            folderButton.setMinSize(36*sizeMultiplier, 26*sizeMultiplier);
             folderButton.setStyle("-fx-background-color: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 5; -fx-text-fill: white;");
-            folderButton.setLayoutX(x + 425 + 159 + 5*sizeMultiplier);
-            folderButton.setLayoutY(y + 17 + 65*sizeMultiplier);
+            folderButton.setLayoutX((x + 589)*sizeMultiplier);
+            folderButton.setLayoutY((y + 82)*sizeMultiplier);
             folderButton.setOnAction(event -> {
                 JFileChooser fileChooser = new JFileChooser(defaultDir);
                 // Set to directories only for folder selection
@@ -433,10 +439,9 @@ public class GUI {
                 }
             });
 
-            exportCompleteButton = new SimpleButton("Generate", 10*sizeMultiplier);
-            exportCompleteButton.setPrefSize(100*sizeMultiplier, 26*sizeMultiplier);
-            exportCompleteButton.setLayoutX(x + 500*sizeMultiplier);
-            exportCompleteButton.setLayoutY(y + 455 + 65*sizeMultiplier);
+            exportCompleteButton = new SimpleButton("Export", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
+            exportCompleteButton.setLayoutX((x + 528)*sizeMultiplier);
+            exportCompleteButton.setLayoutY((y + 520)*sizeMultiplier);
             exportCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
             exportCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             exportCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
@@ -451,11 +456,7 @@ public class GUI {
                         throw new RuntimeException(e);
                     }
                     root.getChildren().removeAll(getExportParts());
-                    titleBarPanel.setDarkened(false);
-                    exportButton.setDarkened(false);
-                    minimizeButton.setDarkened(false);
-                    closeButton.setDarkened(false);
-                    shareButton.setDarkened(false);
+                    setDarkenBackground(false);
                     frame.add(jfxPanel);
                     frame.pack();
                 });
@@ -469,8 +470,8 @@ public class GUI {
             spaceLabel = new Label("Space");
             spaceLabel.setFont(new javafx.scene.text.Font(spaceLabel.getFont().getFamily(), spaceLabel.getFont().getSize()*sizeMultiplier));
             spaceLabel.setPrefSize(85*sizeMultiplier, 20*sizeMultiplier);
-            spaceLabel.setLayoutX(x + 360*sizeMultiplier);
-            spaceLabel.setLayoutY(y - 25 + 65*sizeMultiplier);
+            spaceLabel.setLayoutX((x + 360)*sizeMultiplier);
+            spaceLabel.setLayoutY((y + 40)*sizeMultiplier);
             spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
             String[] spaces = {"TikTok", "Youtube", "Snapchat"/*, "X", "Instagram", "Facebook"*/};
@@ -481,8 +482,8 @@ public class GUI {
             spaceComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             spaceComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             spaceComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-            spaceComboBox.setLayoutX(x + 425*sizeMultiplier);
-            spaceComboBox.setLayoutY(y - 28 + 65*sizeMultiplier);
+            spaceComboBox.setLayoutX((x + 425)*sizeMultiplier);
+            spaceComboBox.setLayoutY((y + 37)*sizeMultiplier);
 
             // youtube
 
@@ -649,42 +650,32 @@ public class GUI {
                 discloseDescribtionLabel.setStyle("-fx-font-size: 10px;");
             }
 
-            shareCompleteButton = new SimpleButton("Share", 10*sizeMultiplier);
+            shareCompleteButton = new SimpleButton("Share", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
             shareCompleteButton.setPrefSize(100*sizeMultiplier, 26*sizeMultiplier);
             shareCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
             shareCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             shareCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             shareCompleteButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-            shareCompleteButton.setLayoutX(x + 500*sizeMultiplier);
-            shareCompleteButton.setLayoutY(this.y + 455 + 65*sizeMultiplier);
+            shareCompleteButton.setLayoutX((x + 528)*sizeMultiplier);
+            shareCompleteButton.setLayoutY((y + 520)*sizeMultiplier);
         }
-
-        jfxCloseButton = new Button();
-        // First SVG path
         SVGPath path1 = new SVGPath();
         path1.setContent("M7 17L16.8995 7.10051");
         path1.setStrokeWidth(0.7);
         path1.setStroke(javafx.scene.paint.Color.WHITE);
-
-        // Second SVG path
         SVGPath path2 = new SVGPath();
         path2.setContent("M7 7.00001L16.8995 16.8995");
         path2.setStrokeWidth(0.7);
         path2.setStroke(javafx.scene.paint.Color.WHITE);
-
-        // Combine the SVGPaths into a Group to use as button graphic
         Group svgGroup = new Group(path1, path2);
-        svgGroup.setScaleX(1.2);
-        svgGroup.setScaleY(1.2);
-        jfxCloseButton.setGraphic(svgGroup); //TODO make thinner (or the other one thicker)
-        jfxCloseButton.setStyle("-fx-background-color: #1E1F20; -fx-padding: 10; -fx-background-radius: 0;");
-        jfxCloseButton.setOnMouseEntered(e -> jfxCloseButton.setStyle("-fx-background-color: #C94F4F; -fx-padding: 10; -fx-background-radius: 0;"));
-        jfxCloseButton.setOnMouseExited(e -> jfxCloseButton.setStyle("-fx-background-color: #1E1F20; -fx-padding: 10; -fx-background-radius: 0;"));
-        jfxCloseButton.setPrefSize(50*sizeMultiplier, 39*sizeMultiplier);
-        jfxCloseButton.setLayoutX(x + 590*sizeMultiplier);
-        jfxCloseButton.setLayoutY(this.y - 80 + 65*sizeMultiplier);
-        jfxCloseButton.setOnMousePressed(e -> jfxCloseButton.setPrefHeight(40));
-        jfxCloseButton.setOnMouseClicked(e -> jfxCloseButton.setPrefHeight(39));
+        svgGroup.setScaleX(1.2*sizeMultiplier);
+        svgGroup.setScaleY(1.2*sizeMultiplier);
+        svgGroup.setLayoutX(50*sizeMultiplier/2-svgGroup.getLayoutBounds().getCenterX());
+        svgGroup.setLayoutY(40*sizeMultiplier/2-svgGroup.getLayoutBounds().getCenterY());
+        jfxCloseButton = new SimpleSVGButton(svgGroup, 50*sizeMultiplier, 40*sizeMultiplier);
+        jfxCloseButton.setBackgroundColor(javafx.scene.paint.Color.rgb(201,79,79));
+        jfxCloseButton.setLayoutX((x + 590)*sizeMultiplier);
+        jfxCloseButton.setLayoutY((y - 15)*sizeMultiplier);
         jfxCloseButton.setOnAction(actionEvent -> {
             Scene scene = jfxPanel.getScene();
             Group root = ((Group)scene.getRoot());
@@ -696,11 +687,7 @@ public class GUI {
                     root.getChildren().remove(accountComboBox);
                     root.getChildren().removeAll(getSpaceParts(spaceComboBox.getValue()));
                 }
-                titleBarPanel.setDarkened(false);
-                exportButton.setDarkened(false);
-                minimizeButton.setDarkened(false);
-                closeButton.setDarkened(false);
-                shareButton.setDarkened(false);
+                setDarkenBackground(false);
                 frame.add(jfxPanel);
                 frame.pack();
             });
@@ -710,7 +697,7 @@ public class GUI {
         frame = new JFrame("BlizzityAI");
         frame.setSize(450, 520);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setUndecorated(true);
         init();
         if (variables.getVariable("key") != null) {
@@ -743,10 +730,45 @@ public class GUI {
 
         JLabel label = new JLabel("Blizzity");
         titleBarPanel.add(label, gbc3);
+        final Point[] start = new Point[1];
+        titleBarPanel.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+//                System.out.println(e.getPoint().getX()-start[0].getX());
+//                titleBarPanel.setAlignmentX((float) (e.getPoint().getX()-start[0].getX()));
+            }
+        });
+        titleBarPanel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("!!!!");
+                start[0] = e.getPoint();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
 
         if (advanced) {
             try {
-                ExportIcon exportIcon = new ExportIcon(25, 25);
+                MovableIcon exportIcon = new MovableIcon(new ExportIcon(25, 25), (int) (-2*sizeMultiplier), 0);
                 exportButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, exportIcon);
                 MovableIcon shareIcon = new MovableIcon(new ShareIcon(30, 30), (int) (2.5*sizeMultiplier), (int) (3.5*sizeMultiplier));
                 shareButton = new JIconButton(10*sizeMultiplier, 10*sizeMultiplier, shareIcon);
@@ -758,18 +780,14 @@ public class GUI {
                     Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
-                        Rectangle clipRect = new Rectangle(1080*sizeMultiplier, 1920*sizeMultiplier);
+                        Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
                         clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
                         clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
                         mediaViewClone.setClip(clipRect);
                         root.getChildren().addAll(getExportParts());
                         frame.add(jfxPanel);
                         frame.pack();
-                        titleBarPanel.setDarkened(true);
-                        exportButton.setDarkened(true);
-                        minimizeButton.setDarkened(true);
-                        closeButton.setDarkened(true);
-                        shareButton.setDarkened(true);
+                        setDarkenBackground(true);
                     });
                 });
                 exportButton.setPreferredSize(new Dimension((int) (40*sizeMultiplier), (int) (40*sizeMultiplier)));
@@ -783,7 +801,7 @@ public class GUI {
                     Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
-                        Rectangle clipRect = new Rectangle(1080*sizeMultiplier, 1920*sizeMultiplier);
+                        Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
                         clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
                         clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
                         mediaViewClone.setClip(clipRect);
@@ -798,11 +816,7 @@ public class GUI {
                         spaceComboBox.toFront();
                         frame.add(jfxPanel);
                         frame.pack();
-                        titleBarPanel.setDarkened(true); //TODO fix interactible
-                        exportButton.setDarkened(true);
-                        minimizeButton.setDarkened(true);
-                        closeButton.setDarkened(true);
-                        shareButton.setDarkened(true);
+                        setDarkenBackground(true);
                     });
                 });
                 shareButton.setPreferredSize(new Dimension((int) (40*sizeMultiplier), (int) (40*sizeMultiplier)));
@@ -1131,11 +1145,6 @@ public class GUI {
             int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frameWidth) / 2;
             int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frameHeight) / 2;
 
-            int videoWidth = 1080;
-            int videoHeight = 1920;
-            int videoPreviewWidth = 230;
-            int videoPreviewHeight = 410;
-
             usagesLabel = new Label("Usages: " + api.usages(key));
             usagesLabel.setLayoutX(22 * sizeMultiplier);
             usagesLabel.setLayoutY(65 * sizeMultiplier);
@@ -1274,11 +1283,13 @@ public class GUI {
                             mediaView.setLayoutY((-755-moveY) + (50+moveY) * sizeMultiplier);
                             mediaView.setLayoutX((-414.5-moveX) + (780+moveX) * sizeMultiplier);
 
+                            moveY = 550;
+                            moveX = 700;
                             mediaViewClone = new MediaView(mediaPlayer.get());
                             mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
                             mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight * sizeMultiplier);
-                            mediaViewClone.setLayoutX(80 * sizeMultiplier);
-                            mediaViewClone.setLayoutY(-610 + 65 * sizeMultiplier);
+                            mediaViewClone.setLayoutX((-27-moveX) + (x+moveX) * sizeMultiplier);
+                            mediaViewClone.setLayoutY((-528-moveY) + (y+moveY) * sizeMultiplier);
 
                             nameDetailLabel = new Label("Name:");
                             nameDetailLabel.setFont(new javafx.scene.text.Font(nameDetailLabel.getFont().getFamily(), nameDetailLabel.getFont().getSize() * sizeMultiplier));
@@ -1436,15 +1447,9 @@ public class GUI {
                                 root.getChildren().removeAll(getShareParts());
                                 root.getChildren().remove(accountComboBox);
                                 root.getChildren().removeAll(getSpaceParts(spaceComboBox.getValue()));
-                                titleBarPanel.setDarkened(false);
-                                exportButton.setDarkened(false);
-                                minimizeButton.setDarkened(false);
-                                closeButton.setDarkened(false);
-                                shareButton.setDarkened(false);
                                 frame.add(jfxPanel);
                                 frame.pack();
                             });
-
                         }
                     });
                     thread.start();
@@ -1572,6 +1577,14 @@ public class GUI {
 
         root.getChildren().addAll(loadingBackground, loading);
         scene.setRoot(root);
+        setDarkenBackground(true);
+    }
+    private void setDarkenBackground(boolean darken) {
+        titleBarPanel.setDarkened(darken);
+        exportButton.setDarkened(darken);
+        minimizeButton.setDarkened(darken);
+        closeButton.setDarkened(darken);
+        shareButton.setDarkened(darken);
     }
     private void admin(AtomicReference<AccountComboBox> adminAccountComboBox, String space, String key, String language) {
         if (adminAccountComboBox.get() == null)
@@ -1612,6 +1625,7 @@ public class GUI {
         Group root = ((Group) scene.getRoot());
         root.getChildren().removeAll(loadingBackground, loading);
         scene.setRoot(root);
+        setDarkenBackground(false);
     }
     private Group getGenerateSVG(javafx.scene.paint.Color color) {
         Group generateSvgGroup = new Group(svgPath(0, 0, color, "M11.5805 4.77604C12.2752 3.00516 12.6226 2.11971 13.349 2.01056C14.0755 1.90141 14.6999 2.64083 15.9488 4.11967L16.2719 4.50226C16.6268 4.9225 16.8042 5.13263 17.0455 5.25261C17.2868 5.37259 17.5645 5.38884 18.1201 5.42135L18.6258 5.45095C20.5808 5.56537 21.5583 5.62258 21.8975 6.26168C22.2367 6.90079 21.713 7.69853 20.6656 9.29403L20.3946 9.7068C20.097 10.1602 19.9482 10.3869 19.908 10.6457C19.8678 10.9045 19.9407 11.1662 20.0866 11.6895L20.2195 12.166C20.733 14.0076 20.9898 14.9284 20.473 15.4325C19.9562 15.9367 19.0081 15.6903 17.1118 15.1975L16.6213 15.07C16.0824 14.93 15.813 14.86 15.5469 14.8999C15.2808 14.9399 15.0481 15.0854 14.5828 15.3763L14.1591 15.6412C12.5215 16.6649 11.7027 17.1768 11.0441 16.8493C10.3854 16.5217 10.3232 15.5717 10.1987 13.6717L10.1665 13.1801C10.1311 12.6402 10.1134 12.3702 9.98914 12.1361C9.86488 11.902 9.64812 11.7302 9.21459 11.3867L8.8199 11.0739C7.29429 9.86506 6.53149 9.26062 6.64124 8.55405C6.751 7.84748 7.66062 7.50672 9.47988 6.8252L9.95054 6.64888C10.4675 6.45522 10.726 6.35839 10.9153 6.17371C11.1046 5.98903 11.2033 5.73742 11.4008 5.23419L11.5805 4.77604Z"), svgPath(0, 0, color, "M5.31003 9.59277C2.87292 11.9213 1.27501 15.8058 2.33125 22.0002C3.27403 19.3966 5.85726 17.2407 8.91219 15.9528C8.80559 15.3601 8.7583 14.6364 8.70844 13.8733L8.66945 13.2782C8.66038 13.1397 8.65346 13.0347 8.64607 12.9443C8.643 12.9068 8.64012 12.8754 8.63743 12.8489C8.61421 12.829 8.58591 12.8053 8.55117 12.7769C8.47874 12.7177 8.39377 12.6503 8.28278 12.5623L7.80759 12.1858C7.11448 11.6368 6.46884 11.1254 6.02493 10.6538C5.77182 10.385 5.48876 10.0304 5.31003 9.59277Z"), svgPath(0, 0, color, "M10.3466 15.4231C10.3415 15.3857 10.3365 15.3475 10.3316 15.3086L10.3877 15.41C10.374 15.4144 10.3603 15.4187 10.3466 15.4231Z"));
