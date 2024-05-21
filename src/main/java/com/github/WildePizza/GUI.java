@@ -337,7 +337,7 @@ public class GUI {
 
         shareBackground = new Rectangle(640*sizeMultiplier, 540*sizeMultiplier);
         shareBackground.setLayoutX(x*sizeMultiplier);
-        shareBackground.setLayoutY((y - 15)*sizeMultiplier);
+        shareBackground.setLayoutY((y + 25)*sizeMultiplier);
         shareBackground.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
         exportTitle = new Rectangle(640*sizeMultiplier, 40*sizeMultiplier);
