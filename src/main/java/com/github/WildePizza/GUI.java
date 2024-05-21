@@ -1298,13 +1298,13 @@ public class GUI {
                             mediaView.setLayoutY((-755-moveY) + (50+moveY) * sizeMultiplier);
                             mediaView.setLayoutX((-414.5-moveX) + (780+moveX) * sizeMultiplier);
 
-                            moveY = 397;
-                            moveX = 558;
+                            moveY = 445;
+                            moveX = 588;
                             mediaViewClone = new MediaView(mediaPlayer.get());
-                            mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
-                            mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight * sizeMultiplier);
-                            mediaViewClone.setLayoutX((-425-moveX) + this.x + moveX * sizeMultiplier + (double) (540 - videoPreviewHeight)/2);
-                            mediaViewClone.setLayoutY((-729-moveY) + this.y + moveY * sizeMultiplier + (double) (540 - videoPreviewHeight)/2);
+                            mediaViewClone.setScaleX((double) 510 / videoHeight * sizeMultiplier);
+                            mediaViewClone.setScaleY((double) 510 / videoHeight * sizeMultiplier);
+                            mediaViewClone.setLayoutX((-396-moveX) + this.x + (moveX+15) * sizeMultiplier);
+                            mediaViewClone.setLayoutY((-680-moveY) + this.y + (moveY+15) * sizeMultiplier);
 
                             nameDetailLabel = new Label("Name:");
                             nameDetailLabel.setFont(new javafx.scene.text.Font(nameDetailLabel.getFont().getFamily(), nameDetailLabel.getFont().getSize() * sizeMultiplier));
