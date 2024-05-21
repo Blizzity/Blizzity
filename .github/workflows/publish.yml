@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '11'
+          distribution: 'OpenJDK'
 
       - name: Setup Git
         run: echo "${{ secrets.PAT }}" | gh auth login --with-token
