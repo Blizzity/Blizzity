@@ -8,6 +8,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -43,9 +45,8 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,8 +54,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"SameParameterValue", "deprecation"})
 public class GUI {
-    public static boolean autoScale = true;
-    public static double sizeMultiplier = 0.3;
+    public static boolean allowResize = false;
+    public static boolean autoScale = false;
+    public static double sizeMultiplier = 1;
     public static JFrame frame;
     private SVGButton selectedSectionButton;
     private JPanel panel;
@@ -65,7 +67,6 @@ public class GUI {
     private AccountComboBox accountComboBox;
     private JLabel signInLabel, descriptionJLabel;
     private final API api;
-    private Point lastClick; // Used for dragging
     public static JSimpleButton closeButton;
     public static JSimpleButton minimizeButton;
     public static SimpleVariables variables;
@@ -198,8 +199,9 @@ public class GUI {
         descriptionJLabel.setBounds(frame.getWidth()/2-width/2, 130, width, 15);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight()) && autoScale)
+        if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
+        System.out.println(sizeMultiplier);
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
         optionsBackground = new Rectangle(670*sizeMultiplier, 490*sizeMultiplier);
@@ -218,7 +220,7 @@ public class GUI {
         languageLabel.setFont(new javafx.scene.text.Font(languageLabel.getFont().getFamily(), languageLabel.getFont().getSize()*sizeMultiplier));
         languageLabel.setLayoutX(22*sizeMultiplier);
         languageLabel.setLayoutY(65*sizeMultiplier);
-        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)"); //TODO make it look better
+        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         languageComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
@@ -236,7 +238,7 @@ public class GUI {
         lengthLabel.setFont(new javafx.scene.text.Font(lengthLabel.getFont().getFamily(), lengthLabel.getFont().getSize()*sizeMultiplier));
         lengthLabel.setLayoutX(22*sizeMultiplier);
         lengthLabel.setLayoutY(105*sizeMultiplier);
-        lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)"); //TODO make it look better
+        lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
         String[] lengths = {"< 1 min", "> 1 min 30 sec"};
@@ -574,7 +576,7 @@ public class GUI {
 
                 String[] privacy = {"Public", "Friends", "Private"};
                 privacyComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
-                privacyComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: white; -fx-background-radius: 5;"); //TODO make it look better
+                privacyComboBox.setStyle("-fx-base: rgb(57, 59, 64); -fx-text-fill: white; -fx-background-radius: 5;");
                 privacyComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
                 privacyComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
                 privacyComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
@@ -651,7 +653,6 @@ public class GUI {
             }
 
             shareCompleteButton = new SimpleButton("Share", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
-            shareCompleteButton.setPrefSize(100*sizeMultiplier, 26*sizeMultiplier);
             shareCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
             shareCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             shareCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
@@ -730,41 +731,68 @@ public class GUI {
 
         JLabel label = new JLabel("Blizzity");
         titleBarPanel.add(label, gbc3);
-        final Point[] start = new Point[1];
-        titleBarPanel.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-//                System.out.println(e.getPoint().getX()-start[0].getX());
-//                titleBarPanel.setAlignmentX((float) (e.getPoint().getX()-start[0].getX()));
-            }
-        });
-        titleBarPanel.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("!!!!");
-                start[0] = e.getPoint();
-            }
-
+        final Point[] clickPoint = new Point[1];
+        titleBarPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
+                clickPoint[0] = e.getPoint();
             }
         });
+
+        if (allowResize) //TODO fix resizer
+            titleBarPanel.addMouseMotionListener(new MouseAdapter() {
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    int x = frame.getLocation().x;
+                    int y = frame.getLocation().y;
+                    int width = frame.getWidth();
+                    int height = frame.getHeight();
+                    int MINIMUM_SIZE = 100;
+
+                    int deltaX = e.getX() - clickPoint[0].x;
+                    int deltaY = e.getY() - clickPoint[0].y;
+
+                    // Check for resizing based on cursor position near the borders
+                    if (e.getX() < 0) {
+                        x += deltaX;
+                        width -= deltaX;
+                        // Ensure minimum width
+                        width = Math.max(width, MINIMUM_SIZE);
+                    } else if (e.getX() > width) {
+                        width += deltaX;
+                    }
+
+                    if (e.getY() < 0) {
+                        y += deltaY;
+                        height -= deltaY;
+                        // Ensure minimum height
+                        height = Math.max(height, MINIMUM_SIZE);
+                    } else if (e.getY() > height) {
+                        height += deltaY;
+                    }
+
+                    // Update frame position and size
+                    frame.setLocation(x, y);
+                    frame.setBounds(x, y, width, height);
+                    clickPoint[0] = e.getPoint();
+                }
+            });
+        titleBarPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                clickPoint[0] = e.getPoint();
+            }
+        });
+
+        titleBarPanel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int xOffset = frame.getLocation().x - clickPoint[0].x + e.getX();
+                int yOffset = frame.getLocation().y - clickPoint[0].y + e.getY();
+                frame.setLocation(xOffset, yOffset);
+            }
+        });
+
 
         if (advanced) {
             try {
@@ -855,19 +883,6 @@ public class GUI {
 
         // Add custom title bar panel to the frame
         titleBarPanel.setPreferredSize(new Dimension((int) (450*sizeMultiplier), (int) (40*sizeMultiplier)));
-        // Add mouse listener for dragging
-        MouseAdapter mouseHandler = new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                frame.setLocation(frame.getX()+(e.getPoint().x-lastClick.x), frame.getY()+(e.getPoint().y-lastClick.y));
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-                lastClick = e.getPoint();
-            }
-        };
-        frame.addMouseListener(mouseHandler);
-        frame.addMouseMotionListener(mouseHandler);
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
     }
     private Node[] getSpaceParts(String space) {
@@ -875,11 +890,11 @@ public class GUI {
         if (space != null) {
             switch (space) {
                 case "TikTok":
-                        parts.addAll(List.of(captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox));
+                    return new Node[] {captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox};
                 case "Youtube":
-                        parts.addAll(List.of(titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox));
+                    return new Node[] {titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox};
                 case "Snapchat":
-                    parts.addAll(List.of(titleTextField));
+                    return new Node[] {titleTextField};
             }
         }
         return convert(parts);
@@ -1283,13 +1298,13 @@ public class GUI {
                             mediaView.setLayoutY((-755-moveY) + (50+moveY) * sizeMultiplier);
                             mediaView.setLayoutX((-414.5-moveX) + (780+moveX) * sizeMultiplier);
 
-                            moveY = 550;
-                            moveX = 700;
+                            moveY = 397;
+                            moveX = 558;
                             mediaViewClone = new MediaView(mediaPlayer.get());
                             mediaViewClone.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
                             mediaViewClone.setScaleY((double) videoPreviewHeight / videoHeight * sizeMultiplier);
-                            mediaViewClone.setLayoutX((-27-moveX) + (x+moveX) * sizeMultiplier);
-                            mediaViewClone.setLayoutY((-528-moveY) + (y+moveY) * sizeMultiplier);
+                            mediaViewClone.setLayoutX((-425-moveX) + this.x + moveX * sizeMultiplier + (double) (540 - videoPreviewHeight)/2);
+                            mediaViewClone.setLayoutY((-729-moveY) + this.y + moveY * sizeMultiplier + (double) (540 - videoPreviewHeight)/2);
 
                             nameDetailLabel = new Label("Name:");
                             nameDetailLabel.setFont(new javafx.scene.text.Font(nameDetailLabel.getFont().getFamily(), nameDetailLabel.getFont().getSize() * sizeMultiplier));
@@ -1379,6 +1394,7 @@ public class GUI {
                             if (imageView != null)
                                 Platform.runLater(() -> root.getChildren().removeAll(imageView));
                             if (api.check(newValue.toLowerCase(), key) || api.connect(newValue.toLowerCase(), key)) {
+                                System.out.println(api.info(newValue.toLowerCase(), key));
                                 accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265*sizeMultiplier, 70*sizeMultiplier, 10*sizeMultiplier, true);
                                 accountComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
                                 accountComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
@@ -1411,11 +1427,15 @@ public class GUI {
                         thread.start();
                     }
             );
+            HashMap<String, List<Object>> spaceRequirements = new HashMap<>();
+            spaceRequirements.put("TikTok", Arrays.asList(new Object[]{nameTextField, titleTextField, descriptionTextField}));
+            spaceRequirements.put("Youtube", Arrays.asList(new Object[]{titleTextField, descriptionTextField}));
+            shareCompleteButton.setDisable(true);
+            privacyComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
+            });
             shareCompleteButton.setOnAction(event -> {
-                if (
-                        !(spaceComboBox.getValue().equals("TikTok") && privacyComboBox.getValue() == null) &&
-                                !(spaceComboBox.getValue().equals("Youtube") && (youtubePrivacyComboBox.getValue() == null || titleTextField.getText().isEmpty() || descriptionTextField.getText().isEmpty()))
-                ) {
+                if (checkShareArguments()) {
                     Scene scene = jfxPanel.getScene();
                     Group root = ((Group) scene.getRoot());
                     startLoadingScreen(scene);
@@ -1455,6 +1475,7 @@ public class GUI {
                     thread.start();
                 } else {
                     // TODO mark
+
                 }
             });
             Platform.runLater(() -> {
@@ -1557,6 +1578,12 @@ public class GUI {
     }
 
     Rectangle loading;
+    private boolean checkShareArguments() {
+        return  (
+                !(spaceComboBox.getValue().equals("TikTok") && privacyComboBox.getValue() == null) &&
+                        !(spaceComboBox.getValue().equals("Youtube") && (youtubePrivacyComboBox.getValue() == null || titleTextField.getText().isEmpty() || descriptionTextField.getText().isEmpty()))
+        );
+    }
     private void startLoadingScreen(Scene scene) {
         Group root = ((Group) scene.getRoot());
         loading = new Rectangle(50*sizeMultiplier, 20*sizeMultiplier, javafx.scene.paint.Color.BLACK);
