@@ -70,7 +70,7 @@ jxbrowser {
 }
 dependencies {
     implementation 'org.json:json:20240303'
-    implementation "com.sparkjava:spark-core:17.0.6"
+    implementation "com.sparkjava:spark-core:2.9.4"
     implementation 'com.github.WildePizza:SimpleVariables:1.4.1'
     implementation 'com.github.WildePizza:SimpleLogger:1.9.3'
 }
