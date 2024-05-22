@@ -6,8 +6,8 @@ on:
       - "*"
 
 jobs:
-  build-and-publish:
-    runs-on: ubuntu-latest
+  windows-x86_64:
+    runs-on: windows-2019
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
