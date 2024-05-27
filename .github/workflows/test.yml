@@ -7,6 +7,12 @@ jobs:
       - name: Checkout project sources
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
       - name: Setup Git
         run: echo "${{ secrets.PAT }}" | gh auth login --with-token
 
@@ -24,6 +30,12 @@ jobs:
       - name: Checkout project sources
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
       - name: Setup Git
         run: echo "${{ secrets.PAT }}" | gh auth login --with-token
 
@@ -40,6 +52,12 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
 
       - name: Setup Git
         run: echo "${{ secrets.PAT }}" | gh auth login --with-token

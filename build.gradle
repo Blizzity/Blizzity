@@ -19,7 +19,18 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://jitpack.io"
+        url "https://maven.pkg.github.com/Blizzity/SimpleLogger"
+        credentials {
+            username = "WildePizza"
+            password = ""
+        }
+    }
+    maven {
+        url "https://maven.pkg.github.com/Blizzity/SimpleVariables"
+        credentials {
+            username = "WildePizza"
+            password = ""
+        }
     }
 }
 
@@ -71,6 +82,7 @@ jxbrowser {
 dependencies {
     implementation 'org.json:json:20240303'
     implementation "com.sparkjava:spark-core:2.9.4"
-    implementation 'com.github.WildePizza:SimpleVariables:1.4.1'
-    implementation 'com.github.WildePizza:SimpleLogger:1.9.3'
+    implementation 'com.github.WildePizza:simple-variables:1.5.6'
+    implementation 'com.github.WildePizza:simple-logger:1.10.26'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409260305-r'
 }
