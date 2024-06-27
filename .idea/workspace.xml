@@ -10,10 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/libs/SimpleLogger.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/libs/SimpleVariables.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +96,7 @@
     "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240527_0004",
+    "com.google.cloudcode.ide_session_index": "20240611_0003",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -234,10 +231,10 @@
     </configuration>
     <list>
       <item itemvalue="Application.Blizzity" />
-      <item itemvalue="Gradle.Blizzity [shadowJar]" />
+      <item itemvalue="Gradle.Blizzity [build]" />
       <item itemvalue="Gradle.Blizzity [createAllExecutables]" />
       <item itemvalue="Gradle.Blizzity [createExe]" />
-      <item itemvalue="Gradle.Blizzity [build]" />
+      <item itemvalue="Gradle.Blizzity [shadowJar]" />
     </list>
     <recent_temporary>
       <list>
