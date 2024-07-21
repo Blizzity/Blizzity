@@ -201,7 +201,6 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-        System.out.println(sizeMultiplier);
         jfxPanel = new JFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
         optionsBackground = new Rectangle(670*sizeMultiplier, 490*sizeMultiplier);
@@ -701,7 +700,7 @@ public class GUI {
         frame.setResizable(true);
         frame.setUndecorated(true);
         init();
-        if (variables.getVariable("key") != null) {
+        if (variables.getVariable("key") != null || Blizzity.offlineMode) {
             showContentPanel((String) variables.getVariable("key"));
             addTitleBarPanel(false);
         } else {
@@ -1394,7 +1393,6 @@ public class GUI {
                             if (imageView != null)
                                 Platform.runLater(() -> root.getChildren().removeAll(imageView));
                             if (api.check(newValue.toLowerCase(), key) || api.connect(newValue.toLowerCase(), key)) {
-                                System.out.println(api.info(newValue.toLowerCase(), key));
                                 accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265*sizeMultiplier, 70*sizeMultiplier, 10*sizeMultiplier, true);
                                 accountComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
                                 accountComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));

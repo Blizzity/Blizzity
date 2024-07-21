@@ -68,9 +68,8 @@ jxbrowser {
 }
 
 dependencies {
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409260305-r'
     implementation 'org.json:json:20240303'
-    implementation "com.sparkjava:spark-core:2.9.4"
-//    implementation 'com.github.WildePizza:simple-variables:1.5.4'
-//    implementation 'com.github.WildePizza:simple-logger:1.10.26'
+    implementation 'com.sparkjava:spark-core:2.9.4'
     implementation fileTree(dir: 'libs', include: '*.jar')
 }

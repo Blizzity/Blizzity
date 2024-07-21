@@ -11,6 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/SimpleVariables.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/SimpleVariables.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,11 +100,11 @@
     "Gradle.Build Blizzity.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240611_0003",
+    "com.google.cloudcode.ide_session_index": "20240721_0001",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "F:/Github/Blizzityy/libs",
+    "last_opened_file_path": "F:/Github/Blizzity/libs",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.0",
@@ -110,11 +114,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\Github\Blizzity\libs" />
       <recent name="F:\Github\Blizzityy\libs" />
       <recent name="C:\Users\wilde\Documents\Github\Blizzity\build\libs" />
       <recent name="F:\Github\Blizzity\.github\workflows" />
       <recent name="F:\Github\Blizzity\jar" />
-      <recent name="F:\Github\Blizzity" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wilde\Documents\Github\Blizzity\src\main\resources" />
@@ -131,7 +135,7 @@
       <recent name="wildepizza.com.github.blizzity.gui" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Blizzity">
+  <component name="RunManager" selected="Gradle.Blizzity [build]">
     <configuration name="Blizzity" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
