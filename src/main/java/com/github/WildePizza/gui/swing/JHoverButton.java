@@ -49,7 +49,7 @@ public class JHoverButton extends JButton implements MouseMotionListener {
         super.addActionListener(e -> fireAction(new ConditionalEvent(this), !isDarkened));
     }
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(MappedGraphics g) {
         try {
             Point mousePoint = MouseInfo.getPointerInfo().getLocation();
             paintComponent(g, !ScreenListener.change && ScreenListener.isSelected(this) && GUI.frame.getBounds().contains(mousePoint) && !isDarkened);
@@ -61,7 +61,7 @@ public class JHoverButton extends JButton implements MouseMotionListener {
             g.dispose();
         }
     }
-    protected void paintComponent(Graphics g, boolean color) {}
+    protected void paintComponent(MappedGraphics g, boolean color) {}
     @Override
     public void mouseDragged(MouseEvent e) {
     }

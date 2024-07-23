@@ -9,7 +9,7 @@ public class JSimpleButton extends JHoverButton {
         setOpaque(false);
     }
     @Override
-    protected void paintComponent(Graphics g, boolean color) {
+    protected void paintComponent(MappedGraphics g, boolean color) {
         int width = getWidth();
         int height = getHeight();
         String text = getText();

@@ -10,10 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26998f5f-c985-4c0f-9f0a-3ba07d630781" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/SimpleVariables.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libs/SimpleVariables.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/Blizzity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/Container.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/MappedGroup.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/MappedJFXPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/MappedParent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/MappedParentHelper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/gui/javafx/MappedScene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/WildePizza/GUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,9 +100,10 @@
     "Gradle.Blizzity.executor": "Run",
     "Gradle.Blizzityy [:Blizzity.main()].executor": "Run",
     "Gradle.Build Blizzity.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20240721_0001",
+    "com.google.cloudcode.ide_session_index": "20240721_0002",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
@@ -129,13 +132,13 @@
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.github.WildePizza.gui.javafx" />
+      <recent name="com.github.WildePizza" />
       <recent name="com.github.WildePizza.gui.swing" />
       <recent name="wildepizza.com.github.blizzity.gui.javafx" />
       <recent name="wildepizza.com.github.blizzity" />
-      <recent name="wildepizza.com.github.blizzity.gui" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Blizzity [build]">
+  <component name="RunManager" selected="Application.Blizzity">
     <configuration name="Blizzity" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />

@@ -13,8 +13,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.MappedNode;
+import javafx.scene.MappedScene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -448,7 +448,7 @@ public class GUI {
             exportCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             exportCompleteButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
             exportCompleteButton.setOnAction(event -> {
-                Scene scene = jfxPanel.getScene();
+                MappedScene scene = jfxPanel.getScene();
                 Group root = ((Group) scene.getRoot());
                 Platform.runLater(() -> {
                     try {
@@ -549,8 +549,7 @@ public class GUI {
                 captionNameTextField = new TextArea();
                 captionNameTextField.setPromptText("Add a title that describes your video");
                 captionNameTextField.setPrefSize(200*sizeMultiplier, 60*sizeMultiplier);
-                captionNameTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); " +
-                        "-fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
+                captionNameTextField.setStyle("-fx-control-inner-background: rgb(45, 45, 45); -fx-background-radius: 5; -fx-border-radius: 0; -fx-text-fill: white; -fx-prompt-text-fill: gray;");
                 captionNameTextField.setLayoutX(x + 425*sizeMultiplier);
                 captionNameTextField.setLayoutY(y + 167*sizeMultiplier);
 
@@ -677,7 +676,7 @@ public class GUI {
         jfxCloseButton.setLayoutX((x + 590)*sizeMultiplier);
         jfxCloseButton.setLayoutY((y - 15)*sizeMultiplier);
         jfxCloseButton.setOnAction(actionEvent -> {
-            Scene scene = jfxPanel.getScene();
+            MappedScene scene = jfxPanel.getScene();
             Group root = ((Group)scene.getRoot());
             Platform.runLater(() -> {
                 if (root.getChildren().contains(exportBackground))
@@ -804,7 +803,7 @@ public class GUI {
                 exportButton.setForeground(color3);
                 exportButton.setHoverBackground(color4);
                 exportButton.addActionListener((ConditionalEventListener) e -> {
-                    Scene scene = jfxPanel.getScene();
+                    MappedScene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
                         Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
@@ -825,7 +824,7 @@ public class GUI {
                 shareButton.setForeground(color3);
                 shareButton.setHoverBackground(color4);
                 shareButton.addActionListener((ConditionalEventListener) e -> {
-                    Scene scene = jfxPanel.getScene();
+                    MappedScene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
                         Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
@@ -884,21 +883,21 @@ public class GUI {
         titleBarPanel.setPreferredSize(new Dimension((int) (450*sizeMultiplier), (int) (40*sizeMultiplier)));
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
     }
-    private Node[] getSpaceParts(String space) {
-        List<Node> parts = new ArrayList<>();
+    private MappedNode[] getSpaceParts(String space) {
+        List<MappedNode> parts = new ArrayList<>();
         if (space != null) {
             switch (space) {
                 case "TikTok":
-                    return new Node[] {captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox};
+                    return new MappedNode[] {captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox};
                 case "Youtube":
-                    return new Node[] {titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox};
+                    return new MappedNode[] {titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox};
                 case "Snapchat":
-                    return new Node[] {titleTextField};
+                    return new MappedNode[] {titleTextField};
             }
         }
         return convert(parts);
     }
-    private Node[] getSectionParts(int section) {
+    private MappedNode[] getSectionParts(int section) {
         switch (section) {
             case 1: return getGenerateParts();
             case 2: return getAccountParts();
@@ -906,18 +905,18 @@ public class GUI {
             default: return null;
         }
     }
-    private Node[] convert(List<Node> parts) {
-        Node[] result = new Node[parts.size()];
-        for (Node n : parts) {
+    private MappedNode[] convert(List<MappedNode> parts) {
+        MappedNode[] result = new MappedNode[parts.size()];
+        for (MappedNode n : parts) {
             result[parts.indexOf(n)] = n;
         }
         return result;
     }
-    private Node[] getExportParts() {
-        return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
+    private MappedNode[] getExportParts() {
+        return new MappedNode[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
     }
-    private Node[] getShareParts() {
-        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, spaceComboBox, spaceLabel};
+    private MappedNode[] getShareParts() {
+        return new MappedNode[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, spaceComboBox, spaceLabel};
     }
     private void showLoginPanel() {
         panel = new JPanel();
@@ -1150,7 +1149,7 @@ public class GUI {
         frame.setVisible(true);
     }
     boolean init = true;
-    Scene scene;
+    MappedScene scene;
     private void showContentPanel(String key) {
         if (init) {
             init = false;
@@ -1244,7 +1243,7 @@ public class GUI {
 
             AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
             generateButton.setOnAction(actionEvent -> {
-                Scene scene = jfxPanel.getScene();
+                MappedScene scene = jfxPanel.getScene();
                 startLoadingScreen(scene);
                 AtomicReference<Double<File, String>> tempFile = new AtomicReference<>();
                 Thread thread = new Thread(() -> {
@@ -1276,7 +1275,7 @@ public class GUI {
                             nameLabel2.setLayoutY(60 * sizeMultiplier);
                             nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                            pathLabel = new Label("Path:");
+                            pathLabel = new Label("MappedPath:");
                             pathLabel.setFont(new javafx.scene.text.Font(pathLabel.getFont().getFamily(), pathLabel.getFont().getSize() * sizeMultiplier));
                             pathLabel.setLayoutX(1142 * sizeMultiplier);
                             pathLabel.setLayoutY(83 * sizeMultiplier);
@@ -1386,7 +1385,7 @@ public class GUI {
             });
             spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        Scene scene = jfxPanel.getScene();
+                        MappedScene scene = jfxPanel.getScene();
                         Group root = ((Group) scene.getRoot());
                         startLoadingScreen(scene);
                         Thread thread = new Thread(() -> {
@@ -1434,7 +1433,7 @@ public class GUI {
             });
             shareCompleteButton.setOnAction(event -> {
                 if (checkShareArguments()) {
-                    Scene scene = jfxPanel.getScene();
+                    MappedScene scene = jfxPanel.getScene();
                     Group root = ((Group) scene.getRoot());
                     startLoadingScreen(scene);
                     Thread thread = new Thread(() -> {
@@ -1478,7 +1477,7 @@ public class GUI {
             });
             Platform.runLater(() -> {
                 Group root = new Group();
-                scene = new Scene(root, 0, 0);
+                scene = new MappedScene(root, 0, 0);
                 scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
 
                 SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
@@ -1582,7 +1581,7 @@ public class GUI {
                         !(spaceComboBox.getValue().equals("Youtube") && (youtubePrivacyComboBox.getValue() == null || titleTextField.getText().isEmpty() || descriptionTextField.getText().isEmpty()))
         );
     }
-    private void startLoadingScreen(Scene scene) {
+    private void startLoadingScreen(MappedScene scene) {
         Group root = ((Group) scene.getRoot());
         loading = new Rectangle(50*sizeMultiplier, 20*sizeMultiplier, javafx.scene.paint.Color.BLACK);
         loading.setArcWidth(10*sizeMultiplier);
@@ -1646,7 +1645,7 @@ public class GUI {
             root.getChildren().add(adminAccountComboBox.get());
         });
     }
-    private void stopLoadingScreen(Scene scene) {
+    private void stopLoadingScreen(MappedScene scene) {
         Group root = ((Group) scene.getRoot());
         root.getChildren().removeAll(loadingBackground, loading);
         scene.setRoot(root);
@@ -1682,14 +1681,14 @@ public class GUI {
         path.setLayoutY(38 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2 - 1.5 / sizeMultiplier);
         return path;
     }
-    private Node[] getGenerateParts() {
-        return new Node[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
+    private MappedNode[] getGenerateParts() {
+        return new MappedNode[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
     }
-    private Node[] getAccountParts() {
-        return new Node[] {usagesLabel, creditsLabel, logoutButton};
+    private MappedNode[] getAccountParts() {
+        return new MappedNode[] {usagesLabel, creditsLabel, logoutButton};
     }
-    private Node[] getAdminParts() {
-        return new Node[] {snapchatComboBox, snapchatLabel, tiktokLabel, youtubeLabel, tiktokComboBox, youtubeComboBox, adminLabel};
+    private MappedNode[] getAdminParts() {
+        return new MappedNode[] {snapchatComboBox, snapchatLabel, tiktokLabel, youtubeLabel, tiktokComboBox, youtubeComboBox, adminLabel};
     }
     private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
         return svgPath(x, y, 1, color, path);

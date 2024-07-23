@@ -109,7 +109,7 @@ public class JRoundedTextField extends JTextField {
         repaint();
     }
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(MappedGraphics g) {
         try {
             Insets insets = getInsets();
 

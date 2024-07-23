@@ -36,7 +36,7 @@ public class JRoundedButton extends JButton {
         this.pressedBoxColor = pressedBox;
     }
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(MappedGraphics g) {
         try {
             int width = getWidth();
             int height = getHeight();

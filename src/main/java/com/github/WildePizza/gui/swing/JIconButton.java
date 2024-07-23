@@ -17,7 +17,7 @@ public class JIconButton extends JHoverButton {
         setOpaque(false);
     }
     @Override
-    protected void paintComponent(Graphics g, boolean color) {
+    protected void paintComponent(MappedGraphics g, boolean color) {
         int width = getWidth();
         int height = getHeight();
         double multiplier = (double) Math.min(height, width) /40;
