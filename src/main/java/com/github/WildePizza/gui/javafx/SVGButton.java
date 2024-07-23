@@ -4,7 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.MappedNode;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -17,7 +17,7 @@ public class SVGButton extends Pane {
     double width;
     public boolean selected = false;
     private final Rectangle rectangle;
-    private final MappedNode group;
+    private final Node group;
     public void setBackgroundColor(Color color) {
         rectangle.setFill(color);
     }
@@ -37,7 +37,7 @@ public class SVGButton extends Pane {
             return "onAction";
         }
     };
-    public SVGButton(MappedNode group, double width, double height, double arc) {
+    public SVGButton(Node group, double width, double height, double arc) {
         this.group = group;
         this.height = height;
         this.width = width;

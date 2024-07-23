@@ -10,7 +10,7 @@ public class JDarkenedPanel extends JPanel {
         repaint();
     }
     @Override
-    protected void paintComponent(MappedGraphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         int componentCount = getComponentCount();
         for (int i = 0; i < componentCount; i++) {

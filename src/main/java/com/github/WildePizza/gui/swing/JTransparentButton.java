@@ -35,7 +35,7 @@ public class JTransparentButton extends JButton {
     }
 
     @Override
-    protected void paintComponent(MappedGraphics g) {
+    protected void paintComponent(Graphics g) {
         try {
             int width = getWidth();
             int height = getHeight();

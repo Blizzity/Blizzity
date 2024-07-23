@@ -13,7 +13,7 @@ public class ScalableIcon implements Icon {
     }
 
     @Override
-    public void paintIcon(Component c, MappedGraphics g, int x, int y) {
+    public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.translate(x, y);
         g2d.scale(scale, scale);

@@ -2,7 +2,7 @@ package com.github.WildePizza.gui.javafx;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.MappedNode;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -23,7 +23,7 @@ public class SimpleComboBox<T> extends Pane {
 
     private ComboBox<T> internalComboBox;
     private Rectangle rectangle;
-    private MappedNode selection;
+    private Node selection;
     private Label selected;
     private final List<Label> items = new ArrayList<>();
     private Polygon arrow;
@@ -187,7 +187,7 @@ public class SimpleComboBox<T> extends Pane {
         if (index < internalComboBox.getItems().size()+id) {
             int indent = 3;
             double arc = 2.5;
-            MappedPath path = new MappedPath();
+            Path path = new Path();
             path.setFill(selectedBackground);
             path.setStroke(selectedBackground);
             if (index == 0) {

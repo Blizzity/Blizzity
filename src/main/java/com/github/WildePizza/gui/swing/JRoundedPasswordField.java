@@ -119,7 +119,7 @@ public class JRoundedPasswordField extends JTextField {
         repaint();
     }
     @Override
-    protected void paintComponent(MappedGraphics g) {
+    protected void paintComponent(Graphics g) {
         try {
             Insets insets = getInsets();
 
@@ -166,7 +166,7 @@ public class JRoundedPasswordField extends JTextField {
             g.dispose();
         }
     }
-    private void drawstring(MappedGraphics g, String text, int x) {
+    private void drawstring(Graphics g, String text, int x) {
         int size = (int) (getFont().getSize()/2.6);
         int offset = 0;
         for (int i = 0; i < text.length(); i++) {

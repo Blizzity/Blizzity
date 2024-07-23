@@ -1,6 +1,7 @@
 package com.github.WildePizza;
 
 import com.github.WildePizza.gui.javafx.*;
+import com.github.WildePizza.gui.javafx.Container;
 import com.github.WildePizza.gui.swing.*;
 import com.github.WildePizza.utils.StringUtils;
 import javafx.animation.Animation;
@@ -8,13 +9,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.MappedNode;
-import javafx.scene.MappedScene;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,8 +45,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -166,7 +162,7 @@ public class GUI {
     private MediaView
             mediaView,
             mediaViewClone;
-    public static JFXPanel jfxPanel;
+    public static MappedJFXPanel jfxPanel;
     private JIconButton exportButton;
     private JIconButton shareButton;
     ImageView imageView;
@@ -201,7 +197,7 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-        jfxPanel = new JFXPanel();
+        jfxPanel = new MappedJFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
         optionsBackground = new Rectangle(670*sizeMultiplier, 490*sizeMultiplier);
         optionsBackground.setArcWidth(30*sizeMultiplier);
@@ -448,15 +444,14 @@ public class GUI {
             exportCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             exportCompleteButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
             exportCompleteButton.setOnAction(event -> {
-                MappedScene scene = jfxPanel.getScene();
-                Group root = ((Group) scene.getRoot());
+                MappedParent parent = jfxPanel.getMappedParent();
                 Platform.runLater(() -> {
                     try {
                         Files.copy(Paths.get(mediaViewClone.getMediaPlayer().getMedia().getSource().replace("file:/", "")), Paths.get(exportFieldLabel.getText().replace("  ", "") + "\\" + nameTextField.getText() + ".mp4"), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    root.getChildren().removeAll(getExportParts());
+                    parent.getChildren().removeAll(getExportParts());
                     setDarkenBackground(false);
                     frame.add(jfxPanel);
                     frame.pack();
@@ -676,7 +671,7 @@ public class GUI {
         jfxCloseButton.setLayoutX((x + 590)*sizeMultiplier);
         jfxCloseButton.setLayoutY((y - 15)*sizeMultiplier);
         jfxCloseButton.setOnAction(actionEvent -> {
-            MappedScene scene = jfxPanel.getScene();
+            Scene scene = jfxPanel.getScene();
             Group root = ((Group)scene.getRoot());
             Platform.runLater(() -> {
                 if (root.getChildren().contains(exportBackground))
@@ -803,14 +798,14 @@ public class GUI {
                 exportButton.setForeground(color3);
                 exportButton.setHoverBackground(color4);
                 exportButton.addActionListener((ConditionalEventListener) e -> {
-                    MappedScene scene = jfxPanel.getScene();
+                    Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
                         Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
                         clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
                         clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
                         mediaViewClone.setClip(clipRect);
-                        root.getChildren().addAll(getExportParts());
+//                        root.getChildren().addAll(getExportParts());
                         frame.add(jfxPanel);
                         frame.pack();
                         setDarkenBackground(true);
@@ -824,21 +819,21 @@ public class GUI {
                 shareButton.setForeground(color3);
                 shareButton.setHoverBackground(color4);
                 shareButton.addActionListener((ConditionalEventListener) e -> {
-                    MappedScene scene = jfxPanel.getScene();
+                    Scene scene = jfxPanel.getScene();
                     Group root = ((Group)scene.getRoot());
                     Platform.runLater(() -> {
                         Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
                         clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
                         clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
                         mediaViewClone.setClip(clipRect);
-                        root.getChildren().addAll(getShareParts());
+//                        root.getChildren().addAll(getShareParts());
                         frame.add(jfxPanel);
                         if (spaceComboBox.getValue() != null) {
-                            root.getChildren().addAll(getSpaceParts(spaceComboBox.getValue()));
+//                            root.getChildren().addAll(getSpaceParts(spaceComboBox.getValue()));
                             spaceComboBox.toFront();
                         }
                         if (accountComboBox != null)
-                            root.getChildren().add(accountComboBox);
+//                            root.getChildren().add(accountComboBox);
                         spaceComboBox.toFront();
                         frame.add(jfxPanel);
                         frame.pack();
@@ -883,21 +878,21 @@ public class GUI {
         titleBarPanel.setPreferredSize(new Dimension((int) (450*sizeMultiplier), (int) (40*sizeMultiplier)));
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
     }
-    private MappedNode[] getSpaceParts(String space) {
-        List<MappedNode> parts = new ArrayList<>();
+    private Node[] getSpaceParts(String space) {
+        List<Node> parts = new ArrayList<>();
         if (space != null) {
             switch (space) {
                 case "TikTok":
-                    return new MappedNode[] {captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox};
+                    return new Node[] {captionNameLabel, captionNameTextField, privacyLabel, commentCheckBox, settingsLabel, stitchCheckBox, duetCheckBox, stitchLabel, duetLabel, commentLabel, discloseSwitch, discloseLabel, discloseDescribtionLabel, privacyComboBox};
                 case "Youtube":
-                    return new MappedNode[] {titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox};
+                    return new Node[] {titleLabel, descriptionLabel, titleTextField, descriptionTextField, youtubePrivacyLabel, youtubePrivacyComboBox};
                 case "Snapchat":
-                    return new MappedNode[] {titleTextField};
+                    return new Node[] {titleTextField};
             }
         }
         return convert(parts);
     }
-    private MappedNode[] getSectionParts(int section) {
+    private Node[] getSectionParts(int section) {
         switch (section) {
             case 1: return getGenerateParts();
             case 2: return getAccountParts();
@@ -905,18 +900,18 @@ public class GUI {
             default: return null;
         }
     }
-    private MappedNode[] convert(List<MappedNode> parts) {
-        MappedNode[] result = new MappedNode[parts.size()];
-        for (MappedNode n : parts) {
+    private Node[] convert(List<Node> parts) {
+        Node[] result = new Node[parts.size()];
+        for (Node n : parts) {
             result[parts.indexOf(n)] = n;
         }
         return result;
     }
-    private MappedNode[] getExportParts() {
-        return new MappedNode[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
+    private Node[] getExportParts() {
+        return new Node[] {darkenBackground, exportBackground, nameTextField, exportTitle, jfxCloseButton, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton, exportTitleLabel};
     }
-    private MappedNode[] getShareParts() {
-        return new MappedNode[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, spaceComboBox, spaceLabel};
+    private Node[] getShareParts() {
+        return new Node[] {darkenBackground, shareBackground, shareTitle, jfxCloseButton, mediaViewClone, shareCompleteButton, shareTitleLabel, spaceComboBox, spaceLabel};
     }
     private void showLoginPanel() {
         panel = new JPanel();
@@ -1149,7 +1144,7 @@ public class GUI {
         frame.setVisible(true);
     }
     boolean init = true;
-    MappedScene scene;
+    Scene scene;
     private void showContentPanel(String key) {
         if (init) {
             init = false;
@@ -1243,7 +1238,7 @@ public class GUI {
 
             AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
             generateButton.setOnAction(actionEvent -> {
-                MappedScene scene = jfxPanel.getScene();
+                Scene scene = jfxPanel.getScene();
                 startLoadingScreen(scene);
                 AtomicReference<Double<File, String>> tempFile = new AtomicReference<>();
                 Thread thread = new Thread(() -> {
@@ -1253,9 +1248,8 @@ public class GUI {
                     Platform.runLater(() -> {
                         if (file != null) {
                             Media media = new Media(file.getKey().toURI().toString());
-                            Group root = ((Group) scene.getRoot());
                             if (nameLabel2 != null)
-                                root.getChildren().removeAll(
+                                jfxPanel.getMappedParent().getChildren().removeAll(
                                         nameLabel2,
                                         pathLabel,
                                         nameDetailLabel,
@@ -1275,7 +1269,7 @@ public class GUI {
                             nameLabel2.setLayoutY(60 * sizeMultiplier);
                             nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                            pathLabel = new Label("MappedPath:");
+                            pathLabel = new Label("Path:");
                             pathLabel.setFont(new javafx.scene.text.Font(pathLabel.getFont().getFamily(), pathLabel.getFont().getSize() * sizeMultiplier));
                             pathLabel.setLayoutX(1142 * sizeMultiplier);
                             pathLabel.setLayoutY(83 * sizeMultiplier);
@@ -1346,19 +1340,19 @@ public class GUI {
                             fpsLabel2.setLayoutY(152 * sizeMultiplier);
                             fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
-                            root.getChildren().addAll(
-                                    nameLabel2,
-                                    pathLabel,
-                                    nameDetailLabel,
-                                    mediaView,
-                                    ratioLabel,
-                                    ratioLabel2,
-                                    resolutionLabel,
-                                    resolutionLabel2,
-                                    fpsLabel,
-                                    fpsLabel2,
-                                    pathLabel2
-                            );
+//                            root.getChildren().addAll(
+//                                    nameLabel2,
+//                                    pathLabel,
+//                                    nameDetailLabel,
+//                                    mediaView,
+//                                    ratioLabel,
+//                                    ratioLabel2,
+//                                    resolutionLabel,
+//                                    resolutionLabel2,
+//                                    fpsLabel,
+//                                    fpsLabel2,
+//                                    pathLabel2
+//                            );
                         } else
                             JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
                         stopLoadingScreen(scene);
@@ -1385,7 +1379,7 @@ public class GUI {
             });
             spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> {
-                        MappedScene scene = jfxPanel.getScene();
+                        Scene scene = jfxPanel.getScene();
                         Group root = ((Group) scene.getRoot());
                         startLoadingScreen(scene);
                         Thread thread = new Thread(() -> {
@@ -1414,9 +1408,9 @@ public class GUI {
                                 });
                                 Platform.runLater(() -> {
                                     stopLoadingScreen(scene);
-                                    root.getChildren().addAll(getSpaceParts(newValue));
+//                                    root.getChildren().addAll(getSpaceParts(newValue));
                                     root.getChildren().removeAll(getSpaceParts(oldValue));
-                                    root.getChildren().add(accountComboBox);
+//                                    root.getChildren().add(accountComboBox);
                                     spaceComboBox.toFront();
                                 });
                             }
@@ -1433,7 +1427,7 @@ public class GUI {
             });
             shareCompleteButton.setOnAction(event -> {
                 if (checkShareArguments()) {
-                    MappedScene scene = jfxPanel.getScene();
+                    Scene scene = jfxPanel.getScene();
                     Group root = ((Group) scene.getRoot());
                     startLoadingScreen(scene);
                     Thread thread = new Thread(() -> {
@@ -1476,33 +1470,28 @@ public class GUI {
                 }
             });
             Platform.runLater(() -> {
-                Group root = new Group();
-                scene = new MappedScene(root, 0, 0);
-                scene.setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
-
-                SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
-                SVGButton accountPane = new SVGButton(accountSvg, 40 * sizeMultiplier, 40 * sizeMultiplier, 10 * sizeMultiplier);
+                jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (920 * sizeMultiplier)));
                 Group generateSvgGroup = getGenerateSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton generatePane = new SVGButton(generateSvgGroup, 40 * sizeMultiplier, 40 * sizeMultiplier, 10 * sizeMultiplier);
+                SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
+                SVGButton accountPane = new SVGButton(accountSvg, 40 * sizeMultiplier, 40 * sizeMultiplier, 10 * sizeMultiplier);
                 SVGPath adminSvgGroup = getAdminSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton adminPane = new SVGButton(adminSvgGroup, 40 * sizeMultiplier, 40 * sizeMultiplier, 10 * sizeMultiplier);
                 selectedSectionButton = generatePane;
-                AtomicInteger selected = new AtomicInteger(1);
                 {
                     generatePane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
                     generatePane.setSelected(true);
                     generatePane.setOnAction(actionEvent -> {
                         if (!generatePane.selected) {
-                            root.getChildren().addAll(getGenerateParts());
-                            root.getChildren().removeAll(getSectionParts(selected.get()));
+//                            root.getChildren().addAll(getGenerateParts());
+//                            root.getChildren().removeAll(getSectionParts(selected.get()));
                             selectedSectionButton.setSelected(false);
                             generatePane.setSelected(true);
                             selectedSectionButton = generatePane;
-                            selected.set(1);
                         }
                     });
-                    generatePane.setLayoutX(20 * sizeMultiplier);
-                    generatePane.setLayoutY(10 * sizeMultiplier);
+                    generatePane.setLayoutX(0 * sizeMultiplier);
+                    generatePane.setLayoutY(0 * sizeMultiplier);
                 }
 
                 {
@@ -1510,16 +1499,15 @@ public class GUI {
                     accountPane.setSelected(false);
                     accountPane.setOnAction(actionEvent -> {
                         if (!accountPane.selected) {
-                            root.getChildren().addAll(getAccountParts());
-                            root.getChildren().removeAll(getSectionParts(selected.get()));
+//                            root.getChildren().addAll(getAccountParts());
+//                            root.getChildren().removeAll(getSectionParts(selected.get()));
                             selectedSectionButton.setSelected(false);
                             accountPane.setSelected(true);
                             selectedSectionButton = accountPane;
-                            selected.set(2);
                         }
                     });
-                    accountPane.setLayoutX(60 * sizeMultiplier);
-                    accountPane.setLayoutY(10 * sizeMultiplier);
+                    accountPane.setLayoutX(0 * sizeMultiplier);
+                    accountPane.setLayoutY(40 * sizeMultiplier);
                 }
 
                 {
@@ -1527,40 +1515,39 @@ public class GUI {
                     adminPane.setSelected(false);
                     adminPane.setOnAction(actionEvent -> {
                         if (!adminPane.selected) {
-                            root.getChildren().addAll(getAdminParts());
-                            root.getChildren().removeAll(getSectionParts(selected.get()));
+//                            root.getChildren().addAll(getAdminParts());
+//                            root.getChildren().removeAll(getSectionParts(selected.get()));
                             selectedSectionButton.setSelected(false);
                             adminPane.setSelected(true);
                             selectedSectionButton = adminPane;
-                            selected.set(3);
                         }
                     });
-                    adminPane.setLayoutX(100 * sizeMultiplier);
-                    adminPane.setLayoutY(10 * sizeMultiplier);
+                    adminPane.setLayoutX(0 * sizeMultiplier);
+                    adminPane.setLayoutY(80 * sizeMultiplier);
                 }
-
-                root.getChildren().addAll(
-                        optionsBackground,
-                        optionsBackground2,
-                        generatePane,
-                        accountPane,
-                        resultBackground,
-                        resultBackground2,
-                        resultLabel,
-                        playButton,
-                        detailsBackground,
-                        detailsBackground2,
-                        detailsLabel,
-                        timelineBackground,
-                        timelineBackground2,
-                        timelineLabel
-                );
+                Container options = new Container(40*sizeMultiplier, 900*sizeMultiplier);
+                jfxPanel.getMappedParent().add("options.container", options);
+                jfxPanel.getScene().setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+//                root.getChildren().addAll(
+//                        optionsBackground,
+//                        optionsBackground2,
+//                        generatePane,
+//                        accountPane,
+//                        resultBackground,
+//                        resultBackground2,
+//                        resultLabel,
+//                        playButton,
+//                        detailsBackground,
+//                        detailsBackground2,
+//                        detailsLabel,
+//                        timelineBackground,
+//                        timelineBackground2,
+//                        timelineLabel
+//                );
                 if (api.admin(key))
-                    root.getChildren().add(adminPane);
-                root.getChildren().addAll(getGenerateParts());
-                scene.setRoot(root);
-                jfxPanel.setScene(scene);
-                jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (920 * sizeMultiplier)));
+//                    root.getChildren().add(adminPane);
+//                root.getChildren().addAll(getGenerateParts());
+//                scene.setRoot(root);
                 addTitleBarPanel(true);
                 frame.add(jfxPanel);
                 frame.pack();
@@ -1581,7 +1568,7 @@ public class GUI {
                         !(spaceComboBox.getValue().equals("Youtube") && (youtubePrivacyComboBox.getValue() == null || titleTextField.getText().isEmpty() || descriptionTextField.getText().isEmpty()))
         );
     }
-    private void startLoadingScreen(MappedScene scene) {
+    private void startLoadingScreen(Scene scene) {
         Group root = ((Group) scene.getRoot());
         loading = new Rectangle(50*sizeMultiplier, 20*sizeMultiplier, javafx.scene.paint.Color.BLACK);
         loading.setArcWidth(10*sizeMultiplier);
@@ -1599,7 +1586,7 @@ public class GUI {
         // Start the animation
         timeline.play();
 
-        root.getChildren().addAll(loadingBackground, loading);
+//        root.getChildren().addAll(loadingBackground, loading);
         scene.setRoot(root);
         setDarkenBackground(true);
     }
@@ -1642,10 +1629,10 @@ public class GUI {
             adminAccountComboBox.get().getSelectionModel().select(admin);
         Platform.runLater(() -> {
             Group root = ((Group) scene.getRoot());
-            root.getChildren().add(adminAccountComboBox.get());
+//            root.getChildren().add(adminAccountComboBox.get());
         });
     }
-    private void stopLoadingScreen(MappedScene scene) {
+    private void stopLoadingScreen(Scene scene) {
         Group root = ((Group) scene.getRoot());
         root.getChildren().removeAll(loadingBackground, loading);
         scene.setRoot(root);
@@ -1681,14 +1668,14 @@ public class GUI {
         path.setLayoutY(38 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2 - 1.5 / sizeMultiplier);
         return path;
     }
-    private MappedNode[] getGenerateParts() {
-        return new MappedNode[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
+    private Node[] getGenerateParts() {
+        return new Node[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
     }
-    private MappedNode[] getAccountParts() {
-        return new MappedNode[] {usagesLabel, creditsLabel, logoutButton};
+    private Node[] getAccountParts() {
+        return new Node[] {usagesLabel, creditsLabel, logoutButton};
     }
-    private MappedNode[] getAdminParts() {
-        return new MappedNode[] {snapchatComboBox, snapchatLabel, tiktokLabel, youtubeLabel, tiktokComboBox, youtubeComboBox, adminLabel};
+    private Node[] getAdminParts() {
+        return new Node[] {snapchatComboBox, snapchatLabel, tiktokLabel, youtubeLabel, tiktokComboBox, youtubeComboBox, adminLabel};
     }
     private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
         return svgPath(x, y, 1, color, path);

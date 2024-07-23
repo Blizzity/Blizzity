@@ -1,13 +1,12 @@
 package com.github.WildePizza.gui.javafx;
 
-import com.github.WildePizza.gui.javafx.mapped.MappedNode;
-import com.github.WildePizza.gui.javafx.mapped.MappedPath;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
@@ -28,7 +27,7 @@ import java.util.Map;
 public class AccountComboBox extends Pane {
     private final ComboBox<Map<String, String>> internalComboBox;
     private final Rectangle rectangle;
-    private MappedNode selection;
+    private Node selection;
     private final List<Pane> items = new ArrayList<>();
     private final Polygon arrow;
     double height;
@@ -267,7 +266,7 @@ public class AccountComboBox extends Pane {
         if (index <= internalComboBox.getItems().size()+id) {
             int indent = 3;
             double arc = 2.5;
-            Path path = new MappedPath();
+            Path path = new Path();
             path.setFill(selectedBackground);
             path.setStroke(selectedBackground);
             if (index == 0) {
