@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import com.github.WildePizza.gui.listeners.ScreenListener;
@@ -24,17 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class AccountComboBox extends Pane {
+public class AccountComboBox extends HoverPane {
     private final ComboBox<Map<String, String>> internalComboBox;
     private final Rectangle rectangle;
     private Node selection;
-    private final List<Pane> items = new ArrayList<>();
+    private final List<HoverPane> items = new ArrayList<>();
     private final Polygon arrow;
     double height;
     double width;
     private Map<String, String> selected;
-    private Pane plusShape;
-    private Pane selectedPane;
+    private HoverPane plusShape;
+    private HoverPane selectedPane;
     private final double sizeMultiplier;
     private Color strokeColor = Color.WHITE;
     private Color selectedStrokeColor = Color.BLUE;
@@ -52,8 +51,8 @@ public class AccountComboBox extends Pane {
     public void setSelectedStrokeColor(Color color) {
         selectedStrokeColor = color;
     }
-    private Pane generateAccountPane(Map<String, String> info) {
-        Pane pane = new Pane();
+    private HoverPane generateAccountPane(Map<String, String> info) {
+        HoverPane pane = new HoverPane();
         if (info != null) {
             Image image = new Image(info.get("avatar"));
             ImageView imageView = new ImageView(image);
@@ -174,7 +173,7 @@ public class AccountComboBox extends Pane {
             } else {
                 double size = 10;
                 double thickness = size/5;
-                plusShape = new Pane();
+                plusShape = new HoverPane();
                 Rectangle horizontal = new Rectangle(size, thickness);
                 Rectangle vertical = new Rectangle(thickness, size);
                 horizontal.relocate(0, (size - thickness) / 2); // Y-position centers the horizontal line
@@ -194,7 +193,7 @@ public class AccountComboBox extends Pane {
                 for (Map<String, String> item : internalComboBox.getItems()) {
                     if (!item.equals(selected)) {
                         index++;
-                        Pane itemLabel = generateAccountPane(item);
+                        HoverPane itemLabel = generateAccountPane(item);
                         itemLabel.setLayoutY(index * height);
                         itemLabel.setLayoutX(selectedPane.getLayoutX());
                         getChildren().add(itemLabel);
@@ -314,7 +313,7 @@ public class AccountComboBox extends Pane {
         rectangle.setStrokeWidth(1);
         rectangle.setHeight(height);
         getChildren().remove(plusShape);
-        for (Pane pane : items)
+        for (HoverPane pane : items)
             getChildren().remove(pane);
         if (!getChildren().contains(arrow))
             getChildren().add(arrow);

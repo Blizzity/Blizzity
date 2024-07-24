@@ -10,14 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 @SuppressWarnings("unused")
-public class SimpleSVGButton extends Pane {
-    double height;
-    double width;
-    private final Rectangle rectangle;
+public class SimpleSVGButton extends Button {
     private final Node group;
-    public void setBackgroundColor(Color color) {
-        rectangle.setFill(color);
-    }
     private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
         @Override
         protected void invalidated() {
@@ -35,13 +29,11 @@ public class SimpleSVGButton extends Pane {
         }
     };
     public SimpleSVGButton(Node group, double width, double height) {
+        super(width, height);
         this.group = group;
-        this.height = height;
-        this.width = width;
         Rectangle hitbox = new Rectangle(0, 0, width, height);
         hitbox.setFill(javafx.scene.paint.Color.TRANSPARENT);
         double multiplier = Math.min(height, width)/40;
-        rectangle = new Rectangle(width, height);
         rectangle.setFill(Color.WHITE);
         rectangle.setLayoutX(0);
         rectangle.setLayoutY(0);

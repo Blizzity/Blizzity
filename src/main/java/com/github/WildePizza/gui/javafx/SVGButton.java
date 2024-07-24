@@ -12,15 +12,9 @@ import javafx.scene.shape.Rectangle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
-public class SVGButton extends Pane {
-    double height;
-    double width;
+public class SVGButton extends Button {
     public boolean selected = false;
-    private final Rectangle rectangle;
     private final Node group;
-    public void setBackgroundColor(Color color) {
-        rectangle.setFill(color);
-    }
     private final ObjectProperty<EventHandler<ActionEvent>> onAction = new ObjectPropertyBase<>() {
         @Override
         protected void invalidated() {
@@ -37,19 +31,14 @@ public class SVGButton extends Pane {
             return "onAction";
         }
     };
-    public SVGButton(Node group, double width, double height, double arc) {
+    public SVGButton(Node group, double width, double height, double arc, double multiplier) {
+        super(width-10*multiplier, height-10*multiplier);
         this.group = group;
-        this.height = height;
-        this.width = width;
-        Rectangle hitbox = new Rectangle(0, 0, width, height);
+        Rectangle hitbox = new Rectangle(0, 0, width*multiplier, height*multiplier);
         hitbox.setFill(javafx.scene.paint.Color.TRANSPARENT);
-
-        double multiplier = Math.min(height, width)/40;
-
-        rectangle = new Rectangle(width-10*multiplier, height-10*multiplier);
         rectangle.setFill(Color.WHITE);
-        rectangle.setArcWidth(arc);
-        rectangle.setArcHeight(arc);
+        rectangle.setArcWidth(arc*multiplier);
+        rectangle.setArcHeight(arc*multiplier);
         rectangle.setLayoutX(5*multiplier);
         rectangle.setLayoutY(5*multiplier);
 

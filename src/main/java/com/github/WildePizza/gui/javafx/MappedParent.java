@@ -32,10 +32,7 @@ public class MappedParent extends Parent {
             if (child1 instanceof Container) {
                 children.forEach((name2, child2) -> {
                     if (child2 instanceof Container) {
-                        if (((Container) child1).getY() == 0) {
-                            ((Container) child1).setOutline(Container.TOP, true);
-                        }
-                        if (((Container) child1).getY() - ((Container) child1).getHeight() == ((Container) child2).getY()) {
+                        if (((Container) child1).getY() == ((Container) child2).getY() + ((Container) child2).getHeight()) {
                             ((Container) child1).setOutline(Container.TOP, true);
                         }
                         if (((Container) child1).getX() + ((Container) child1).getWidth() == ((Container) child2).getX()) {

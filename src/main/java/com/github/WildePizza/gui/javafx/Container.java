@@ -1,11 +1,10 @@
 package com.github.WildePizza.gui.javafx;
 
 import javafx.scene.Cursor;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class Container extends Pane {
+public class Container extends HoverPane {
     public static final int TOP=1, RIGHT=2, BOTTOM=3, LEFT=4;
     Color outlineColor = Color.rgb(30,31,34);
     Color color = Color.rgb(43,45,48);
@@ -57,6 +56,8 @@ public class Container extends Pane {
                     outlineTopHitbox.setLayoutX(x);
                     outlineTopHitbox.setLayoutY(y - Math.floor(outlineHitboxSize / 2));
                     outlineTopHitbox.setCursor(Cursor.S_RESIZE);
+                    outlineTopHitbox.setFill(Color.TRANSPARENT);
+                    outlineTopHitbox.setStroke(Color.TRANSPARENT);
                     getChildren().add(outlineTopHitbox);
                 } else
                     getChildren().remove(outlineTopHitbox);
@@ -120,10 +121,12 @@ public class Container extends Pane {
         int offsetY = 0;
         int offsetWidth = 0;
         int offsetHeight = 0;
+        super.setLayoutX(x);
+        super.setLayoutY(y);
+        super.setWidth(width);
+        super.setHeight(height);
         bg1 = new Rectangle(width, height);
         bg1.setFill(outlineColor);
-        bg1.setLayoutX(x);
-        bg1.setLayoutY(y);
         if (outlineTop) {
             offsetY++;
             offsetHeight--;
@@ -139,8 +142,8 @@ public class Container extends Pane {
             offsetWidth--;
         }
         bg2 = new Rectangle(width+offsetWidth, height+offsetHeight);
-        bg2.setLayoutX(x+offsetX);
-        bg2.setLayoutY(y+offsetY);
+        bg2.setLayoutX(offsetX);
+        bg2.setLayoutY(offsetY);
         bg2.setFill(color);
         if (getChildren().isEmpty())
             getChildren().addAll(bg1, bg2);
