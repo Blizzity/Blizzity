@@ -48,6 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings({"SameParameterValue", "deprecation"})
 public class GUI {
+    public static final int generate = 1, account = 2, admin = 3;
     public static boolean allowResize = false;
     public static boolean autoScale = false;
     public static double sizeMultiplier = 1;
@@ -92,7 +93,6 @@ public class GUI {
     private Label
             discloseLabel,
             discloseDescribtionLabel,
-            languageLabel,
             lengthLabel,
             resultLabel,
             detailsLabel,
@@ -209,55 +209,6 @@ public class GUI {
         optionsBackground2.setLayoutY(50*sizeMultiplier);
         optionsBackground2.setFill(javafx.scene.paint.Color.rgb(30, 31, 32));
 
-        languageLabel = new Label("Language:");
-        languageLabel.setFont(new javafx.scene.text.Font(languageLabel.getFont().getFamily(), languageLabel.getFont().getSize()*sizeMultiplier));
-        languageLabel.setLayoutX(22*sizeMultiplier);
-        languageLabel.setLayoutY(65*sizeMultiplier);
-        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
-        languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        languageComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
-        languageComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        languageComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-        languageComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        languageComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        languageComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-        languageComboBox.getItems().addAll(languages);
-        languageComboBox.getSelectionModel().select(0);
-        languageComboBox.setLayoutX(87*sizeMultiplier);
-        languageComboBox.setLayoutY(62*sizeMultiplier);
-
-        lengthLabel = new Label("Length:");
-        lengthLabel.setFont(new javafx.scene.text.Font(lengthLabel.getFont().getFamily(), lengthLabel.getFont().getSize()*sizeMultiplier));
-        lengthLabel.setLayoutX(22*sizeMultiplier);
-        lengthLabel.setLayoutY(105*sizeMultiplier);
-        lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
-        lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        String[] lengths = {"< 1 min", "> 1 min 30 sec"};
-        lengthComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
-        lengthComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        lengthComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-        lengthComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        lengthComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        lengthComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-        lengthComboBox.getItems().addAll(lengths);
-        lengthComboBox.getSelectionModel().select(0);
-        lengthComboBox.setLayoutX(87*sizeMultiplier);
-        lengthComboBox.setLayoutY(102*sizeMultiplier);
-
-        logoutButton = new SimpleButton("Logout", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
-        logoutButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        logoutButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        logoutButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        logoutButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-        logoutButton.setLayoutX(590*sizeMultiplier);
-        logoutButton.setLayoutY(470*sizeMultiplier);
-        logoutButton.setOnAction(actionEvent -> {
-            variables.deleteVariable("key");
-            frame.remove(jfxPanel);
-            showLoginPanel();
-        });
 
         resultBackground = new Rectangle(430*sizeMultiplier, 490*sizeMultiplier);
         resultBackground.setArcWidth(30*sizeMultiplier);
@@ -354,26 +305,6 @@ public class GUI {
         shareTitleLabel.setLayoutX((x + 15)*sizeMultiplier);
         shareTitleLabel.setLayoutY((y - 5)*sizeMultiplier);
         shareTitleLabel.setTextFill(javafx.scene.paint.Color.WHITE);
-
-        generateButton = new SimpleButton("Generate", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
-        generateButton.setBackgroundColor(javafx.scene.paint.Color.rgb(53,116,240));
-        generateButton.setStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
-        generateButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
-        generateButton.setTextFill(javafx.scene.paint.Color.WHITE);
-        generateButton.setLayoutX(590*sizeMultiplier);
-        generateButton.setLayoutY(470*sizeMultiplier);
-
-        resetButton = new SimpleButton("Reset", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
-        resetButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        resetButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        resetButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        resetButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
-        resetButton.setLayoutX(510*sizeMultiplier);
-        resetButton.setLayoutY(470*sizeMultiplier);
-        resetButton.setOnAction(actionEvent -> {
-            lengthComboBox.getSelectionModel().select(0);
-            languageComboBox.getSelectionModel().select(0);
-        });
 
         // export
 
@@ -857,12 +788,12 @@ public class GUI {
         }
         return convert(parts);
     }
-    private Node[] getSectionParts(int section) {
+    private Node[] getSectionParts(int section, String key) {
         switch (section) {
-            case 1: return getGenerateParts();
-            case 2: return getAccountParts();
-            case 3: return getAdminParts();
-            default: return null;
+            case generate: return getGenerateParts();
+            case account: return getAccountParts(key);
+            case admin: return getAdminParts();
+            default: return new Node[]{};
         }
     }
     private Node[] convert(List<Node> parts) {
@@ -1118,7 +1049,12 @@ public class GUI {
                 int frameHeight = (int) ((screenHeight-40) * sizeMultiplier);
                 int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frameWidth) / 2;
                 int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frameHeight) / 2;
-                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier).setY(40*sizeMultiplier).setResizable(true);
+                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setX(40*sizeMultiplier).setY(40*sizeMultiplier).setResizable(true);
+                options.setMinHeight(300*sizeMultiplier);
+                options.setMaxHeight(-1);
+                options.setMinWidth(200*sizeMultiplier);
+                options.setMaxWidth(-1);
+                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier).setY(40*sizeMultiplier);
                 Group generateSvgGroup = getGenerateSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton generatePane = new SVGButton(generateSvgGroup, 40, 40, 10, sizeMultiplier);
                 SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
@@ -1128,27 +1064,26 @@ public class GUI {
                 selectedSectionButton = generatePane;
                 {
                     generatePane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
-                    generatePane.setSelected(true);
                     generatePane.setOnAction(actionEvent -> {
                         if (!generatePane.selected) {
-//                            root.getChildren().addAll(getGenerateParts());
-//                            root.getChildren().removeAll(getSectionParts(selected.get()));
+                            options.getChildren().clear();
+                            options.getChildren().addAll(getGenerateParts());
                             selectedSectionButton.setSelected(false);
                             generatePane.setSelected(true);
                             selectedSectionButton = generatePane;
                         }
                     });
+                    generatePane.callEvent();
                     generatePane.setLayoutX(0 * sizeMultiplier);
                     generatePane.setLayoutY(0 * sizeMultiplier);
                 }
 
                 {
                     accountPane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
-                    accountPane.setSelected(false);
                     accountPane.setOnAction(actionEvent -> {
                         if (!accountPane.selected) {
-//                            root.getChildren().addAll(getAccountParts());
-//                            root.getChildren().removeAll(getSectionParts(selected.get()));
+                            options.getChildren().clear();
+                            options.getChildren().addAll(getAccountParts(key));
                             selectedSectionButton.setSelected(false);
                             accountPane.setSelected(true);
                             selectedSectionButton = accountPane;
@@ -1160,11 +1095,10 @@ public class GUI {
 
                 {
                     adminPane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
-                    adminPane.setSelected(false);
                     adminPane.setOnAction(actionEvent -> {
                         if (!adminPane.selected) {
-//                            root.getChildren().addAll(getAdminParts());
-//                            root.getChildren().removeAll(getSectionParts(selected.get()));
+                            options.getChildren().clear();
+                            options.getChildren().addAll(getAdminParts());
                             selectedSectionButton.setSelected(false);
                             adminPane.setSelected(true);
                             selectedSectionButton = adminPane;
@@ -1173,7 +1107,7 @@ public class GUI {
                     adminPane.setLayoutX(0 * sizeMultiplier);
                     adminPane.setLayoutY(80 * sizeMultiplier);
                 }
-                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier).setResizable(true);
+                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier);
                 Group exportSvgGroup = getExportSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton exportPane = new SVGButton(exportSvgGroup, 40, 40, 10, sizeMultiplier);
                 {
@@ -1258,8 +1192,11 @@ public class GUI {
                 title.getChildren().addAll(jfxCloseButton, jfxMinimizeButton, exportPane, sharePane);
                 title.setColor(javafx.scene.paint.Color.rgb(60,63,65));
                 selector.getChildren().addAll(generatePane, accountPane, adminPane);
-                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setX(40*sizeMultiplier).setY(40*sizeMultiplier).setResizable(true);
                 Container timeline = new Container((screenWidth-selector.getWidth())*sizeMultiplier, 320*sizeMultiplier).setX(40*sizeMultiplier).setY(620*sizeMultiplier).setResizable(true);
+                timeline.setMinHeight(100*sizeMultiplier);
+                timeline.setMaxHeight(-1);
+                timeline.setMinWidth(-1);
+                timeline.setMaxWidth(-1);
                 frame.add(jfxPanel);
                 frame.pack();
                 frame.setLocation(x, y);
@@ -1276,17 +1213,7 @@ public class GUI {
         jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (960 * sizeMultiplier)));
         frame.pack();
         frame.setVisible(true);
-//        usagesLabel = new Label("Usages: " + api.usages(key));
-//        usagesLabel.setLayoutX(22 * sizeMultiplier);
-//        usagesLabel.setLayoutY(65 * sizeMultiplier);
-//        usagesLabel.setFont(new javafx.scene.text.Font(usagesLabel.getFont().getFamily(), usagesLabel.getFont().getSize() * sizeMultiplier));
-//        usagesLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
 //
-//        creditsLabel = new Label("Credits: " + api.credits(key));
-//        creditsLabel.setLayoutX(22 * sizeMultiplier);
-//        creditsLabel.setLayoutY(90 * sizeMultiplier);
-//        creditsLabel.setFont(new javafx.scene.text.Font(creditsLabel.getFont().getFamily(), creditsLabel.getFont().getSize() * sizeMultiplier));
-//        creditsLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
 //
 //        youtubeLabel = new Label("Youtube:");
 //        youtubeLabel.setLayoutX(22 * sizeMultiplier);
@@ -1796,9 +1723,89 @@ public class GUI {
         return path;
     }
     private Node[] getGenerateParts() {
+        Label languageLabel = new Label("Language:");
+        languageLabel.setFont(new javafx.scene.text.Font(languageLabel.getFont().getFamily(), languageLabel.getFont().getSize()*sizeMultiplier));
+        languageLabel.setLayoutX(22*sizeMultiplier);
+        languageLabel.setLayoutY(65*sizeMultiplier);
+        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
+        languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        String[] lengths = {"< 1 min", "> 1 min 30 sec"};
+        SimpleComboBox<String> lengthComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
+        lengthComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+        lengthComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        lengthComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+        lengthComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+        lengthComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+        lengthComboBox.getItems().addAll(lengths);
+        lengthComboBox.getSelectionModel().select(0);
+        lengthComboBox.setLayoutX(87*sizeMultiplier);
+        lengthComboBox.setLayoutY(102*sizeMultiplier);
+
+        SimpleComboBox<String> languageComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
+        languageComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+        languageComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        languageComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+        languageComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+        languageComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+        languageComboBox.getItems().addAll(languages);
+        languageComboBox.getSelectionModel().select(0);
+        languageComboBox.setLayoutX(87*sizeMultiplier);
+        languageComboBox.setLayoutY(62*sizeMultiplier);
+
+        Label lengthLabel = new Label("Length:");
+        lengthLabel.setFont(new javafx.scene.text.Font(lengthLabel.getFont().getFamily(), lengthLabel.getFont().getSize()*sizeMultiplier));
+        lengthLabel.setLayoutX(22*sizeMultiplier);
+        lengthLabel.setLayoutY(105*sizeMultiplier);
+        lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
+        lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+
+        SimpleButton generateButton = new SimpleButton("Generate", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
+        generateButton.setBackgroundColor(javafx.scene.paint.Color.rgb(53,116,240));
+        generateButton.setStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
+        generateButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
+        generateButton.setTextFill(javafx.scene.paint.Color.WHITE);
+        generateButton.setLayoutX(590*sizeMultiplier);
+        generateButton.setLayoutY(470*sizeMultiplier);
+
+        SimpleButton resetButton = new SimpleButton("Reset", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
+        resetButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+        resetButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+        resetButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+        resetButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        resetButton.setLayoutX(510*sizeMultiplier);
+        resetButton.setLayoutY(470*sizeMultiplier);
+        resetButton.setOnAction(actionEvent -> {
+            lengthComboBox.getSelectionModel().select(0);
+            languageComboBox.getSelectionModel().select(0);
+        });
         return new Node[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
     }
-    private Node[] getAccountParts() {
+    private Node[] getAccountParts(String key) {
+        Label usagesLabel = new Label("Usages: " + api.usages(key));
+        usagesLabel.setLayoutX(22 * sizeMultiplier);
+        usagesLabel.setLayoutY(65 * sizeMultiplier);
+        usagesLabel.setFont(new javafx.scene.text.Font(usagesLabel.getFont().getFamily(), usagesLabel.getFont().getSize() * sizeMultiplier));
+        usagesLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+
+        Label creditsLabel = new Label("Credits: " + api.credits(key));
+        creditsLabel.setLayoutX(22 * sizeMultiplier);
+        creditsLabel.setLayoutY(90 * sizeMultiplier);
+        creditsLabel.setFont(new javafx.scene.text.Font(creditsLabel.getFont().getFamily(), creditsLabel.getFont().getSize() * sizeMultiplier));
+        creditsLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+
+        SimpleButton logoutButton = new SimpleButton("Logout", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
+        logoutButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+        logoutButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+        logoutButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+        logoutButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        logoutButton.setLayoutX(590*sizeMultiplier);
+        logoutButton.setLayoutY(470*sizeMultiplier);
+        logoutButton.setOnAction(actionEvent -> {
+            variables.deleteVariable("key");
+            frame.remove(jfxPanel);
+            showLoginPanel();
+        });
         return new Node[] {usagesLabel, creditsLabel, logoutButton};
     }
     private Node[] getAdminParts() {

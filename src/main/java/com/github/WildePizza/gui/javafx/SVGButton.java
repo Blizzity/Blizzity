@@ -76,7 +76,9 @@ public class SVGButton extends Button {
         }
 
     }
-
+    public void callEvent() {
+        onAction.getValue().handle(new ActionEvent());
+    }
     public final void setOnAction(EventHandler<ActionEvent> var1) {
         this.onAction.set(var1);
     }

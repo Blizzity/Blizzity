@@ -1,8 +1,10 @@
 package com.github.WildePizza.gui.javafx;
 
-import javafx.collections.ObservableMap;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -16,6 +18,7 @@ public class Container extends HoverPane {
     Color color = Color.rgb(43,45,48);
     double width;
     double height;
+    Pane children = new Pane();
     public boolean resizable = false;
     boolean outlineTop = false, outlineBottom = false, outlineRight = false, outlineLeft = false;
     double outlineWidth = 1;
@@ -40,7 +43,7 @@ public class Container extends HoverPane {
     }
 
     public boolean setCurrentHeight(double height) {
-        if (height >= getMinHeight() && height <= getMaxHeight()) {
+        if ((height >= getMinHeight() || getMinHeight() == -1) && ((height <= getMaxHeight()) || getMaxHeight() == -1)) {
             this.height = height;
             super.setHeight(height);
             drawContainer();
@@ -58,7 +61,7 @@ public class Container extends HoverPane {
     }
 
     public boolean setCurrentWidth(double width) {
-        if (width >= getMinWidth() && width <= getMaxWidth()) {
+        if ((width >= getMinWidth() || getMinWidth() == -1) && ((width <= getMaxWidth()) || getMaxWidth() == -1)) {
             this.width = width;
             super.setWidth(width);
             drawContainer();
@@ -164,31 +167,36 @@ public class Container extends HoverPane {
                                 clickPoint[0] = new Point((int) event.getX(), (int) event.getY());
                                 outlineTopHitbox.setY(outlineTopHitbox.getY() - yOffset);
                                 List<Container> relatedChildren = getRelatedTreeY(children);
-                                int stop = 0;
+                                int stop = -1;
                                 int index = 0;
                                 for (Container child : relatedChildren) {
                                     if (child == this) {
-                                        if (!child.setCurrentHeight(child.getCurrentHeight() + yOffset))
+                                        if (!child.setCurrentHeight(child.getCurrentHeight() + yOffset)) {
                                             stop=index;
-                                        child.setY(child.getY() + yOffset);
-                                        child.setY(child.getY() - yOffset);
+                                            break;
+                                        } else
+                                            child.setY(child.getY() - yOffset);
                                     } else {
-                                        if (!child.setCurrentHeight(child.getCurrentHeight() - yOffset))
+                                        if (!child.setCurrentHeight(child.getCurrentHeight() - yOffset)) {
                                             stop=index;
+                                            break;
+                                        }
                                     }
                                     index++;
                                 }
                                 index = 0;
-                                if (stop != 0)
+                                if (stop != -1) {
                                     outlineTopHitbox.setY(outlineTopHitbox.getY() + yOffset);
-                                for (Container child : relatedChildren) {
-                                    if (index == stop)
-                                        break;
-                                    if (child == this)
-                                        relatedChildren.get(index).setCurrentHeight(child.getCurrentHeight() - yOffset);
-                                    else
-                                        relatedChildren.get(index).setCurrentHeight(child.getCurrentHeight() + yOffset);
-                                    index++;
+                                    for (Container child : relatedChildren) {
+                                        if (index == stop)
+                                            break;
+                                        if (child == this) {
+                                            relatedChildren.get(index).setCurrentHeight(child.getCurrentHeight() - yOffset);
+                                            child.setY(child.getY() + yOffset);
+                                        } else
+                                            relatedChildren.get(index).setCurrentHeight(child.getCurrentHeight() + yOffset);
+                                        index++;
+                                    }
                                 }
                             });
                             children.add(name + ".hitbox.top", outlineTopHitbox);
@@ -213,15 +221,37 @@ public class Container extends HoverPane {
                             outlineRightHitbox.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
                             outlineRightHitbox.setOnMouseDragged(event -> {
                                 int xOffset = (int) (clickPoint[0].x - event.getX());
-                                clickPoint[0] = new Point((int) event.getX(), (int) event.getY());
+                                clickPoint[0] = new Point((int) event.getX(), (int) event.getX());
                                 outlineRightHitbox.setX(outlineRightHitbox.getX() - xOffset);
-                                double initialX = getX();
-                                for (Container child : getRelatedTreeX(children)) {
-                                    if (initialX == child.getX()) {
-                                        child.setCurrentWidth(child.getCurrentWidth() - xOffset);
+                                List<Container> relatedChildren = getRelatedTreeX(children);
+                                int stop = -1;
+                                int index = 0;
+                                for (Container child : relatedChildren) {
+                                    if (child == this) {
+                                        if (!child.setCurrentWidth(child.getCurrentWidth() + xOffset)) {
+                                            stop=index;
+                                            break;
+                                        } child.setX(child.getX() + xOffset);
                                     } else {
-                                        child.setCurrentWidth(child.getCurrentWidth() + xOffset);
-                                        child.setX(child.getX() - xOffset);
+                                        if (!child.setCurrentWidth(child.getCurrentWidth() - xOffset)) {
+                                            stop=index;
+                                            break;
+                                        }
+                                    }
+                                    index++;
+                                }
+                                index = 0;
+                                if (stop != -1) {
+                                    outlineRightHitbox.setX(outlineRightHitbox.getX() + xOffset);
+                                    for (Container child : relatedChildren) {
+                                        if (index == stop)
+                                            break;
+                                        if (child == this) {
+                                            relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() - xOffset);
+                                            child.setX(child.getX() - xOffset);
+                                        } else
+                                            relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() + xOffset);
+                                        index++;
                                     }
                                 }
                             });
@@ -310,11 +340,16 @@ public class Container extends HoverPane {
         bg2.setLayoutX(offsetX);
         bg2.setLayoutY(offsetY);
         bg2.setFill(color);
-        if (getChildren().isEmpty())
-            getChildren().addAll(bg1, bg2);
+        if (super.getChildren().isEmpty())
+            super.getChildren().addAll(bg1, bg2, children);
         else {
-            getChildren().set(0, bg1);
-            getChildren().set(1, bg2);
+            super.getChildren().set(0, bg1);
+            super.getChildren().set(1, bg2);
+            super.getChildren().set(2, children);
         }
+    }
+    @Override
+    public ObservableList<javafx.scene.Node> getChildren() {
+        return children.getChildren();
     }
 }
