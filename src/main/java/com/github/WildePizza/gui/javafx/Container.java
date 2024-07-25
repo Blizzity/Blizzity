@@ -18,7 +18,6 @@ public class Container extends HoverPane {
     Color color = Color.rgb(43,45,48);
     double width;
     double height;
-    Pane children = new Pane();
     public boolean resizable = false;
     boolean outlineTop = false, outlineBottom = false, outlineRight = false, outlineLeft = false;
     double outlineWidth = 1;
@@ -26,6 +25,7 @@ public class Container extends HoverPane {
     public Rectangle bg1, bg2, outlineTopHitbox, outlineRightHitbox;
     double x;
     double y;
+    public List<ContainerInterface> actions = new ArrayList<>();
 
     public Container setResizable(boolean resizable) {
         this.resizable = resizable;
@@ -148,6 +148,11 @@ public class Container extends HoverPane {
         }
         return false;
     }
+    public void callInterface() {
+        for (ContainerInterface action : actions) {
+            action.execute();
+        }
+    }
     public Container setOutline(int side, boolean outline, String name, MappedParent children, boolean resizable) {
         switch (side) {
             case TOP:
@@ -228,15 +233,16 @@ public class Container extends HoverPane {
                                 int index = 0;
                                 for (Container child : relatedChildren) {
                                     if (child == this) {
-                                        if (!child.setCurrentWidth(child.getCurrentWidth() + xOffset)) {
-                                            stop=index;
-                                            break;
-                                        } child.setX(child.getX() + xOffset);
-                                    } else {
                                         if (!child.setCurrentWidth(child.getCurrentWidth() - xOffset)) {
                                             stop=index;
                                             break;
                                         }
+                                    } else {
+                                        if (!child.setCurrentWidth(child.getCurrentWidth() + xOffset)) {
+                                            stop=index;
+                                            break;
+                                        } else
+                                            child.setX(child.getX() - xOffset);
                                     }
                                     index++;
                                 }
@@ -247,10 +253,11 @@ public class Container extends HoverPane {
                                         if (index == stop)
                                             break;
                                         if (child == this) {
-                                            relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() - xOffset);
-                                            child.setX(child.getX() - xOffset);
-                                        } else
                                             relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() + xOffset);
+                                        } else {
+                                            relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() - xOffset);
+                                            child.setX(child.getX() + xOffset);
+                                        }
                                         index++;
                                     }
                                 }
@@ -314,6 +321,7 @@ public class Container extends HoverPane {
     }
 
     private void drawContainer() {
+        callInterface();
         int offsetX = 0;
         int offsetY = 0;
         int offsetWidth = 0;
@@ -340,16 +348,21 @@ public class Container extends HoverPane {
         bg2.setLayoutX(offsetX);
         bg2.setLayoutY(offsetY);
         bg2.setFill(color);
-        if (super.getChildren().isEmpty())
-            super.getChildren().addAll(bg1, bg2, children);
+        if (getChildren().isEmpty())
+            getChildren().addAll(bg1, bg2);
         else {
-            super.getChildren().set(0, bg1);
-            super.getChildren().set(1, bg2);
-            super.getChildren().set(2, children);
+            getChildren().set(0, bg1);
+            getChildren().set(1, bg2);
         }
     }
-    @Override
-    public ObservableList<javafx.scene.Node> getChildren() {
-        return children.getChildren();
+    public void clear() {
+        getChildren().clear();
+        actions.clear();
+        drawContainer();
+    }
+
+    @FunctionalInterface
+    public interface ContainerInterface {
+        void execute();
     }
 }
