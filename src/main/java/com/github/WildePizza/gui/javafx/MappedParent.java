@@ -28,15 +28,19 @@ public class MappedParent extends Parent {
             throw new IllegalArgumentException("Key already exists: " + key);
         }
         children.put(key, child);
-        children.forEach((name1, child1) -> {
+        ObservableMap<String, Node> childrenClone = FXCollections.observableHashMap();
+        childrenClone.putAll(children);
+        childrenClone.forEach((name1, child1) -> {
             if (child1 instanceof Container) {
-                children.forEach((name2, child2) -> {
+                childrenClone.forEach((name2, child2) -> {
                     if (child2 instanceof Container) {
-                        if (((Container) child1).getY() == ((Container) child2).getY() + ((Container) child2).getHeight()) {
-                            ((Container) child1).setOutline(Container.TOP, true);
+                        if (((Container) child1).hasRelatedY((Container) child2)) {
+                            ((Container) child1).setOutline(Container.TOP, true, name1, this, ((Container) child2).resizable);
                         }
-                        if (((Container) child1).getX() + ((Container) child1).getWidth() == ((Container) child2).getX()) {
-                            ((Container) child1).setOutline(Container.RIGHT, true);
+                        if (((Container) child1).hasRelatedX((Container) child2)) {
+                            ((Container) child1).setOutline(Container.RIGHT, true, name1, this, ((Container) child2).resizable);
+//                            if (((Container) child1).getOutline(Container.TOP))
+//                                ((Container) child1).setOutline(Container.TOP_RIGHT, true, name1, this);
                         }
                     }
                 });

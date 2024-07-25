@@ -1118,7 +1118,7 @@ public class GUI {
                 int frameHeight = (int) ((screenHeight-40) * sizeMultiplier);
                 int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frameWidth) / 2;
                 int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frameHeight) / 2;
-                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier).setY(40*sizeMultiplier);
+                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier).setY(40*sizeMultiplier).setResizable(true);
                 Group generateSvgGroup = getGenerateSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton generatePane = new SVGButton(generateSvgGroup, 40, 40, 10, sizeMultiplier);
                 SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
@@ -1173,7 +1173,7 @@ public class GUI {
                     adminPane.setLayoutX(0 * sizeMultiplier);
                     adminPane.setLayoutY(80 * sizeMultiplier);
                 }
-                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier);
+                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier).setResizable(true);
                 Group exportSvgGroup = getExportSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton exportPane = new SVGButton(exportSvgGroup, 40, 40, 10, sizeMultiplier);
                 {
@@ -1220,9 +1220,7 @@ public class GUI {
                     sharePane.setLayoutY(0 * sizeMultiplier);
                 }
                 final Point[] clickPoint = new Point[1];
-                title.setOnMousePressed(event -> {
-                    clickPoint[0] = new Point((int) event.getX(), (int) event.getY());
-                });
+                title.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
                 title.setOnMouseDragged(event -> {
                     int xOffset = (int) (frame.getLocation().x - clickPoint[0].x + event.getX());
                     int yOffset = (int) (frame.getLocation().y - clickPoint[0].y + event.getY());
@@ -1260,16 +1258,17 @@ public class GUI {
                 title.getChildren().addAll(jfxCloseButton, jfxMinimizeButton, exportPane, sharePane);
                 title.setColor(javafx.scene.paint.Color.rgb(60,63,65));
                 selector.getChildren().addAll(generatePane, accountPane, adminPane);
-                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setX(40*sizeMultiplier).setY(40*sizeMultiplier);
-                Container timeline = new Container((screenWidth-selector.getWidth())*sizeMultiplier, 320*sizeMultiplier).setX(40*sizeMultiplier).setY(620*sizeMultiplier);
+                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setX(40*sizeMultiplier).setY(40*sizeMultiplier).setResizable(true);
+                Container timeline = new Container((screenWidth-selector.getWidth())*sizeMultiplier, 320*sizeMultiplier).setX(40*sizeMultiplier).setY(620*sizeMultiplier).setResizable(true);
+                frame.add(jfxPanel);
+                frame.pack();
+                frame.setLocation(x, y);
                 jfxPanel.getMappedParent().add("title", title);
                 jfxPanel.getMappedParent().add("options.selector", selector);
                 jfxPanel.getMappedParent().add("options", options);
                 jfxPanel.getMappedParent().add("timeline", timeline);
+//                debug();
                 jfxPanel.getScene().setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
-                frame.add(jfxPanel);
-                frame.pack();
-                frame.setLocation(x, y);
             } else {
                 frame.add(jfxPanel);
             }
@@ -1593,6 +1592,8 @@ public class GUI {
 //
 //            }
 //        });
+        frame.pack();
+        frame.setVisible(true);
     }
 
     Rectangle loading;
@@ -1631,46 +1632,47 @@ public class GUI {
             childrenMap.forEach((name, child) -> {
                 System.out.println(name + ":");
                 AtomicInteger i = new AtomicInteger();
-                ((Container)child).getChildren().forEach(node -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Platform.runLater(() -> {
-                        i.getAndIncrement();
-                        i2.getAndIncrement();
-                        double xLoc;
-                        double yLoc;
-                        double width;
-                        double height;
-                        System.out.println("  " + i + ":");
-                        if (node instanceof com.github.WildePizza.gui.javafx.Button) {
-                            xLoc = node.getLayoutX();
-                            yLoc = node.getLayoutY();
-                            width = ((Pane) node).getWidth();
-                            height = ((Pane) node).getHeight();
-                        } else if (node instanceof Rectangle) {
-                            xLoc = node.getLayoutX();
-                            yLoc = node.getLayoutY();
-                            width = ((Rectangle) node).getWidth();
-                            height = ((Rectangle) node).getHeight();
-                        } else {
-                            xLoc = 0;
-                            yLoc = 0;
-                            width = 0;
-                            height = 0;
-                            System.out.println("Unknown node " + node.getClass());
+                if (child instanceof Container)
+                    ((Container)child).getChildren().forEach(node -> {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
-                        System.out.println("     " + xLoc + " - " + (xLoc + width));
-                        System.out.println("     " + yLoc + " - " + (yLoc + height));
-                        Rectangle rectangle = new Rectangle(width, height);
-                        rectangle.setLayoutX(xLoc);
-                        rectangle.setLayoutY(yLoc);
-                        rectangle.setFill(javafx.scene.paint.Color.rgb(i2.get()*10, 0, 0));
-                        jfxPanel.getMappedParent().getChildren().add(rectangle);
+                        Platform.runLater(() -> {
+                            i.getAndIncrement();
+                            i2.getAndIncrement();
+                            double xLoc;
+                            double yLoc;
+                            double width;
+                            double height;
+                            System.out.println("  " + i + ":");
+                            if (node instanceof com.github.WildePizza.gui.javafx.Button) {
+                                xLoc = node.getLayoutX();
+                                yLoc = node.getLayoutY();
+                                width = ((Pane) node).getWidth();
+                                height = ((Pane) node).getHeight();
+                            } else if (node instanceof Rectangle) {
+                                xLoc = node.getLayoutX();
+                                yLoc = node.getLayoutY();
+                                width = ((Rectangle) node).getWidth();
+                                height = ((Rectangle) node).getHeight();
+                            } else {
+                                xLoc = 0;
+                                yLoc = 0;
+                                width = 0;
+                                height = 0;
+                                System.out.println("Unknown node " + node.getClass());
+                            }
+                            System.out.println("     " + xLoc + " - " + (xLoc + width));
+                            System.out.println("     " + yLoc + " - " + (yLoc + height));
+                            Rectangle rectangle = new Rectangle(width, height);
+                            rectangle.setLayoutX(xLoc);
+                            rectangle.setLayoutY(yLoc);
+                            rectangle.setFill(javafx.scene.paint.Color.rgb(i2.get()*10, 0, 0));
+                            jfxPanel.getMappedParent().getChildren().add(rectangle);
+                        });
                     });
-                });
             });
         });
         thread.start();
