@@ -1,10 +1,7 @@
 package com.github.WildePizza.gui.javafx;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -12,6 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Container extends HoverPane {
     public static final int TOP=1, TOP_RIGHT=2, RIGHT=3, BOTTOM_RIGHT=4, BOTTOM=5, BOTTOM_LEFT=6, LEFT=7, TOP_LEFT=8;
     Color outlineColor = Color.rgb(30,31,34);
@@ -30,6 +28,22 @@ public class Container extends HoverPane {
     public Container setResizable(boolean resizable) {
         this.resizable = resizable;
         return this;
+    }
+
+    public void addLineBreak(String name, int y) {
+        Label label = new Label(name);
+        label.setTextFill(Colors.textColor);
+        label.setLayoutY(y);
+        label.setLayoutX(16);
+        Rectangle rectangle = new Rectangle(0, 0, 0, 0.5);
+        label.widthProperty().addListener((observable, oldValue, newValue) -> {
+            rectangle.setX(newValue.doubleValue()+25);
+            rectangle.setWidth(width - newValue.doubleValue() - 55);
+        });
+        actions.add(() -> rectangle.setWidth(width - label.getWidth() - 55));
+        label.heightProperty().addListener((observable, oldValue, newValue) -> rectangle.setY(y + newValue.doubleValue()/2 + 1));
+        rectangle.setFill(Color.rgb(65,65,73));
+        getChildren().addAll(rectangle, label);
     }
 
     public Container(double width, double height) {

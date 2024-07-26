@@ -2,6 +2,7 @@ package com.github.WildePizza;
 
 import com.github.WildePizza.gui.javafx.*;
 import com.github.WildePizza.gui.javafx.Container;
+import com.github.WildePizza.gui.javafx.Window;
 import com.github.WildePizza.gui.swing.*;
 import com.github.WildePizza.utils.StringUtils;
 import javafx.animation.Animation;
@@ -18,9 +19,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -65,6 +68,7 @@ public class GUI {
     public static JSimpleButton closeButton;
     public static JSimpleButton minimizeButton;
     public static SimpleVariables variables;
+//    Swing colors
     Color color1 = new Color(19, 19, 20);
     public static Color color2 = new Color(30, 31, 32);
     Color color3 = new Color(191, 191, 191);
@@ -268,7 +272,7 @@ public class GUI {
             exportCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
             exportCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             exportCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-            exportCompleteButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+            exportCompleteButton.setTextFill(Colors.textColor);
             exportCompleteButton.setOnAction(event -> {
                 MappedParent parent = jfxPanel.getMappedParent();
                 Platform.runLater(() -> {
@@ -300,7 +304,7 @@ public class GUI {
             spaceComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
             spaceComboBox.getItems().addAll(spaces);
             spaceComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-            spaceComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+            spaceComboBox.setTextFill(Colors.textColor);
             spaceComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             spaceComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
             spaceComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
@@ -347,7 +351,7 @@ public class GUI {
                 String[] privacy = {"Public", "Unlisted", "Private"};
                 youtubePrivacyComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
                 youtubePrivacyComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-                youtubePrivacyComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+                youtubePrivacyComboBox.setTextFill(Colors.textColor);
                 youtubePrivacyComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
                 youtubePrivacyComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
                 youtubePrivacyComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
@@ -475,7 +479,7 @@ public class GUI {
             shareCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
             shareCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
             shareCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-            shareCompleteButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+            shareCompleteButton.setTextFill(Colors.textColor);
             shareCompleteButton.setLayoutX((x + 528)*sizeMultiplier);
             shareCompleteButton.setLayoutY((y + 520)*sizeMultiplier);
         }
@@ -901,6 +905,7 @@ public class GUI {
                             options.clear();
                             options.getChildren().addAll(getGenerateParts(key, options, details));
                             options.callInterface();
+                            options.addLineBreak("Video Settings", 25);
                             selectedSectionButton.setSelected(false);
                             generatePane.setSelected(true);
                             selectedSectionButton = generatePane;
@@ -1369,40 +1374,79 @@ public class GUI {
         return path;
     }
     private Node[] getGenerateParts(String key, Container container, Container details) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/quiz.png")));
+        ImageView imageView = new ImageView(image);
+        double width = image.getWidth()/10*sizeMultiplier;
+        double height = image.getHeight()/10*sizeMultiplier;
+        imageView.setFitWidth(width);
+        imageView.setFitHeight(height);
+        Rectangle clip = new Rectangle(width, height);
+        clip.setArcWidth(30);
+        clip.setArcHeight(30);
+        imageView.setClip(clip);
+        imageView.setLayoutX(95*sizeMultiplier);
+        imageView.setLayoutY(56*sizeMultiplier);
+        Rectangle outline = new Rectangle(width, height);
+        outline.setStroke(javafx.scene.paint.Color.rgb(78, 81, 87));
+        outline.setStrokeWidth(3);
+        outline.setArcWidth(clip.getArcWidth());
+        outline.setArcHeight(clip.getArcHeight());
+        outline.setLayoutX(imageView.getLayoutX());
+        outline.setLayoutY(imageView.getLayoutY());
+        imageView.setOnMouseClicked(event -> {
+            outline.setStrokeWidth(5);
+            outline.setStroke(javafx.scene.paint.Color.rgb(53, 116, 240));
+            Window typeSelector = new Window();
+            typeSelector.open();
+        });
+
+        Label nameLabel = new Label("3 Question Quiz");
+        nameLabel.setFont(new javafx.scene.text.Font(nameLabel.getFont().getFamily(), nameLabel.getFont().getSize()*sizeMultiplier));
+        nameLabel.setLayoutY(imageView.getLayoutY()+height+3);
+        nameLabel.widthProperty().addListener((observable, oldValue, newValue) -> nameLabel.setLayoutX((width-newValue.doubleValue())/2 + imageView.getLayoutX()));
+        nameLabel.setTextFill(javafx.scene.paint.Color.rgb(100, 100, 100));
+
+        Label typeLabel = new Label("Type:");
+        typeLabel.setFont(new javafx.scene.text.Font(typeLabel.getFont().getFamily(), typeLabel.getFont().getSize()*sizeMultiplier));
+        typeLabel.setLayoutX(30*sizeMultiplier);
+        typeLabel.heightProperty().addListener((observable, oldValue, newValue) -> {
+            typeLabel.setLayoutY((height-newValue.doubleValue())/2 + 56);
+        });
+        typeLabel.setTextFill(Colors.textColor);
+
         Label languageLabel = new Label("Language:");
         languageLabel.setFont(new javafx.scene.text.Font(languageLabel.getFont().getFamily(), languageLabel.getFont().getSize()*sizeMultiplier));
-        languageLabel.setLayoutX(22*sizeMultiplier);
-        languageLabel.setLayoutY(25*sizeMultiplier);
-        languageLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
-        languageLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        languageLabel.setLayoutX(30*sizeMultiplier);
+        languageLabel.setLayoutY(height + 93*sizeMultiplier);
+        languageLabel.setTextFill(Colors.textColor);
 
         SimpleComboBox<String> languageComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
         languageComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        languageComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        languageComboBox.setTextFill(Colors.textColor);
         languageComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         languageComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         languageComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
         languageComboBox.getItems().addAll(languages);
         languageComboBox.getSelectionModel().select(0);
-        languageComboBox.setLayoutX(87*sizeMultiplier);
-        languageComboBox.setLayoutY(22*sizeMultiplier);
+        languageComboBox.setLayoutX(95*sizeMultiplier);
+        languageComboBox.setLayoutY(height + 90*sizeMultiplier);
 
         String[] lengths = {"< 1 min", "> 1 min 30 sec"};
         SimpleComboBox<String> lengthComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
         lengthComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        lengthComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        lengthComboBox.setTextFill(Colors.textColor);
         lengthComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         lengthComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         lengthComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
         lengthComboBox.getItems().addAll(lengths);
         lengthComboBox.getSelectionModel().select(0);
-        lengthComboBox.setLayoutX(87*sizeMultiplier);
-        lengthComboBox.setLayoutY(62*sizeMultiplier);
+        lengthComboBox.setLayoutX(95*sizeMultiplier);
+        lengthComboBox.setLayoutY(height + 135*sizeMultiplier);
 
         Label lengthLabel = new Label("Length:");
         lengthLabel.setFont(new javafx.scene.text.Font(lengthLabel.getFont().getFamily(), lengthLabel.getFont().getSize()*sizeMultiplier));
-        lengthLabel.setLayoutX(22*sizeMultiplier);
-        lengthLabel.setLayoutY(65*sizeMultiplier);
+        lengthLabel.setLayoutX(30*sizeMultiplier);
+        lengthLabel.setLayoutY(height + 138*sizeMultiplier);
         lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
@@ -1530,7 +1574,7 @@ public class GUI {
         resetButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
         resetButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         resetButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        resetButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        resetButton.setTextFill(Colors.textColor);
         resetButton.setOnAction(actionEvent -> {
             lengthComboBox.getSelectionModel().select(0);
             languageComboBox.getSelectionModel().select(0);
@@ -1539,26 +1583,26 @@ public class GUI {
             resetButton.setLayoutX(container.getCurrentWidth()-167*sizeMultiplier);
             resetButton.setLayoutY(container.getCurrentHeight()-37*sizeMultiplier);
         });
-        return new Node[] {languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
+        return new Node[] {typeLabel, outline, imageView, nameLabel, languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
     }
     private Node[] getAccountParts(Container container, String key) {
         Label usagesLabel = new Label("Usages: " + api.usages(key));
         usagesLabel.setLayoutX(22 * sizeMultiplier);
         usagesLabel.setLayoutY(22 * sizeMultiplier);
         usagesLabel.setFont(new javafx.scene.text.Font(usagesLabel.getFont().getFamily(), usagesLabel.getFont().getSize() * sizeMultiplier));
-        usagesLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        usagesLabel.setTextFill(Colors.textColor);
 
         Label creditsLabel = new Label("Credits: " + api.credits(key));
         creditsLabel.setLayoutX(22 * sizeMultiplier);
         creditsLabel.setLayoutY(50 * sizeMultiplier);
         creditsLabel.setFont(new javafx.scene.text.Font(creditsLabel.getFont().getFamily(), creditsLabel.getFont().getSize() * sizeMultiplier));
-        creditsLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        creditsLabel.setTextFill(Colors.textColor);
 
         SimpleButton logoutButton = new SimpleButton("Logout", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
         logoutButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
         logoutButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         logoutButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        logoutButton.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        logoutButton.setTextFill(Colors.textColor);
         container.actions.add(() -> {
             logoutButton.setLayoutX(container.getCurrentWidth()-87*sizeMultiplier);
             logoutButton.setLayoutY(container.getCurrentHeight()-37*sizeMultiplier);
@@ -1575,14 +1619,14 @@ public class GUI {
         adminLabel.setLayoutX(400 * sizeMultiplier);
         adminLabel.setLayoutY(97 * sizeMultiplier);
         adminLabel.setFont(new javafx.scene.text.Font(adminLabel.getFont().getFamily(), adminLabel.getFont().getSize() * sizeMultiplier));
-        adminLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        adminLabel.setTextFill(Colors.textColor);
 
         AtomicReference<AccountComboBox> adminAccountComboBox = new AtomicReference<>();
         SimpleComboBox<String> snapchatComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
         snapchatComboBox.setLayoutX(22 * sizeMultiplier);
         snapchatComboBox.setLayoutY(142 * sizeMultiplier);
         snapchatComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        snapchatComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        snapchatComboBox.setTextFill(Colors.textColor);
         snapchatComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         snapchatComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         snapchatComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
@@ -1597,25 +1641,25 @@ public class GUI {
         snapchatLabel.setLayoutX(22 * sizeMultiplier);
         snapchatLabel.setLayoutY(122 * sizeMultiplier);
         snapchatLabel.setFont(new javafx.scene.text.Font(snapchatLabel.getFont().getFamily(), snapchatLabel.getFont().getSize() * sizeMultiplier));
-        snapchatLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        snapchatLabel.setTextFill(Colors.textColor);
 
         Label tiktokLabel = new Label("Tiktok:");
         tiktokLabel.setLayoutX(22 * sizeMultiplier);
         tiktokLabel.setLayoutY(72 * sizeMultiplier);
         tiktokLabel.setFont(new javafx.scene.text.Font(tiktokLabel.getFont().getFamily(), tiktokLabel.getFont().getSize() * sizeMultiplier));
-        tiktokLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        tiktokLabel.setTextFill(Colors.textColor);
 
         Label youtubeLabel = new Label("Youtube:");
         youtubeLabel.setLayoutX(22 * sizeMultiplier);
         youtubeLabel.setLayoutY(22 * sizeMultiplier);
         youtubeLabel.setFont(new javafx.scene.text.Font(youtubeLabel.getFont().getFamily(), youtubeLabel.getFont().getSize() * sizeMultiplier));
-        youtubeLabel.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        youtubeLabel.setTextFill(Colors.textColor);
 
         SimpleComboBox<String> tiktokComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
         tiktokComboBox.setLayoutX(22 * sizeMultiplier);
         tiktokComboBox.setLayoutY(92 * sizeMultiplier);
         tiktokComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        tiktokComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        tiktokComboBox.setTextFill(Colors.textColor);
         tiktokComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         tiktokComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         tiktokComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
@@ -1630,7 +1674,7 @@ public class GUI {
         youtubeComboBox.setLayoutX(22 * sizeMultiplier);
         youtubeComboBox.setLayoutY(42 * sizeMultiplier);
         youtubeComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        youtubeComboBox.setTextFill(javafx.scene.paint.Color.rgb(210, 210, 210));
+        youtubeComboBox.setTextFill(Colors.textColor);
         youtubeComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         youtubeComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         youtubeComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
