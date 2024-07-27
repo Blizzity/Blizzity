@@ -126,7 +126,7 @@ public class GUI {
     private MediaView
             mediaView,
             mediaViewClone;
-    public static ResizablePanel jfxPanel;
+    public static MappedJFXPanel jfxPanel;
     private JIconButton exportButton;
     private JIconButton shareButton;
     ImageView imageView;
@@ -161,7 +161,7 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-        jfxPanel = new ResizablePanel();
+        jfxPanel = new MappedJFXPanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
 
         darkenBackground = new Rectangle(screenWidth*sizeMultiplier, screenHeight*sizeMultiplier);
@@ -492,6 +492,7 @@ public class GUI {
         init();
         if (variables.getVariable("key") != null || Blizzity.offlineMode) {
             showContentPanel((String) variables.getVariable("key"));
+//            addTitleBarPanel(api.admin((String) variables.getVariable("key")));
         } else {
             addTitleBarPanel(false);
             showLoginPanel();
@@ -1057,7 +1058,7 @@ public class GUI {
                 frame.add(jfxPanel);
             }
         });
-        jfxPanel.setSize(screenWidth * sizeMultiplier, 960 * sizeMultiplier);
+        jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (960 * sizeMultiplier)));
         frame.pack();
 //
 //
