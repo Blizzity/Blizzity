@@ -12,55 +12,78 @@ import javafx.scene.shape.Rectangle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ResizablePanel extends JFXPanel {
-    protected Rectangle topLeftHitbox, topRightHitbox, topHitbox, rightHitbox, bottomRightHitbox, bottomHitbox, bottomLeftHitbox, leftHitbox;
+public class ResizablePanel extends MappedJFXPanel {
     protected double tempWidth, tempHeight, height, width;
-    double blurRadius = 10 * GUI.sizeMultiplier;
+    double offsetRadius;
     double outlineRadius = 1 * GUI.sizeMultiplier;
     double hitboxRadius = 5 * GUI.sizeMultiplier;
+    public List<Interface> resizeEvent = new ArrayList<>();
     JDialog dialog;
-    JFXPanel panel;
-    ResizablePanel(JDialog dialog) {
-        this();
+    public ResizablePanel(double width, double height, double offsetRadius, JDialog dialog) {
+        this(width, height, offsetRadius);
         this.dialog = dialog;
     }
-    ResizablePanel(JFXPanel panel) {
-        this();
-        this.panel = panel;
+    public ResizablePanel(double width, double height) {
+        this(width, height, 0);
     }
-    ResizablePanel() {
-        setOpaque(false);
-        setBackground(new java.awt.Color(0, 0, 0, 0));
-        Pane root = new Pane();
-        root.setStyle("-fx-background-color: transparent;");
-        moveResizeHitboxes();
-        Scene scene = new Scene(root, width, height);
-        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        setScene(scene);
+    public ResizablePanel() {
+        this(0, 0, 0);
     }
-    private void setSize(double width, double height) {
+    public ResizablePanel(double width, double height, double offsetRadius) {
+        super();
+        Platform.runLater(() -> {
+            this.width = width;
+            this.height = height;
+            this.offsetRadius = offsetRadius;
+            setOpaque(false);
+            setBackground(new java.awt.Color(0, 0, 0, 0));
+            Pane root = new Pane();
+            root.setStyle("-fx-background-color: transparent;");
+            getMappedParent().add("cursor.nw_resize", newDraggable(Cursor.NW_RESIZE));
+            getMappedParent().add("cursor.n_resize", newDraggable(Cursor.N_RESIZE));
+            getMappedParent().add("cursor.ne_resize", newDraggable(Cursor.NE_RESIZE));
+            getMappedParent().add("cursor.e_resize", newDraggable(Cursor.E_RESIZE));
+            getMappedParent().add("cursor.se_resize", newDraggable(Cursor.SE_RESIZE));
+            getMappedParent().add("cursor.s_resize", newDraggable(Cursor.S_RESIZE));
+            getMappedParent().add("cursor.sw_resize", newDraggable(Cursor.SW_RESIZE));
+            getMappedParent().add("cursor.w_resize", newDraggable(Cursor.W_RESIZE));
+            moveResizeHitboxes();
+            Scene scene = new Scene(root, width, height);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            setScene(scene);
+        });
+    }
+    public void setSize(double width, double height) {
         setSize(width, height, true);
     }
-    private void setSize(double width, double height, boolean refresh) {
+    public void setSize(double width, double height, boolean refresh) {
         this.width = width;
         this.height = height;
         moveResizeHitboxes();
-        if (refresh)
-            dialog.setSize((int) (width + blurRadius * 2), (int) (height + blurRadius * 2));
-        else {
-            if (tempWidth == 0 || Math.abs(tempWidth - width) <= 20) {
-                tempWidth = width + 300;
-                dialog.setSize((int) tempWidth, (int) tempHeight);
+        callResize(width, height);
+        if (dialog != null) {
+            if (refresh)
+                dialog.setSize((int) (width + offsetRadius * 2), (int) (height + offsetRadius * 2));
+            else {
+                if (tempWidth == 0 || Math.abs(tempWidth - width) <= 20) {
+                    tempWidth = width + 300;
+                    dialog.setSize((int) tempWidth, (int) tempHeight);
+                }
+                if (tempHeight == 0 || Math.abs(tempHeight - height) <= 20) {
+                    tempHeight = height + 300;
+                    dialog.setSize((int) tempWidth, (int) tempHeight);
+                }
             }
-            if (tempHeight == 0 || Math.abs(tempHeight - height) <= 20) {
-                tempHeight = height + 300;
-                dialog.setSize((int) tempWidth, (int) tempHeight);
-            }
+        } else {
+            setPreferredSize(new Dimension((int) (width + offsetRadius * 2), (int) (height + offsetRadius * 2)));
         }
     }
-    private void makeDraggable(Rectangle rectangle, Cursor cursor) {
+    private Rectangle newDraggable(Cursor cursor) {
+        Rectangle rectangle = new Rectangle();
         rectangle.setCursor(cursor);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.TRANSPARENT);
@@ -74,9 +97,7 @@ public class ResizablePanel extends JFXPanel {
             tempWidth = 0;
             tempHeight = 0;
         });
-        rectangle.setOnMouseReleased(event -> {
-            dialog.setSize((int) (width + blurRadius * 2), (int) (height + blurRadius * 2));
-        });
+        rectangle.setOnMouseReleased(event -> dialog.setSize((int) (width + offsetRadius * 2), (int) (height + offsetRadius * 2)));
         rectangle.setOnMouseDragged(event -> {
             int yOffset = (int) (clickPoint[0].y - event.getY());
             int xOffset = (int) (clickPoint[0].x - event.getX());
@@ -105,58 +126,57 @@ public class ResizablePanel extends JFXPanel {
                 }
             });
         });
-    }
-    public Node[] getResizeHitbox() {
-        topLeftHitbox = new Rectangle();
-        makeDraggable(topLeftHitbox, Cursor.NW_RESIZE);
-        topHitbox = new Rectangle();
-        makeDraggable(topHitbox, Cursor.N_RESIZE);
-        topRightHitbox = new Rectangle();
-        makeDraggable(topRightHitbox, Cursor.NE_RESIZE);
-        rightHitbox = new Rectangle();
-        makeDraggable(rightHitbox, Cursor.E_RESIZE);
-        bottomRightHitbox = new Rectangle();
-        makeDraggable(bottomRightHitbox, Cursor.SE_RESIZE);
-        bottomHitbox = new Rectangle();
-        makeDraggable(bottomHitbox, Cursor.S_RESIZE);
-        bottomLeftHitbox = new Rectangle();
-        makeDraggable(bottomLeftHitbox, Cursor.SW_RESIZE);
-        leftHitbox = new Rectangle();
-        makeDraggable(leftHitbox, Cursor.W_RESIZE);
-        return new Node[]{topLeftHitbox, topHitbox, topRightHitbox, rightHitbox, bottomRightHitbox, bottomHitbox, bottomLeftHitbox, leftHitbox};
+        return rectangle;
     }
     public void moveResizeHitboxes() {
-        topLeftHitbox.setX(blurRadius- hitboxRadius);
-        topLeftHitbox.setY(blurRadius- hitboxRadius);
+        Rectangle topLeftHitbox = (Rectangle) getMappedParent().get("cursor.nw_resize");
+        topLeftHitbox.setX(offsetRadius - hitboxRadius);
+        topLeftHitbox.setY(offsetRadius - hitboxRadius);
         topLeftHitbox.setWidth(hitboxRadius *2);
         topLeftHitbox.setHeight(hitboxRadius *2);
-        topHitbox.setX(blurRadius+ hitboxRadius);
-        topHitbox.setY(blurRadius- hitboxRadius);
+        Rectangle topHitbox = (Rectangle) getMappedParent().get("cursor.n_resize");
+        topHitbox.setX(offsetRadius + hitboxRadius);
+        topHitbox.setY(offsetRadius - hitboxRadius);
         topHitbox.setWidth(width- hitboxRadius *2);
         topHitbox.setHeight(hitboxRadius *2);
-        topRightHitbox.setX(width+blurRadius- hitboxRadius);
-        topRightHitbox.setY(blurRadius- hitboxRadius);
+        Rectangle topRightHitbox = (Rectangle) getMappedParent().get("cursor.ne_resize");
+        topRightHitbox.setX(width+ offsetRadius - hitboxRadius);
+        topRightHitbox.setY(offsetRadius - hitboxRadius);
         topRightHitbox.setWidth(hitboxRadius *2);
         topRightHitbox.setHeight(hitboxRadius *2);
-        rightHitbox.setX(width+blurRadius- hitboxRadius);
-        rightHitbox.setY(blurRadius+ hitboxRadius);
+        Rectangle rightHitbox = (Rectangle) getMappedParent().get("cursor.e_resize");
+        rightHitbox.setX(width+ offsetRadius - hitboxRadius);
+        rightHitbox.setY(offsetRadius + hitboxRadius);
         rightHitbox.setWidth(hitboxRadius *2);
         rightHitbox.setHeight(height- hitboxRadius *2);
-        bottomRightHitbox.setX(width+blurRadius- hitboxRadius);
-        bottomRightHitbox.setY(height+blurRadius- hitboxRadius);
+        Rectangle bottomRightHitbox = (Rectangle) getMappedParent().get("cursor.se_resize");
+        bottomRightHitbox.setX(width+ offsetRadius - hitboxRadius);
+        bottomRightHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomRightHitbox.setWidth(hitboxRadius *2);
         bottomRightHitbox.setHeight(hitboxRadius *2);
-        bottomHitbox.setX(blurRadius+ hitboxRadius);
-        bottomHitbox.setY(height+blurRadius- hitboxRadius);
+        Rectangle bottomHitbox = (Rectangle) getMappedParent().get("cursor.s_resize");
+        bottomHitbox.setX(offsetRadius + hitboxRadius);
+        bottomHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomHitbox.setWidth(width- hitboxRadius *2);
         bottomHitbox.setHeight(hitboxRadius *2);
-        bottomLeftHitbox.setX(blurRadius- hitboxRadius);
-        bottomLeftHitbox.setY(height+blurRadius- hitboxRadius);
+        Rectangle bottomLeftHitbox = (Rectangle) getMappedParent().get("cursor.sw_resize");
+        bottomLeftHitbox.setX(offsetRadius - hitboxRadius);
+        bottomLeftHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomLeftHitbox.setWidth(hitboxRadius *2);
         bottomLeftHitbox.setHeight(hitboxRadius *2);
-        leftHitbox.setX(blurRadius- hitboxRadius);
-        leftHitbox.setY(blurRadius+ hitboxRadius);
+        Rectangle leftHitbox = (Rectangle) getMappedParent().get("cursor.w_resize");
+        leftHitbox.setX(offsetRadius - hitboxRadius);
+        leftHitbox.setY(offsetRadius + hitboxRadius);
         leftHitbox.setWidth(hitboxRadius *2);
         leftHitbox.setHeight(height- hitboxRadius *2);
+    }
+    public void callResize(double width, double height) {
+        for (Interface action : resizeEvent) {
+            action.execute(width, height);
+        }
+    }
+    @FunctionalInterface
+    public interface Interface {
+        void execute(double width, double height);
     }
 }
