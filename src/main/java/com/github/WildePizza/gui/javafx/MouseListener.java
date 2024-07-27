@@ -22,7 +22,6 @@ public class MouseListener implements MouseMotionListener {
     }
 
     private void callInterface(MouseEvent e) {
-        System.out.println("1");
         if (running)
             for (Interface action : actions) {
                 action.execute(e);

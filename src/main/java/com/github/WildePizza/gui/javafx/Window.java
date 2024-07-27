@@ -1,6 +1,7 @@
 package com.github.WildePizza.gui.javafx;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -14,14 +15,20 @@ import javafx.scene.shape.SVGPath;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Window {
     double sizeMultiplier = 1;
-    double blurRadius = 10;
-    double outlineRadius = 5;
+    double blurRadius = 10 * sizeMultiplier;
+    double outlineRadius = 1;
+    double hitboxRadius = 5;
     double height;
     double width;
-    Rectangle rectangle, topLeftHitbox, topRightHitbox, topHitbox, rightHitbox, bottomRightHitbox, bottomHitbox, bottomLeftHitbox, leftHitbox;
+    Rectangle rectangle, topLeftHitbox, topRightHitbox, topHitbox, rightHitbox, bottomRightHitbox, bottomHitbox, bottomLeftHitbox, leftHitbox, outline, divider;
     JDialog dialog;
     Container title, main;
     JFXPanel fxPanel;
@@ -33,6 +40,7 @@ public class Window {
         this.width = width;
         this.height = height;
     }
+
     public void open(JFrame frame) {
         SwingUtilities.invokeLater(() -> {
             dialog = new JDialog(frame, "", Dialog.ModalityType.APPLICATION_MODAL);
@@ -59,6 +67,10 @@ public class Window {
         });
     }
     public Node[] getContent(JDialog dialog) {
+        outline = new Rectangle(blurRadius-outlineRadius, blurRadius-outlineRadius, width+outlineRadius*2, height+outlineRadius*2);
+        divider = new Rectangle(blurRadius, blurRadius+40*sizeMultiplier, width, 1);
+        divider.setFill(Color.rgb(60,63,65));
+        outline.setFill(Color.rgb(60,63,65));
         rectangle = new Rectangle(blurRadius, blurRadius, width, height);
         rectangle.setFill(Color.BLACK);
         GaussianBlur blur = new GaussianBlur();
@@ -67,7 +79,26 @@ public class Window {
         title = new Container(width, 40*sizeMultiplier)
                 .setY(blurRadius)
                 .setX(blurRadius)
-                .setColor(Color.rgb(60,63,65));
+                .setColor(Color.rgb(43, 45, 48));
+        dialog.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                Platform.runLater(() -> {
+                    title.setColor(Color.rgb(43, 45, 48));
+                    ((Pane) (fxPanel.getScene().getRoot())).getChildren().remove(outline);
+                });
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                Platform.runLater(() -> {
+                    title.setColor(Color.rgb(60,63,65));
+                    ((Pane) (fxPanel.getScene().getRoot())).getChildren().add(outline);
+                    outline.toBack();
+                    rectangle.toBack();
+                });
+            }
+        });
         SVGPath path1 = new SVGPath();
         path1.setContent("M7 17L16.8995 7.10051");
         path1.setStrokeWidth(0.7);
@@ -84,7 +115,10 @@ public class Window {
         jfxCloseButton = new SimpleSVGButton(svgGroup, 30*sizeMultiplier, 40*sizeMultiplier);
         jfxCloseButton.setBackgroundColor(javafx.scene.paint.Color.rgb(201,79,79));
         jfxCloseButton.setLayoutX((width - 30)*sizeMultiplier);
-        jfxCloseButton.setOnAction(actionEvent -> dialog.dispose());
+        jfxCloseButton.setOnAction(actionEvent -> {
+            dialog.dispose();
+            callInterface();
+        });
         title.getChildren().add(jfxCloseButton);
         final Point[] clickPoint = new Point[1];
         title.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
@@ -93,8 +127,14 @@ public class Window {
             int yOffset = (int) (dialog.getLocation().y - clickPoint[0].y + event.getY());
             dialog.setLocation(xOffset, yOffset);
         });
-        main = new Container(width, height-40*sizeMultiplier).setY(40*sizeMultiplier+blurRadius).setX(blurRadius);
-        return new Node[]{rectangle, title, main};
+        main = new Container(width, height-41*sizeMultiplier).setY(41*sizeMultiplier+blurRadius).setX(blurRadius);
+        return new Node[] {rectangle, title, main, divider};
+    }
+    public ObservableList<Node> getChildren() {
+        return main.getChildren();
+    }
+    public Container getContainer() {
+        return main;
     }
     public Node[] getResizeHitbox() {
         topLeftHitbox = new Rectangle();
@@ -116,57 +156,83 @@ public class Window {
         return new Node[]{topLeftHitbox, topHitbox, topRightHitbox, rightHitbox, bottomRightHitbox, bottomHitbox, bottomLeftHitbox, leftHitbox};
     }
     public void moveResizeHitboxes() {
-        topLeftHitbox.setX(blurRadius-outlineRadius);
-        topLeftHitbox.setY(blurRadius-outlineRadius);
-        topLeftHitbox.setWidth(outlineRadius*2);
-        topLeftHitbox.setHeight(outlineRadius*2);
-        topHitbox.setX(blurRadius+outlineRadius);
-        topHitbox.setY(blurRadius-outlineRadius);
-        topHitbox.setWidth(width-outlineRadius*2);
-        topHitbox.setHeight(outlineRadius*2);
-        topRightHitbox.setX(width+blurRadius-outlineRadius);
-        topRightHitbox.setY(blurRadius-outlineRadius);
-        topRightHitbox.setWidth(outlineRadius*2);
-        topRightHitbox.setHeight(outlineRadius*2);
-        rightHitbox.setX(width+blurRadius-outlineRadius);
-        rightHitbox.setY(blurRadius+outlineRadius);
-        rightHitbox.setWidth(outlineRadius*2);
-        rightHitbox.setHeight(height-outlineRadius*2);
-        bottomRightHitbox.setX(width+blurRadius-outlineRadius);
-        bottomRightHitbox.setY(height+blurRadius-outlineRadius);
-        bottomRightHitbox.setWidth(outlineRadius*2);
-        bottomRightHitbox.setHeight(outlineRadius*2);
-        bottomHitbox.setX(blurRadius+outlineRadius);
-        bottomHitbox.setY(height+blurRadius-outlineRadius);
-        bottomHitbox.setWidth(width-outlineRadius*2);
-        bottomHitbox.setHeight(outlineRadius*2);
-        bottomLeftHitbox.setX(blurRadius-outlineRadius);
-        bottomLeftHitbox.setY(height+blurRadius-outlineRadius);
-        bottomLeftHitbox.setWidth(outlineRadius*2);
-        bottomLeftHitbox.setHeight(outlineRadius*2);
-        leftHitbox.setX(blurRadius-outlineRadius);
-        leftHitbox.setY(blurRadius+outlineRadius);
-        leftHitbox.setWidth(outlineRadius*2);
-        leftHitbox.setHeight(height-outlineRadius*2);
+        topLeftHitbox.setX(blurRadius- hitboxRadius);
+        topLeftHitbox.setY(blurRadius- hitboxRadius);
+        topLeftHitbox.setWidth(hitboxRadius *2);
+        topLeftHitbox.setHeight(hitboxRadius *2);
+        topHitbox.setX(blurRadius+ hitboxRadius);
+        topHitbox.setY(blurRadius- hitboxRadius);
+        topHitbox.setWidth(width- hitboxRadius *2);
+        topHitbox.setHeight(hitboxRadius *2);
+        topRightHitbox.setX(width+blurRadius- hitboxRadius);
+        topRightHitbox.setY(blurRadius- hitboxRadius);
+        topRightHitbox.setWidth(hitboxRadius *2);
+        topRightHitbox.setHeight(hitboxRadius *2);
+        rightHitbox.setX(width+blurRadius- hitboxRadius);
+        rightHitbox.setY(blurRadius+ hitboxRadius);
+        rightHitbox.setWidth(hitboxRadius *2);
+        rightHitbox.setHeight(height- hitboxRadius *2);
+        bottomRightHitbox.setX(width+blurRadius- hitboxRadius);
+        bottomRightHitbox.setY(height+blurRadius- hitboxRadius);
+        bottomRightHitbox.setWidth(hitboxRadius *2);
+        bottomRightHitbox.setHeight(hitboxRadius *2);
+        bottomHitbox.setX(blurRadius+ hitboxRadius);
+        bottomHitbox.setY(height+blurRadius- hitboxRadius);
+        bottomHitbox.setWidth(width- hitboxRadius *2);
+        bottomHitbox.setHeight(hitboxRadius *2);
+        bottomLeftHitbox.setX(blurRadius- hitboxRadius);
+        bottomLeftHitbox.setY(height+blurRadius- hitboxRadius);
+        bottomLeftHitbox.setWidth(hitboxRadius *2);
+        bottomLeftHitbox.setHeight(hitboxRadius *2);
+        leftHitbox.setX(blurRadius- hitboxRadius);
+        leftHitbox.setY(blurRadius+ hitboxRadius);
+        leftHitbox.setWidth(hitboxRadius *2);
+        leftHitbox.setHeight(height- hitboxRadius *2);
     }
     private void makeDraggable(Rectangle rectangle, Cursor cursor) {
         rectangle.setCursor(cursor);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.TRANSPARENT);
         final Point[] clickPoint = new Point[1];
-        rectangle.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
+        AtomicReference<Double> initialWidth = new AtomicReference<>(0D);
+        AtomicReference<Double> initialHeight = new AtomicReference<>(0D);
+        rectangle.setOnMousePressed(event -> {
+            initialWidth.set(width);
+            initialHeight.set(height);
+            clickPoint[0] = new Point((int) event.getX(), (int) event.getY());
+            tempWidth = 0;
+            tempHeight = 0;
+        });
         rectangle.setOnMouseReleased(event -> {
             dialog.setSize((int) (width + blurRadius * 2), (int) (height + blurRadius * 2));
         });
         rectangle.setOnMouseDragged(event -> {
             int yOffset = (int) (clickPoint[0].y - event.getY());
             int xOffset = (int) (clickPoint[0].x - event.getX());
-            if (cursor.equals(Cursor.NW_RESIZE)) {
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                if (cursor.equals(Cursor.NW_RESIZE)) {
                     setSize(width + xOffset, height + yOffset, false);
-                    dialog.setLocation(dialog.getLocation().x - xOffset, dialog.getLocation().y - yOffset);
-                });
-            }
+                    dialog.setLocation(dialog.getLocation().x - xOffset, dialog.getLocation().y - yOffset); // TODO fix glitchy movement
+                } else if (cursor.equals(Cursor.N_RESIZE)) {
+                    setSize(width, height + yOffset, false);
+                    dialog.setLocation(dialog.getLocation().x, dialog.getLocation().y - yOffset);
+                } else if (cursor.equals(Cursor.NE_RESIZE)) {
+                    setSize(initialWidth.get() - xOffset, height + yOffset, false);
+                    dialog.setLocation(dialog.getLocation().x, dialog.getLocation().y - yOffset);
+                } else if (cursor.equals(Cursor.E_RESIZE)) {
+                    setSize(initialWidth.get() - xOffset, height, false);
+                } else if (cursor.equals(Cursor.SE_RESIZE)) {
+                    setSize(initialWidth.get() - xOffset, initialHeight.get() - yOffset, false);
+                } else if (cursor.equals(Cursor.S_RESIZE)) {
+                    setSize(width, initialHeight.get() - yOffset, false);
+                } else if (cursor.equals(Cursor.SW_RESIZE)) {
+                    setSize(width + xOffset, initialHeight.get() - yOffset, false);
+                    dialog.setLocation(dialog.getLocation().x - xOffset, dialog.getLocation().y);
+                } else if (cursor.equals(Cursor.W_RESIZE)) {
+                    setSize(width + xOffset, height, false);
+                    dialog.setLocation(dialog.getLocation().x - xOffset, dialog.getLocation().y);
+                }
+            });
         });
     }
     protected double tempWidth, tempHeight;
@@ -187,14 +253,25 @@ public class Window {
         if (refresh)
             dialog.setSize((int) (width + blurRadius * 2), (int) (height + blurRadius * 2));
         else {
-            if (tempWidth == 0 || Math.abs(tempWidth-width) <= 50) {
+            if (tempWidth == 0 || Math.abs(tempWidth - width) <= 20) {
                 tempWidth = width + 300;
                 dialog.setSize((int) tempWidth, (int) tempHeight);
             }
-            if (tempHeight == 0 || Math.abs(tempHeight-height) <= 50) {
+            if (tempHeight == 0 || Math.abs(tempHeight - height) <= 20) {
                 tempHeight = height + 300;
                 dialog.setSize((int) tempWidth, (int) tempHeight);
             }
         }
+    }
+    public List<Interface> actions = new ArrayList<>();
+    public void callInterface() {
+        for (Interface action : actions) {
+            action.execute();
+        }
+    }
+
+    @FunctionalInterface
+    public interface Interface {
+        void execute();
     }
 }

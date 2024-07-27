@@ -2,7 +2,6 @@ package com.github.WildePizza;
 
 import com.github.WildePizza.gui.javafx.*;
 import com.github.WildePizza.gui.javafx.Container;
-import com.github.WildePizza.gui.javafx.MouseListener;
 import com.github.WildePizza.gui.javafx.Window;
 import com.github.WildePizza.gui.swing.*;
 import com.github.WildePizza.utils.StringUtils;
@@ -24,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -1387,7 +1385,8 @@ public class GUI {
         imageView.setLayoutX(95*sizeMultiplier);
         imageView.setLayoutY(56*sizeMultiplier);
         Rectangle outline = new Rectangle(width, height);
-        outline.setStroke(javafx.scene.paint.Color.rgb(78, 81, 87));
+        javafx.scene.paint.Color outlineColor = javafx.scene.paint.Color.rgb(78, 81, 87);
+        outline.setStroke(outlineColor);
         outline.setStrokeWidth(3);
         outline.setArcWidth(clip.getArcWidth());
         outline.setArcHeight(clip.getArcHeight());
@@ -1398,6 +1397,10 @@ public class GUI {
             outline.setStroke(javafx.scene.paint.Color.rgb(53, 116, 240));
             Window typeSelector = new Window();
             typeSelector.open(frame);
+            typeSelector.actions.add(() -> {
+                outline.setStroke(outlineColor);
+                outline.setStrokeWidth(3);
+            });
         });
 
         Label nameLabel = new Label("3 Question Quiz");
