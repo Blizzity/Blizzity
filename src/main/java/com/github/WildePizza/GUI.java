@@ -2,6 +2,7 @@ package com.github.WildePizza;
 
 import com.github.WildePizza.gui.javafx.*;
 import com.github.WildePizza.gui.javafx.Container;
+import com.github.WildePizza.gui.javafx.MouseListener;
 import com.github.WildePizza.gui.javafx.Window;
 import com.github.WildePizza.gui.swing.*;
 import com.github.WildePizza.utils.StringUtils;
@@ -994,8 +995,10 @@ public class GUI {
                     sharePane.setLayoutY(0 * sizeMultiplier);
                 }
                 final Point[] clickPoint = new Point[1];
-                title.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
-                title.setOnMouseDragged(event -> {
+                title.setOnMousePressed(event -> {
+                    clickPoint[0] = new Point((int) event.getX(), (int) event.getY());
+                });
+                title.setOnMouseDragged((event) -> {
                     int xOffset = (int) (frame.getLocation().x - clickPoint[0].x + event.getX());
                     int yOffset = (int) (frame.getLocation().y - clickPoint[0].y + event.getY());
                     frame.setLocation(xOffset, yOffset);
@@ -1009,8 +1012,8 @@ public class GUI {
                 path2.setStrokeWidth(0.7);
                 path2.setStroke(javafx.scene.paint.Color.WHITE);
                 Group svgGroup = new Group(path1, path2);
-                svgGroup.setScaleX(1.2*sizeMultiplier);
-                svgGroup.setScaleY(1.2*sizeMultiplier);
+                svgGroup.setScaleX(1*sizeMultiplier);
+                svgGroup.setScaleY(1*sizeMultiplier);
                 svgGroup.setLayoutX(50*sizeMultiplier/2-svgGroup.getLayoutBounds().getCenterX());
                 svgGroup.setLayoutY(40*sizeMultiplier/2-svgGroup.getLayoutBounds().getCenterY());
                 SimpleSVGButton jfxCloseButton = new SimpleSVGButton(svgGroup, 50*sizeMultiplier, 40*sizeMultiplier);
@@ -1051,15 +1054,14 @@ public class GUI {
                 jfxPanel.getMappedParent().add("timeline", timeline);
                 jfxPanel.getMappedParent().add("playback", playback);
                 jfxPanel.getMappedParent().add("details", details);
-//                debug();
                 jfxPanel.getScene().setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+                new Thread(() -> Platform.runLater(() -> frame.setVisible(true))).start();
             } else {
                 frame.add(jfxPanel);
             }
         });
         jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (960 * sizeMultiplier)));
         frame.pack();
-        frame.setVisible(true);
 //
 //
 //        Button playButton = new Button();
@@ -1170,8 +1172,6 @@ public class GUI {
 //
 //            }
 //        });
-        frame.pack();
-        frame.setVisible(true);
     }
 
     Rectangle loading;
@@ -1397,7 +1397,7 @@ public class GUI {
             outline.setStrokeWidth(5);
             outline.setStroke(javafx.scene.paint.Color.rgb(53, 116, 240));
             Window typeSelector = new Window();
-            typeSelector.open();
+            typeSelector.open(frame);
         });
 
         Label nameLabel = new Label("3 Question Quiz");

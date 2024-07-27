@@ -11,7 +11,7 @@ import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Container extends HoverPane {
-    public static final int TOP=1, TOP_RIGHT=2, RIGHT=3, BOTTOM_RIGHT=4, BOTTOM=5, BOTTOM_LEFT=6, LEFT=7, TOP_LEFT=8;
+    public static final int TOP=1, RIGHT=2, BOTTOM=3, LEFT=4;
     Color outlineColor = Color.rgb(30,31,34);
     Color color = Color.rgb(43,45,48);
     double width;
@@ -57,7 +57,10 @@ public class Container extends HoverPane {
     }
 
     public boolean setCurrentHeight(double height) {
-        if ((height >= getMinHeight() || getMinHeight() == -1) && ((height <= getMaxHeight()) || getMaxHeight() == -1)) {
+        return setCurrentHeight(height, false);
+    }
+    public boolean setCurrentHeight(double height, boolean ignore) {
+        if (((height >= getMinHeight() || getMinHeight() == -1) && ((height <= getMaxHeight()) || getMaxHeight() == -1)) || ignore) {
             this.height = height;
             super.setHeight(height);
             drawContainer();
@@ -75,7 +78,10 @@ public class Container extends HoverPane {
     }
 
     public boolean setCurrentWidth(double width) {
-        if ((width >= getMinWidth() || getMinWidth() == -1) && ((width <= getMaxWidth()) || getMaxWidth() == -1)) {
+        return setCurrentWidth(width, false);
+    }
+    public boolean setCurrentWidth(double width, boolean ignore) {
+        if (((width >= getMinWidth() || getMinWidth() == -1) && ((width <= getMaxWidth()) || getMaxWidth() == -1)) || ignore) {
             this.width = width;
             super.setWidth(width);
             drawContainer();
