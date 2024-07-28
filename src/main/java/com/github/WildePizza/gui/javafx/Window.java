@@ -132,7 +132,7 @@ public class Window {
                 dialog.setLocation(xOffset, yOffset);
             });
             Container main = new Container(width, height - 41 * GUI.sizeMultiplier).setY(41 * GUI.sizeMultiplier + blurRadius).setX(blurRadius);
-            jfxPanel.getMappedParent().addAll("window.outline", outline, "window.divider", divider, "window.blur", rectangle, "window.title", title, "window.main", main);
+            jfxPanel.getMappedParent().addAll("window.outline", outline, "window.blur", rectangle, "window.title", title, "window.main", main, "window.divider", divider);
         });
     }
     public ObservableList<Node> getChildren() {

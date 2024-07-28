@@ -38,19 +38,22 @@ public class ResizablePanel extends MappedJFXPanel {
         Platform.runLater(() -> {
             this.width = width;
             this.height = height;
-            this.offsetRadius = offsetRadius;
+            if (offsetRadius == 0)
+                this.offsetRadius = offsetRadius;
+            else
+                this.offsetRadius = hitboxRadius;
             setOpaque(false);
             setBackground(new java.awt.Color(0, 0, 0, 0));
             getScene().getRoot().setStyle("-fx-background-color: transparent;");
             getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
-            getMappedParent().add("cursor.nw_resize", newDraggable(Cursor.NW_RESIZE));
-            getMappedParent().add("cursor.n_resize", newDraggable(Cursor.N_RESIZE));
-            getMappedParent().add("cursor.ne_resize", newDraggable(Cursor.NE_RESIZE));
-            getMappedParent().add("cursor.e_resize", newDraggable(Cursor.E_RESIZE));
-            getMappedParent().add("cursor.se_resize", newDraggable(Cursor.SE_RESIZE));
-            getMappedParent().add("cursor.s_resize", newDraggable(Cursor.S_RESIZE));
-            getMappedParent().add("cursor.sw_resize", newDraggable(Cursor.SW_RESIZE));
-            getMappedParent().add("cursor.w_resize", newDraggable(Cursor.W_RESIZE));
+            getMappedParent().add(0, "cursor.nw_resize", newDraggable(Cursor.NW_RESIZE));
+            getMappedParent().add(-1, "cursor.n_resize", newDraggable(Cursor.N_RESIZE));
+            getMappedParent().add(-2, "cursor.ne_resize", newDraggable(Cursor.NE_RESIZE));
+            getMappedParent().add(-3, "cursor.e_resize", newDraggable(Cursor.E_RESIZE));
+            getMappedParent().add(-4, "cursor.se_resize", newDraggable(Cursor.SE_RESIZE));
+            getMappedParent().add(-5, "cursor.s_resize", newDraggable(Cursor.S_RESIZE));
+            getMappedParent().add(-6, "cursor.sw_resize", newDraggable(Cursor.SW_RESIZE));
+            getMappedParent().add(-7, "cursor.w_resize", newDraggable(Cursor.W_RESIZE));
             moveResizeHitboxes();
         });
     }
@@ -126,42 +129,42 @@ public class ResizablePanel extends MappedJFXPanel {
         return rectangle;
     }
     public void moveResizeHitboxes() {
-        Rectangle topLeftHitbox = (Rectangle) getMappedParent().get("cursor.nw_resize");
+        Rectangle topLeftHitbox = (Rectangle) getMappedParent().get(0, "cursor.nw_resize");
         topLeftHitbox.setX(offsetRadius - hitboxRadius);
         topLeftHitbox.setY(offsetRadius - hitboxRadius);
         topLeftHitbox.setWidth(hitboxRadius *2);
         topLeftHitbox.setHeight(hitboxRadius *2);
-        Rectangle topHitbox = (Rectangle) getMappedParent().get("cursor.n_resize");
+        Rectangle topHitbox = (Rectangle) getMappedParent().get(-1, "cursor.n_resize");
         topHitbox.setX(offsetRadius + hitboxRadius);
         topHitbox.setY(offsetRadius - hitboxRadius);
         topHitbox.setWidth(width- hitboxRadius *2);
         topHitbox.setHeight(hitboxRadius *2);
-        Rectangle topRightHitbox = (Rectangle) getMappedParent().get("cursor.ne_resize");
+        Rectangle topRightHitbox = (Rectangle) getMappedParent().get(-2, "cursor.ne_resize");
         topRightHitbox.setX(width+ offsetRadius - hitboxRadius);
         topRightHitbox.setY(offsetRadius - hitboxRadius);
         topRightHitbox.setWidth(hitboxRadius *2);
         topRightHitbox.setHeight(hitboxRadius *2);
-        Rectangle rightHitbox = (Rectangle) getMappedParent().get("cursor.e_resize");
+        Rectangle rightHitbox = (Rectangle) getMappedParent().get(-3, "cursor.e_resize");
         rightHitbox.setX(width+ offsetRadius - hitboxRadius);
         rightHitbox.setY(offsetRadius + hitboxRadius);
         rightHitbox.setWidth(hitboxRadius *2);
         rightHitbox.setHeight(height- hitboxRadius *2);
-        Rectangle bottomRightHitbox = (Rectangle) getMappedParent().get("cursor.se_resize");
+        Rectangle bottomRightHitbox = (Rectangle) getMappedParent().get(-4, "cursor.se_resize");
         bottomRightHitbox.setX(width+ offsetRadius - hitboxRadius);
         bottomRightHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomRightHitbox.setWidth(hitboxRadius *2);
         bottomRightHitbox.setHeight(hitboxRadius *2);
-        Rectangle bottomHitbox = (Rectangle) getMappedParent().get("cursor.s_resize");
+        Rectangle bottomHitbox = (Rectangle) getMappedParent().get(-5, "cursor.s_resize");
         bottomHitbox.setX(offsetRadius + hitboxRadius);
         bottomHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomHitbox.setWidth(width- hitboxRadius *2);
         bottomHitbox.setHeight(hitboxRadius *2);
-        Rectangle bottomLeftHitbox = (Rectangle) getMappedParent().get("cursor.sw_resize");
+        Rectangle bottomLeftHitbox = (Rectangle) getMappedParent().get(-6, "cursor.sw_resize");
         bottomLeftHitbox.setX(offsetRadius - hitboxRadius);
         bottomLeftHitbox.setY(height+ offsetRadius - hitboxRadius);
         bottomLeftHitbox.setWidth(hitboxRadius *2);
         bottomLeftHitbox.setHeight(hitboxRadius *2);
-        Rectangle leftHitbox = (Rectangle) getMappedParent().get("cursor.w_resize");
+        Rectangle leftHitbox = (Rectangle) getMappedParent().get(-7, "cursor.w_resize");
         leftHitbox.setX(offsetRadius - hitboxRadius);
         leftHitbox.setY(offsetRadius + hitboxRadius);
         leftHitbox.setWidth(hitboxRadius *2);

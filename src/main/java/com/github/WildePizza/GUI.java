@@ -126,7 +126,7 @@ public class GUI {
     private MediaView
             mediaView,
             mediaViewClone;
-    public static MappedJFXPanel jfxPanel;
+    public static ResizablePanel jfxPanel;
     private JIconButton exportButton;
     private JIconButton shareButton;
     ImageView imageView;
@@ -161,7 +161,7 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-        jfxPanel = new MappedJFXPanel();
+        jfxPanel = new ResizablePanel();
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
 
         darkenBackground = new Rectangle(screenWidth*sizeMultiplier, screenHeight*sizeMultiplier);
@@ -492,7 +492,6 @@ public class GUI {
         init();
         if (variables.getVariable("key") != null || Blizzity.offlineMode) {
             showContentPanel((String) variables.getVariable("key"));
-//            addTitleBarPanel(api.admin((String) variables.getVariable("key")));
         } else {
             addTitleBarPanel(false);
             showLoginPanel();
@@ -1054,11 +1053,12 @@ public class GUI {
                 jfxPanel.getMappedParent().add("details", details);
                 jfxPanel.getScene().setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
                 new Thread(() -> Platform.runLater(() -> frame.setVisible(true))).start();
+                debug2();
             } else {
                 frame.add(jfxPanel);
             }
         });
-        jfxPanel.setPreferredSize(new Dimension((int) (screenWidth * sizeMultiplier), (int) (960 * sizeMultiplier)));
+        jfxPanel.setSize(screenWidth * sizeMultiplier, 960 * sizeMultiplier);
         frame.pack();
 //
 //
@@ -1257,14 +1257,23 @@ public class GUI {
         AtomicReference<String> hovered = new AtomicReference<>();
         Map<String, Node> childrenMap = jfxPanel.getMappedParent().getChildrenMap();
         childrenMap.forEach((name, child) -> {
-            ((Container)child).getChildren().forEach(node -> {
-                node.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Listening for " + name + " hovered");
+            if (child instanceof  Container)
+                ((Container)child).getChildren().forEach(node -> {
+                    node.hoverProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue)
+                            hovered.set(name);
+                        else if (hovered.get().equals(name))
+                            hovered.set(null);
+                    });
+                });
+            else
+                child.hoverProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue)
                         hovered.set(name);
                     else if (hovered.get().equals(name))
                         hovered.set(null);
                 });
-            });
         });
         Thread thread = new Thread(() -> {
             while (true)

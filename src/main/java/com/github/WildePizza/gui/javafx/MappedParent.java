@@ -5,25 +5,30 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 
 import java.util.*;
 
-public class MappedParent extends Parent {
-
-    private final ObservableMap<String, Node> children = FXCollections.observableHashMap();
-    public MappedParent() {
-        children.addListener((MapChangeListener<String, Node>) change -> {
-            if (change.wasAdded()) {
-                super.getChildren().add(change.getValueAdded());
-            }
-            if (change.wasRemoved()) {
-                super.getChildren().remove(change.getValueRemoved());
-            }
-        });
-    }
+public class MappedParent extends LayeredParent {
+    private final Map<Integer, ObservableMap<String, Node>> children = new HashMap<>();
 
     public void add(String key, Node child) {
+        add(1, key, child);
+    }
+    public void add(int layer, String key, Node child) {
+        ObservableMap<String, Node> children;
+        if (this.children.get(layer) == null) {
+            children = FXCollections.observableHashMap();
+            children.addListener((MapChangeListener<String, Node>) change -> {
+                if (change.wasAdded()) {
+                    super.add(change.getValueAdded(), layer);
+                }
+                if (change.wasRemoved()) {
+                    super.remove(change.getValueRemoved(), layer);
+                }
+            });
+            this.children.put(layer, children);
+        } else
+            children = this.children.get(layer);
         if (children.containsKey(key)) {
             throw new IllegalArgumentException("Key already exists: " + key);
         }
@@ -55,11 +60,17 @@ public class MappedParent extends Parent {
     }
 
     public void remove(String key) {
-        Node child = children.remove(key);
+        remove(1, key);
+    }
+    public void remove(int layer, String key) {
+        Node child = children.get(layer).remove(key);
     }
 
     public Node get(String key) {
-        return children.get(key);
+        return get(1, key);
+    }
+    public Node get(int layer, String key) {
+        return children.get(layer).get(key);
     }
     @Deprecated
     public ObservableList<Node> getChildren() {
@@ -67,11 +78,27 @@ public class MappedParent extends Parent {
     }
 
     public Map<String, Node> getChildrenMap() {
-        return children;
+        Map<Integer, ObservableMap<String, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
+        sortedMap.putAll(children);
+        Map<String, Node> values = new HashMap<>();
+        sortedMap.forEach((name, value) -> values.putAll(value));
+        return values;
+    }
+
+    public Map<String, Node> getChildrenMap(int layer) {
+        return children.get(layer);
     }
 
     @Override
     public ObservableList<Node> getChildrenUnmodifiable() {
-        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(children.values()));
+        Map<Integer, ObservableMap<String, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
+        sortedMap.putAll(children);
+        List<Node> values = new ArrayList<>();
+        sortedMap.forEach((name, value) -> values.addAll(value.values()));
+        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(values));
+    }
+
+    public ObservableList<Node> getChildrenUnmodifiable(int layer) {
+        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(children.get(layer).values()));
     }
 }
