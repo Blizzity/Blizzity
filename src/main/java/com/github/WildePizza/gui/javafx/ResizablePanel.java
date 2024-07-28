@@ -41,8 +41,8 @@ public class ResizablePanel extends MappedJFXPanel {
             this.offsetRadius = offsetRadius;
             setOpaque(false);
             setBackground(new java.awt.Color(0, 0, 0, 0));
-            Pane root = new Pane();
-            root.setStyle("-fx-background-color: transparent;");
+            getScene().getRoot().setStyle("-fx-background-color: transparent;");
+            getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
             getMappedParent().add("cursor.nw_resize", newDraggable(Cursor.NW_RESIZE));
             getMappedParent().add("cursor.n_resize", newDraggable(Cursor.N_RESIZE));
             getMappedParent().add("cursor.ne_resize", newDraggable(Cursor.NE_RESIZE));
@@ -52,9 +52,6 @@ public class ResizablePanel extends MappedJFXPanel {
             getMappedParent().add("cursor.sw_resize", newDraggable(Cursor.SW_RESIZE));
             getMappedParent().add("cursor.w_resize", newDraggable(Cursor.W_RESIZE));
             moveResizeHitboxes();
-            Scene scene = new Scene(root, width, height);
-            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            setScene(scene);
         });
     }
     public void setSize(double width, double height) {

@@ -39,8 +39,6 @@ public class MappedParent extends Parent {
                         }
                         if (((Container) child1).hasRelatedX((Container) child2)) {
                             ((Container) child1).setOutline(Container.RIGHT, true, name1, this, ((Container) child2).resizable);
-//                            if (((Container) child1).getOutline(Container.TOP))
-//                                ((Container) child1).setOutline(Container.TOP_RIGHT, true, name1, this);
                         }
                     }
                 });
