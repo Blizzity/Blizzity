@@ -100,7 +100,6 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-
         jfxPanel = new ResizablePanel(frame);
         ScreenListener.addMouseListener(jfxPanel, 0, 40);
         if (variables.getVariable("key") != null || Blizzity.offlineMode) {
@@ -1025,6 +1024,7 @@ public class GUI {
                 playback.setMaxHeight(-1);
                 playback.setMinWidth(200*sizeMultiplier);
                 playback.setMaxWidth(-1);
+                jfxPanel.setSize(screenWidth * sizeMultiplier, 960 * sizeMultiplier);
                 frame.add(jfxPanel);
                 frame.pack();
                 frame.setLocation(x, y);
@@ -1041,7 +1041,6 @@ public class GUI {
                 frame.add(jfxPanel);
             }
         });
-        jfxPanel.setSize(screenWidth * sizeMultiplier, 960 * sizeMultiplier);
         frame.pack();
 //
 //
