@@ -1,5 +1,6 @@
 package com.github.WildePizza.gui.javafx;
 
+import com.github.WildePizza.Double;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -9,41 +10,41 @@ import javafx.scene.Node;
 import java.util.*;
 
 public class MappedParent extends LayeredParent {
-    private final Map<Integer, ObservableMap<String, Node>> children = new HashMap<>();
-
-    public void add(String key, Node child) {
-        add(1, key, child);
+    private final ObservableMap<String, Double<Integer, Node>> children = FXCollections.observableHashMap();
+    public MappedParent() {
+        children.addListener((MapChangeListener<String, Double<Integer, Node>>) change -> {
+            if (change.wasAdded()) {
+                add(change.getValueAdded().getValue(), change.getValueAdded().getKey());
+            }
+            if (change.wasRemoved()) {
+                remove(change.getValueRemoved().getValue());
+            }
+        });
     }
-    public void add(int layer, String key, Node child) {
-        ObservableMap<String, Node> children;
-        if (this.children.get(layer) == null) {
-            children = FXCollections.observableHashMap();
-            children.addListener((MapChangeListener<String, Node>) change -> {
-                if (change.wasAdded()) {
-                    super.add(change.getValueAdded(), layer);
-                }
-                if (change.wasRemoved()) {
-                    super.remove(change.getValueRemoved(), layer);
-                }
-            });
-            this.children.put(layer, children);
-        } else
-            children = this.children.get(layer);
+    public void toFront(String key) {
+        Double<Integer, Node> value = children.get(key);
+        children.remove(key);
+        add(key, value.getValue());
+    }
+    public void add(String key, Node child) {
+        add(key, child, getFreeKey());
+    }
+    public void add(String key, Node child, int layer) {
         if (children.containsKey(key)) {
             throw new IllegalArgumentException("Key already exists: " + key);
         }
-        children.put(key, child);
-        ObservableMap<String, Node> childrenClone = FXCollections.observableHashMap();
+        children.put(key, new Double<>(layer, child));
+        ObservableMap<String, Double<Integer, Node>> childrenClone = FXCollections.observableHashMap();
         childrenClone.putAll(children);
         childrenClone.forEach((name1, child1) -> {
-            if (child1 instanceof Container) {
+            if (child1.getValue() instanceof Container) {
                 childrenClone.forEach((name2, child2) -> {
-                    if (child2 instanceof Container) {
-                        if (((Container) child1).hasRelatedY((Container) child2)) {
-                            ((Container) child1).setOutline(Container.TOP, true, name1, this, ((Container) child2).resizable);
+                    if (child2.getValue() instanceof Container) {
+                        if (((Container) child1.getValue()).hasRelatedY((Container) child2.getValue())) {
+                            ((Container) child1.getValue()).setOutline(Container.TOP, true, name1, this, ((Container) child2.getValue()).resizable);
                         }
-                        if (((Container) child1).hasRelatedX((Container) child2)) {
-                            ((Container) child1).setOutline(Container.RIGHT, true, name1, this, ((Container) child2).resizable);
+                        if (((Container) child1.getValue()).hasRelatedX((Container) child2.getValue())) {
+                            ((Container) child1.getValue()).setOutline(Container.RIGHT, true, name1, this, ((Container) child2.getValue()).resizable);
                         }
                     }
                 });
@@ -59,18 +60,14 @@ public class MappedParent extends LayeredParent {
         }
     }
 
-    public void remove(String key) {
-        remove(1, key);
-    }
-    public void remove(int layer, String key) {
-        Node child = children.get(layer).remove(key);
-    }
-
     public Node get(String key) {
-        return get(1, key);
+        if (children.containsKey(key))
+            return children.get(key).getValue();
+        else
+            return null;
     }
-    public Node get(int layer, String key) {
-        return children.get(layer).get(key);
+    public void remove(String node) {
+        children.remove(node);
     }
     @Deprecated
     public ObservableList<Node> getChildren() {
@@ -78,27 +75,19 @@ public class MappedParent extends LayeredParent {
     }
 
     public Map<String, Node> getChildrenMap() {
-        Map<Integer, ObservableMap<String, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
+        Map<String, Double<Integer, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
         sortedMap.putAll(children);
         Map<String, Node> values = new HashMap<>();
-        sortedMap.forEach((name, value) -> values.putAll(value));
+        sortedMap.forEach((name, value) -> values.put(name, value.getValue()));
         return values;
-    }
-
-    public Map<String, Node> getChildrenMap(int layer) {
-        return children.get(layer);
     }
 
     @Override
     public ObservableList<Node> getChildrenUnmodifiable() {
-        Map<Integer, ObservableMap<String, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
+        Map<String, Double<Integer, Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
         sortedMap.putAll(children);
         List<Node> values = new ArrayList<>();
-        sortedMap.forEach((name, value) -> values.addAll(value.values()));
+        sortedMap.forEach((name, value) -> values.add(value.getValue()));
         return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(values));
-    }
-
-    public ObservableList<Node> getChildrenUnmodifiable(int layer) {
-        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(children.get(layer).values()));
     }
 }

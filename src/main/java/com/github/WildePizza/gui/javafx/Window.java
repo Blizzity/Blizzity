@@ -16,8 +16,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class Window {
     double blurRadius = 10 * GUI.sizeMultiplier;
@@ -119,10 +117,7 @@ public class Window {
             jfxCloseButton = new SimpleSVGButton(svgGroup, 30 * GUI.sizeMultiplier, 40 * GUI.sizeMultiplier);
             jfxCloseButton.setBackgroundColor(javafx.scene.paint.Color.rgb(201, 79, 79));
             jfxCloseButton.setLayoutX((width - 30) * GUI.sizeMultiplier);
-            jfxCloseButton.setOnAction(actionEvent -> {
-                dialog.dispose();
-                callInterface();
-            });
+            jfxCloseButton.setOnAction(actionEvent -> close());
             title.getChildren().add(jfxCloseButton);
             final Point[] clickPoint = new Point[1];
             title.setOnMousePressed(event -> clickPoint[0] = new Point((int) event.getX(), (int) event.getY()));
@@ -132,8 +127,13 @@ public class Window {
                 dialog.setLocation(xOffset, yOffset);
             });
             Container main = new Container(width, height - 41 * GUI.sizeMultiplier).setY(41 * GUI.sizeMultiplier + blurRadius).setX(blurRadius);
-            jfxPanel.getMappedParent().addAll("window.outline", outline, "window.blur", rectangle, "window.title", title, "window.main", main, "window.divider", divider);
+            jfxPanel.getMappedParent().addAll("window.outline", outline, "window.divider", divider, "window.blur", rectangle, "window.title", title, "window.main", main);
+            jfxPanel.toFront();
         });
+    }
+    public void close() {
+        dialog.dispose();
+        callInterface();
     }
     public ObservableList<Node> getChildren() {
         return ((Container) jfxPanel.getMappedParent().get("window.main")).getChildren();

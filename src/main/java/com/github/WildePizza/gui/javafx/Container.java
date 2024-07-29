@@ -1,16 +1,19 @@
 package com.github.WildePizza.gui.javafx;
 
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class Container extends HoverPane {
+public class Container extends MappedPane {
     public static final int TOP=1, RIGHT=2, BOTTOM=3, LEFT=4;
     Color outlineColor = Color.rgb(30,31,34);
     Color color = Color.rgb(43,45,48);
@@ -24,7 +27,6 @@ public class Container extends HoverPane {
     double x;
     double y;
     public List<ContainerInterface> actions = new ArrayList<>();
-
     public Container setResizable(boolean resizable) {
         this.resizable = resizable;
         return this;
