@@ -42,7 +42,9 @@ public class OfflineAPI extends API {
     }
     @Override
     public Double<File, String> video(String authToken, String language, int length) {
-        return null;
+        URL resourceUrl = OfflineAPI.class.getClassLoader().getResource("quiz.mp4");
+        assert resourceUrl != null;
+        return new Double<>(new File(resourceUrl.getFile()), "quiz");
     }
     @Override
     public void youtubePost(String authToken, String video, String title, String description, String privacy_level) {}

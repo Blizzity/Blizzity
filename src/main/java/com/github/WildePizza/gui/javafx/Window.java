@@ -29,12 +29,13 @@ public class Window {
     public Window() {
         this(300, 200);
     }
-    Window(double width, double height) {
+    public Window(double width, double height) {
         this.width = width;
         this.height = height;
     }
 
     public void open(JFrame frame) {
+        jfxPanel = new ResizablePanel(width, height, blurRadius);
         SwingUtilities.invokeLater(() -> {
             dialog = new JDialog(frame, "", Dialog.ModalityType.APPLICATION_MODAL);
             dialog.setUndecorated(true);
@@ -44,7 +45,7 @@ public class Window {
             dialog.getContentPane().setBackground(new java.awt.Color(0, 0, 0, 0));
             dialog.getRootPane().setOpaque(false);
             dialog.getRootPane().setBackground(new java.awt.Color(0, 0, 0, 0));
-            jfxPanel = new ResizablePanel(width, height, blurRadius, dialog);
+            jfxPanel.setDialog(dialog);
             jfxPanel.resizeEvent.add((width, height) -> {
                 Rectangle divider = (Rectangle) jfxPanel.getMappedParent().get("window.divider");
                 divider.setWidth(width);
@@ -127,13 +128,13 @@ public class Window {
                 dialog.setLocation(xOffset, yOffset);
             });
             Container main = new Container(width, height - 41 * GUI.sizeMultiplier).setY(41 * GUI.sizeMultiplier + blurRadius).setX(blurRadius);
-            jfxPanel.getMappedParent().addAll("window.outline", outline, "window.divider", divider, "window.blur", rectangle, "window.title", title, "window.main", main);
+            jfxPanel.getMappedParent().addAll("window.blur", rectangle, "window.outline", outline, "window.divider", divider, "window.title", title, "window.main", main);
             jfxPanel.toFront();
         });
     }
     public void close() {
         dialog.dispose();
-        callInterface();
+        callOnClose();
     }
     public ObservableList<Node> getChildren() {
         return ((Container) jfxPanel.getMappedParent().get("window.main")).getChildren();
@@ -141,9 +142,12 @@ public class Window {
     public Container getContainer() {
         return (Container) jfxPanel.getMappedParent().get("window.main");
     }
-    public List<Interface> actions = new ArrayList<>();
-    public void callInterface() {
-        for (Interface action : actions) {
+    public List<Interface> onClose = new ArrayList<>();
+    public void addOnClose(Interface action) {
+        onClose.add(action);
+    }
+    public void callOnClose() {
+        for (Interface action : onClose) {
             action.execute();
         }
     }

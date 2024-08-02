@@ -10,6 +10,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -73,17 +74,12 @@ public class GUI {
     Color color8 = new Color(46, 135, 253);
     Color color9 = new Color(22, 67, 128);
     private Double<File, String> file;
-    private MediaView
-            mediaView,
-            mediaViewClone;
     public static ResizablePanel jfxPanel;
     ImageView imageView;
     int screenWidth = 1530;
     int screenHeight = 1000;
     int videoWidth = 1080;
     int videoHeight = 1920;
-    int videoPreviewWidth = 230;
-    int videoPreviewHeight = 410;
     String[] languages = {"English", "French", "German", "Italian", "Portuguese", "Spanish"};
     double x = (double) screenWidth /2- (double) 640 /2;
     double y = (double) screenHeight / 2 - (double) 670 / 2;
@@ -100,8 +96,6 @@ public class GUI {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if ((screenWidth > screenSize.getWidth() || screenHeight > screenSize.getHeight() || sizeMultiplier != 1) && autoScale)
             sizeMultiplier = Math.min(screenSize.getHeight()/(screenHeight+100), screenSize.getWidth()/(screenWidth+100));
-        jfxPanel = new ResizablePanel(frame);
-        ScreenListener.addMouseListener(jfxPanel, 0, 40);
         if (variables.getVariable("key") != null || Blizzity.offlineMode) {
             showContentPanel((String) variables.getVariable("key"));
         } else {
@@ -207,13 +201,11 @@ public class GUI {
         closeButton.setHoverForeground(color6);
         closeButton.setHoverBackground(new Color(201, 79, 79));
         closeButton.addActionListener((ConditionalEventListener) e -> {
-            frame.dispose(); // Close the window
+            frame.dispose();
         });
         closeButton.setPreferredSize(new Dimension((int) (50*sizeMultiplier), (int) (40*sizeMultiplier)));
         closeButton.setMinimumSize(new Dimension((int) (50*sizeMultiplier), (int) (40*sizeMultiplier)));
         titleBarPanel.add(closeButton);
-
-        // Add custom title bar panel to the frame
         titleBarPanel.setPreferredSize(new Dimension((int) (450*sizeMultiplier), (int) (40*sizeMultiplier)));
         frame.getContentPane().add(titleBarPanel, BorderLayout.NORTH);
     }
@@ -483,144 +475,161 @@ public class GUI {
             //TODO
         });
 
-        return new Node[] {nameTextField, nameLabel, exportLabel, exportFieldLabel, folderButton, mediaViewClone, exportCompleteButton};
+        return new Node[] {nameTextField, nameLabel, exportLabel, exportFieldLabel, folderButton, getMediaViewCopy(), exportCompleteButton};
     }
     private void openShareWindow(String key) {
-        Window shareWindow = new Window();
-        Label spaceLabel = new Label("Space");
-        spaceLabel.setFont(new javafx.scene.text.Font(spaceLabel.getFont().getFamily(), spaceLabel.getFont().getSize()*sizeMultiplier));
-        spaceLabel.setPrefSize(85*sizeMultiplier, 20*sizeMultiplier);
-        spaceLabel.setLayoutX((x + 360)*sizeMultiplier);
-        spaceLabel.setLayoutY((y + 40)*sizeMultiplier);
-        spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        Platform.runLater(() -> {
+            Window shareWindow = new Window(640*sizeMultiplier, 540*sizeMultiplier);
+            shareWindow.open(frame);
+            Label spaceLabel = new Label("Space");
+            spaceLabel.setFont(new javafx.scene.text.Font(spaceLabel.getFont().getFamily(), spaceLabel.getFont().getSize() * sizeMultiplier));
+            spaceLabel.setPrefSize(85 * sizeMultiplier, 20 * sizeMultiplier);
+            spaceLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-        SimpleButton shareCompleteButton = new SimpleButton("Share", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
-        shareCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        shareCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        shareCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        shareCompleteButton.setTextFill(Colors.textColor);
-        shareCompleteButton.setLayoutX((x + 528)*sizeMultiplier);
-        shareCompleteButton.setLayoutY((y + 520)*sizeMultiplier);
+            SimpleButton shareCompleteButton = new SimpleButton("Share", 72 * sizeMultiplier, 22 * sizeMultiplier, 10 * sizeMultiplier);
+            shareCompleteButton.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+            shareCompleteButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+            shareCompleteButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+            shareCompleteButton.setTextFill(Colors.textColor);
 
-        String[] spaces = {"TikTok", "Youtube", "Snapchat"/*, "X", "Instagram", "Facebook"*/};
-        SimpleComboBox<String> spaceComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
-        spaceComboBox.getItems().addAll(spaces);
-        spaceComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-        spaceComboBox.setTextFill(Colors.textColor);
-        spaceComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-        spaceComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-        spaceComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-        spaceComboBox.setLayoutX((x + 425)*sizeMultiplier);
-        spaceComboBox.setLayoutY((y + 37)*sizeMultiplier);
-        spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    startLoadingScreen(scene);
-                    Thread thread = new Thread(() -> {
-                        if (api.check(newValue.toLowerCase(), key) || api.connect(newValue.toLowerCase(), key)) {
-                            AccountComboBox accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265*sizeMultiplier, 70*sizeMultiplier, 10*sizeMultiplier, true);
-                            accountComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
-                            accountComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
-                            accountComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
-                            accountComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
-                            accountComboBox.setLayoutX(this.x + 360 * sizeMultiplier);
-                            accountComboBox.setLayoutY(this.y + 20 + 55 * sizeMultiplier);
-                            accountComboBox.setOnSelect(actionEvent -> api.select(newValue.toLowerCase(), key, accountComboBox.getSelectionModel().getSelectedItem().get("id")));
-                            accountComboBox.setOnAction(actionEvent -> {
-                                if (api.connect(newValue.toLowerCase(), key)) {
-                                    List<Map<String, String>> data = api.info(newValue.toLowerCase(), key, true);
-                                    accountComboBox.getItems().setAll(data);
-                                    for (Map<String, String> entry : data) {
-                                        if (entry.get("selected").equalsIgnoreCase("true")) {
-                                            accountComboBox.getSelectionModel().select(entry);
-                                            break;
+            String[] spaces = {"TikTok", "Youtube", "Snapchat"/*, "X", "Instagram", "Facebook"*/};
+            SimpleComboBox<String> spaceComboBox = new SimpleComboBox<>(117 * sizeMultiplier, 25 * sizeMultiplier, 10 * sizeMultiplier);
+            spaceComboBox.getItems().addAll(spaces);
+            spaceComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+            spaceComboBox.setTextFill(Colors.textColor);
+            spaceComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+            spaceComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+            spaceComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+            spaceComboBox.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> {
+                        startLoadingScreen();
+                        Thread thread = new Thread(() -> {
+                            if (api.check(newValue.toLowerCase(), key) || api.connect(newValue.toLowerCase(), key)) {
+                                AccountComboBox accountComboBox = new AccountComboBox(api.info(newValue.toLowerCase(), key), 265 * sizeMultiplier, 70 * sizeMultiplier, 10 * sizeMultiplier, true);
+                                accountComboBox.setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
+                                accountComboBox.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
+                                accountComboBox.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
+                                accountComboBox.setSelectedBackgroundColor(javafx.scene.paint.Color.rgb(46, 67, 110));
+                                accountComboBox.setLayoutX(this.x + 360 * sizeMultiplier);
+                                accountComboBox.setLayoutY(this.y + 20 + 55 * sizeMultiplier);
+                                accountComboBox.setOnSelect(actionEvent -> api.select(newValue.toLowerCase(), key, accountComboBox.getSelectionModel().getSelectedItem().get("id")));
+                                accountComboBox.setOnAction(actionEvent -> {
+                                    if (api.connect(newValue.toLowerCase(), key)) {
+                                        List<Map<String, String>> data = api.info(newValue.toLowerCase(), key, true);
+                                        accountComboBox.getItems().setAll(data);
+                                        for (Map<String, String> entry : data) {
+                                            if (entry.get("selected").equalsIgnoreCase("true")) {
+                                                accountComboBox.getSelectionModel().select(entry);
+                                                break;
+                                            }
                                         }
                                     }
+                                });
+                                Platform.runLater(() -> {
+                                    stopLoadingScreen();
+                                    for (Node node : shareWindow.getContainer().getChildrenMap().values()) {
+                                        shareWindow.getChildren().remove(node);
+                                    }
+                                    addSpaceParts(newValue, shareWindow.getContainer());
+                                    shareWindow.getChildren().add(accountComboBox);
+                                    spaceComboBox.toFront();
+                                });
+                            }
+                        });
+                        thread.start();
+                    }
+            );
+
+            shareCompleteButton.setOnAction(event -> {
+                if (checkShareArguments(spaceComboBox.getValue().toLowerCase(), shareWindow)) {
+                    Scene scene = jfxPanel.getScene();
+                    Group root = ((Group) scene.getRoot());
+                    startLoadingScreen();
+                    Thread thread = new Thread(() -> {
+                        if (api.check(spaceComboBox.getValue().toLowerCase(), key)) {
+                            if (spaceComboBox.getValue().equals("TikTok")) {
+                                String privacy;
+                                switch (((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("tiktok.privacyComboBox"))).getValue()) {
+                                    case "Private":
+                                        privacy = "SELF_ONLY";
+                                        break;
+                                    case "Friends":
+                                        privacy = "MUTUAL_FOLLOW_FRIENDS";
+                                        break;
+                                    case "Public":
+                                        privacy = "PUBLIC_TO_EVERYONE";
+                                        break;
+                                    default:
+                                        throw new IllegalStateException("Unexpected value: " + ((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("tiktok.privacyComboBox"))).getValue());
                                 }
-                            });
+                                api.tiktokPost(
+                                        key,
+                                        URLEncoder.encode(file.getValue()),
+                                        URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("tiktok.nameTextField"))).getText()),
+                                        privacy,
+                                        ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.duetCheckBox"))).isSelected(),
+                                        ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.commentCheckBox"))).isSelected(),
+                                        ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.stitchCheckBox"))).isSelected(),
+                                        1000
+                                );
+                            } else if (spaceComboBox.getValue().equals("Youtube")) {
+                                api.youtubePost(
+                                        key,
+                                        URLEncoder.encode(file.getValue()),
+                                        URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.titleTextField"))).getText()),
+                                        URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.descriptionTextField"))).getText()),
+                                        ((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("youtube.youtubePrivacyComboBox"))).getValue()
+                                );
+                            } else if (spaceComboBox.getValue().equals("Snapchat")) {
+                                api.snapchatPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("snapchat.titleTextField"))).getText()));
+                            }
                             Platform.runLater(() -> {
-                                stopLoadingScreen(scene);
-                                for (Node node : shareWindow.getContainer().getChildrenMap().values()) {
-                                    shareWindow.getChildren().remove(node);
-                                }
-                                addSpaceParts(newValue, shareWindow.getContainer());
-                                shareWindow.getChildren().add(accountComboBox);
-                                spaceComboBox.toFront();
+                                stopLoadingScreen();
+                                shareWindow.close();
+                                frame.add(jfxPanel);
+                                frame.pack();
                             });
                         }
                     });
                     thread.start();
-                }
-        );
-
-        shareCompleteButton.setOnAction(event -> {
-            if (checkShareArguments(spaceComboBox.getValue().toLowerCase(), shareWindow)) {
-                Scene scene = jfxPanel.getScene();
-                Group root = ((Group) scene.getRoot());
-                startLoadingScreen(scene);
-                Thread thread = new Thread(() -> {
-                    if (api.check(spaceComboBox.getValue().toLowerCase(), key)) {
-                        if (spaceComboBox.getValue().equals("TikTok")) {
-                            String privacy;
-                            switch (((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("tiktok.privacyComboBox"))).getValue()) {
-                                case "Private":
-                                    privacy = "SELF_ONLY";
-                                    break;
-                                case "Friends":
-                                    privacy = "MUTUAL_FOLLOW_FRIENDS";
-                                    break;
-                                case "Public":
-                                    privacy = "PUBLIC_TO_EVERYONE";
-                                    break;
-                                default:
-                                    throw new IllegalStateException("Unexpected value: " + ((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("tiktok.privacyComboBox"))).getValue());
-                            }
-                            api.tiktokPost(
-                                    key,
-                                    URLEncoder.encode(file.getValue()),
-                                    URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("tiktok.nameTextField"))).getText()),
-                                    privacy,
-                                    ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.duetCheckBox"))).isSelected(),
-                                    ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.commentCheckBox"))).isSelected(),
-                                    ((CheckBox) (shareWindow.getContainer().getChildrenMap().get("tiktok.stitchCheckBox"))).isSelected(),
-                                    1000
-                            );
-                        } else if (spaceComboBox.getValue().equals("Youtube")) {
-                            api.youtubePost(
-                                    key,
-                                    URLEncoder.encode(file.getValue()),
-                                    URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.titleTextField"))).getText()),
-                                    URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.descriptionTextField"))).getText()),
-                                    ((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("youtube.youtubePrivacyComboBox"))).getValue()
-                            );
-                        } else if (spaceComboBox.getValue().equals("Snapchat")) {
-                            api.snapchatPost(key, URLEncoder.encode(file.getValue()), URLEncoder.encode(((TextField) (shareWindow.getContainer().getChildrenMap().get("snapchat.titleTextField"))).getText()));
-                        }
-                        Platform.runLater(() -> {
-                            stopLoadingScreen(scene);
-                            shareWindow.close();
-                            frame.add(jfxPanel);
-                            frame.pack();
-                        });
-                    }
-                });
-                thread.start();
-            } else {
+                }/* else {
                 // TODO mark
-
-            }
-        });
+            }*/
+            });
 //        HashMap<String, List<Object>> spaceRequirements = new HashMap<>();
 //        spaceRequirements.put("TikTok", Arrays.asList(new Object[]{nameTextField, titleTextField, descriptionTextField}));
 //        spaceRequirements.put("Youtube", Arrays.asList(new Object[]{titleTextField, descriptionTextField}));
 //        shareCompleteButton.setDisable(true);
 
-        if (spaceComboBox.getValue() != null) {
-            addSpaceParts(spaceComboBox.getValue(), shareWindow.getContainer());
+            if (spaceComboBox.getValue() != null) {
+                addSpaceParts(spaceComboBox.getValue(), shareWindow.getContainer());
+                spaceComboBox.toFront();
+            }
             spaceComboBox.toFront();
-        }
-        spaceComboBox.toFront();
-
-        shareWindow.getChildren().addAll(mediaViewClone, spaceComboBox, spaceLabel);
+            SwingUtilities.invokeLater(() -> {
+                ObservableList<Node> children = shareWindow.getChildren();
+                Platform.runLater(() -> {
+                    MediaView mediaView = getMediaViewCopy();
+                    shareWindow.getContainer().onResize.add((width, height) -> {
+                        double videoScale = 0.8;
+                        double mediaSize = Math.min(shareWindow.getContainer().getCurrentWidth() / videoWidth, shareWindow.getContainer().getCurrentHeight() / videoHeight) * videoScale;
+                        mediaView.setScaleX(mediaSize);
+                        mediaView.setScaleY(mediaSize);
+                        double offset = videoHeight * mediaSize * (1-videoScale);
+                        spaceComboBox.setLayoutX(425 * sizeMultiplier);
+                        spaceComboBox.setLayoutY(offset);
+                        spaceLabel.setLayoutX(360 * sizeMultiplier);
+                        spaceLabel.setLayoutY(offset + 3 * sizeMultiplier);
+                        shareCompleteButton.setLayoutX(shareWindow.getContainer().getCurrentWidth()-87*sizeMultiplier);
+                        shareCompleteButton.setLayoutY(shareWindow.getContainer().getCurrentHeight()-37*sizeMultiplier);
+                        mediaView.setLayoutX(offset / 2 - (videoWidth - videoWidth * mediaSize) /2);
+                        mediaView.setLayoutY((shareWindow.getContainer().getCurrentHeight() - videoHeight * mediaSize) / 2 - (videoHeight - videoHeight * mediaSize) /2);
+                    });
+                    shareWindow.getContainer().callOnResize(shareWindow.getContainer().getCurrentWidth(), shareWindow.getContainer().getCurrentHeight());
+                    children.addAll(mediaView, spaceComboBox, spaceLabel, shareCompleteButton);
+                });
+            });
+        });
     }
     private void showLoginPanel() {
         String signInText = "Sign in";
@@ -867,8 +876,9 @@ public class GUI {
         frame.setVisible(true);
     }
     boolean init = true;
-    Scene scene;
     private void showContentPanel(String key) {
+        jfxPanel = new ResizablePanel(frame);
+        ScreenListener.addMouseListener(jfxPanel, 0, 40);
         Platform.runLater(() -> {
             if (init) {
                 init = false;
@@ -876,17 +886,45 @@ public class GUI {
                 int frameHeight = (int) ((screenHeight-40) * sizeMultiplier);
                 int x = (Toolkit.getDefaultToolkit().getScreenSize().width - frameWidth) / 2;
                 int y = (Toolkit.getDefaultToolkit().getScreenSize().height - frameHeight) / 2;
-                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setX(40*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius).setResizable(true);
+                Container playback = new Container(700*sizeMultiplier, 540*sizeMultiplier).setResizable(true);
+                Container bar = new Container(700*sizeMultiplier, 40*sizeMultiplier).setResizable(true);
+                bar.setMinHeight(30*sizeMultiplier);
+                bar.setMaxHeight(-1);
+                bar.setMinWidth(200*sizeMultiplier);
+                bar.setMaxWidth(-1);
+                Pane playShape = createPlayShape(11 * sizeMultiplier, 12 * sizeMultiplier, javafx.scene.paint.Color.WHITE);
+                Pane pauseShape = createPauseShape(11 * sizeMultiplier, 12 * sizeMultiplier, javafx.scene.paint.Color.WHITE);
+                playShape.setOnMouseClicked(event -> {
+                    MediaPlayer mediaPlayer = ((MediaView) (((Container) (jfxPanel.getMappedParent().get("playback"))).getChildrenMap().get("mediaView"))).getMediaPlayer();
+                    mediaPlayer.play();
+                    bar.getChildren().remove(playShape);
+                    bar.getChildren().add(pauseShape);
+                });
+                pauseShape.setOnMouseClicked(event -> {
+                    MediaPlayer mediaPlayer = ((MediaView) (((Container) (jfxPanel.getMappedParent().get("playback"))).getChildrenMap().get("mediaView"))).getMediaPlayer();
+                    mediaPlayer.pause();
+                    bar.getChildren().add(playShape);
+                    bar.getChildren().remove(pauseShape);
+                });
+                final boolean[] playing = {false};
+                bar.addOnResize((width, height) -> {
+                    pauseShape.setLayoutX((width - pauseShape.getBoundsInParent().getWidth()) / 2);
+                    pauseShape.setLayoutY((height - pauseShape.getBoundsInParent().getHeight()) / 2);
+                    playShape.setLayoutX((width - playShape.getBoundsInParent().getWidth()) / 2);
+                    playShape.setLayoutY((height - playShape.getBoundsInParent().getHeight()) / 2);
+                });
+                bar.getChildren().add(playShape);
+                Container options = new Container(410*sizeMultiplier, 580*sizeMultiplier).setResizable(true);
                 options.setMinHeight(300*sizeMultiplier);
                 options.setMaxHeight(-1);
                 options.setMinWidth(200*sizeMultiplier);
                 options.setMaxWidth(-1);
-                Container details = new Container(380*sizeMultiplier, 580*sizeMultiplier + jfxPanel.offsetRadius).setX(1150*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius).setResizable(true);
+                Container details = new Container(380*sizeMultiplier, 580*sizeMultiplier + jfxPanel.offsetRadius).setResizable(true);
                 details.setMinHeight(300*sizeMultiplier);
                 details.setMaxHeight(-1);
                 details.setMinWidth(200*sizeMultiplier);
                 details.setMaxWidth(-1);
-                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier).setY(40*sizeMultiplier + jfxPanel.offsetRadius).setX(jfxPanel.offsetRadius);
+                Container selector = new Container(40*sizeMultiplier, 900*sizeMultiplier);
                 Group generateSvgGroup = getGenerateSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton generatePane = new SVGButton(generateSvgGroup, 40, 40, 10, sizeMultiplier);
                 SVGPath accountSvg = getAccountSVG(javafx.scene.paint.Color.WHITE);
@@ -899,8 +937,8 @@ public class GUI {
                     generatePane.setOnAction(actionEvent -> {
                         if (!generatePane.selected) {
                             options.clear();
-                            options.getChildren().addAll(getGenerateParts(key, options, details));
-                            options.callInterface();
+                            options.getChildren().addAll(getGenerateParts(key, options, details, playback));
+                            options.callOnResize(options.getCurrentWidth(), options.getCurrentHeight());
                             options.addLineBreak("Video Settings", 25);
                             selectedSectionButton.setSelected(false);
                             generatePane.setSelected(true);
@@ -918,7 +956,7 @@ public class GUI {
                         if (!accountPane.selected) {
                             options.clear();
                             options.getChildren().addAll(getAccountParts(options, key));
-                            options.callInterface();
+                            options.callOnResize(options.getCurrentWidth(), options.getCurrentHeight());
                             selectedSectionButton.setSelected(false);
                             accountPane.setSelected(true);
                             selectedSectionButton = accountPane;
@@ -934,7 +972,7 @@ public class GUI {
                         if (!adminPane.selected) {
                             options.clear();
                             options.getChildren().addAll(getAdminParts(options, key));
-                            options.callInterface();
+                            options.callOnResize(options.getCurrentWidth(), options.getCurrentHeight());
                             selectedSectionButton.setSelected(false);
                             adminPane.setSelected(true);
                             selectedSectionButton = adminPane;
@@ -943,16 +981,12 @@ public class GUI {
                     adminPane.setLayoutX(0 * sizeMultiplier);
                     adminPane.setLayoutY(80 * sizeMultiplier);
                 }
-                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier).setX(jfxPanel.offsetRadius).setY(jfxPanel.offsetRadius);
+                Container title = new Container(screenWidth*sizeMultiplier, 40*sizeMultiplier);
                 Group exportSvgGroup = getExportSVG(javafx.scene.paint.Color.WHITE);
                 SVGButton exportPane = new SVGButton(exportSvgGroup, 40, 40, 10, sizeMultiplier);
                 {
                     exportPane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
                     exportPane.setOnAction(actionEvent -> Platform.runLater(() -> {
-                        Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
-                        clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
-                        clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
-                        mediaViewClone.setClip(clipRect);
 //                        root.getChildren().addAll(getExportParts());
                         frame.add(jfxPanel);
                         frame.pack();
@@ -963,15 +997,7 @@ public class GUI {
                 SVGButton sharePane = new SVGButton(shareSvgGroup, 40, 40, 10, sizeMultiplier);
                 {
                     sharePane.setBackgroundColor(javafx.scene.paint.Color.rgb(80, 83, 84));
-                    sharePane.setOnAction(actionEvent -> Platform.runLater(() -> {
-                        Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
-                        clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
-                        clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
-                        mediaViewClone.setClip(clipRect);
-                        openShareWindow(key);
-                        frame.add(jfxPanel);
-                        frame.pack();
-                    }));
+                    sharePane.setOnAction(actionEvent -> openShareWindow(key));
                     sharePane.setLayoutX((screenWidth - 180) * sizeMultiplier);
                     sharePane.setLayoutY(0 * sizeMultiplier);
                 }
@@ -1019,7 +1045,12 @@ public class GUI {
                 timeline.setMaxHeight(-1);
                 timeline.setMinWidth(-1);
                 timeline.setMaxWidth(-1);
-                Container playback = new Container(700*sizeMultiplier, 580*sizeMultiplier).setX(450*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius).setResizable(true);
+                com.github.WildePizza.gui.javafx.Timeline timelineBar = new com.github.WildePizza.gui.javafx.Timeline(timeline.getCurrentWidth(), timeline.getCurrentHeight());
+                timeline.getChildren().add(timelineBar);
+                timeline.addOnResize((width, height) -> {
+                    timelineBar.setWidth(width);
+                    timelineBar.setHeight(height);
+                });
                 playback.setMinHeight(300*sizeMultiplier);
                 playback.setMaxHeight(-1);
                 playback.setMinWidth(200*sizeMultiplier);
@@ -1033,33 +1064,35 @@ public class GUI {
                 jfxPanel.getMappedParent().add("options", options);
                 jfxPanel.getMappedParent().add("timeline", timeline);
                 jfxPanel.getMappedParent().add("playback", playback);
+                jfxPanel.getMappedParent().add("playback.bar", bar);
                 jfxPanel.getMappedParent().add("details", details);
                 jfxPanel.toFront();
                 jfxPanel.getScene().setFill(javafx.scene.paint.Color.rgb(19, 19, 20));
+                jfxPanel.addOnResize((width, height) -> {
+                    playback.setX(450*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius);
+                    bar.setX(450*sizeMultiplier + jfxPanel.offsetRadius).setY(580*sizeMultiplier + jfxPanel.offsetRadius);
+                    options.setX(40*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius);
+                    details.setX(1150*sizeMultiplier + jfxPanel.offsetRadius).setY(40*sizeMultiplier + jfxPanel.offsetRadius);
+                    selector.setY(40*sizeMultiplier + jfxPanel.offsetRadius).setX(jfxPanel.offsetRadius);
+                    title.setX(jfxPanel.offsetRadius).setY(jfxPanel.offsetRadius).setWidth((float) width);
+                    jfxPanel.getMappedParent().renderOutline();
+                });
+                jfxPanel.callResize(jfxPanel.getWidth(), jfxPanel.getHeight());
                 new Thread(() -> Platform.runLater(() -> frame.setVisible(true))).start();
             } else {
                 frame.add(jfxPanel);
             }
         });
         frame.pack();
-//
-//
-//        Button playButton = new Button();
-//        playButton.setGraphic(createPlayShape(11 * sizeMultiplier, 12 * sizeMultiplier, javafx.scene.paint.Color.WHITE));
-//        playButton.setBackground(null);
-//        playButton.setLayoutX(890 * sizeMultiplier - 11 * sizeMultiplier / 2);
-//        playButton.setLayoutY(468 * sizeMultiplier - 12 * sizeMultiplier / 2);
-//        final boolean[] playing = {false};
-//        playButton.setOnAction(event -> {
-//            if (playing[0]) {
-//                mediaPlayer.get().pause();
-//                playButton.setGraphic(createPlayShape(11 * sizeMultiplier, 12 * sizeMultiplier, javafx.scene.paint.Color.WHITE));
-//            } else {
-//                mediaPlayer.get().play();
-//                playButton.setGraphic(createPauseShape(11 * sizeMultiplier, 12 * sizeMultiplier, javafx.scene.paint.Color.WHITE));
-//            }
-//            playing[0] = !playing[0];
-//        });
+    }
+
+    private MediaView getMediaViewCopy() {
+        Rectangle clipRect = new Rectangle(videoWidth, videoHeight);
+        clipRect.setArcWidth(80*sizeMultiplier); // Adjust corner radius
+        clipRect.setArcHeight(80*sizeMultiplier); // Adjust corner radius
+        MediaView mediaViewClone = new MediaView(((MediaView) (((Container) (jfxPanel.getMappedParent().get("playback"))).getChildrenMap().get("mediaView"))).getMediaPlayer());
+        mediaViewClone.setClip(clipRect);
+        return mediaViewClone;
     }
 
     Rectangle loading;
@@ -1070,8 +1103,7 @@ public class GUI {
                         !(space.equals("youtube") && (((SimpleComboBox<String>) (shareWindow.getContainer().getChildrenMap().get("youtube.youtubePrivacyComboBox"))).getValue() == null || ((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.titleTextField"))).getText().isEmpty() || ((TextField) (shareWindow.getContainer().getChildrenMap().get("youtube.descriptionTextField"))).getText().isEmpty()))
         );
     }
-    private void startLoadingScreen(Scene scene) {
-        Group root = ((Group) scene.getRoot());
+    private void startLoadingScreen() {
         loading = new Rectangle(50*sizeMultiplier, 20*sizeMultiplier, javafx.scene.paint.Color.BLACK);
         loading.setArcWidth(10*sizeMultiplier);
         loading.setArcHeight(10*sizeMultiplier);
@@ -1083,8 +1115,7 @@ public class GUI {
         );
         timeline.setCycleCount(Animation.INDEFINITE); // Repeat indefinitely
         timeline.play();
-        root.getChildren().addAll(loading);
-        scene.setRoot(root);
+        jfxPanel.getMappedParent().getChildren().addAll(loading);
     }
     private void debug() {
         Map<String, Node> childrenMap = jfxPanel.getMappedParent().getChildrenMap();
@@ -1172,8 +1203,7 @@ public class GUI {
     private void admin(AtomicReference<AccountComboBox> adminAccountComboBox, String space, String key, String language) {
         if (adminAccountComboBox.get() == null)
             Platform.runLater(() -> {
-                Group root = ((Group) scene.getRoot());
-                root.getChildren().remove(adminAccountComboBox.get());
+                jfxPanel.getMappedParent().getChildren().remove(adminAccountComboBox.get());
             });
         adminAccountComboBox.set(new AccountComboBox(api.info(space, key), 265 * sizeMultiplier, 70 * sizeMultiplier, 10 * sizeMultiplier, false));
         adminAccountComboBox.get().setBackgroundColor(javafx.scene.paint.Color.rgb(57, 59, 64));
@@ -1199,15 +1229,10 @@ public class GUI {
         Map<String, String> admin = api.adminCheck(space, language, key);
         if (admin != null)
             adminAccountComboBox.get().getSelectionModel().select(admin);
-        Platform.runLater(() -> {
-            Group root = ((Group) scene.getRoot());
-//            root.getChildren().add(adminAccountComboBox.get());
-        });
+        jfxPanel.getMappedParent().getChildren().add(adminAccountComboBox.get());
     }
-    private void stopLoadingScreen(Scene scene) {
-        Group root = ((Group) scene.getRoot());
-        root.getChildren().removeAll(loading);
-        scene.setRoot(root);
+    private void stopLoadingScreen() {
+        jfxPanel.getMappedParent().getChildren().removeAll(loading);
     }
     private Group getShareSVG(javafx.scene.paint.Color color) {
         Group generateSvgGroup = new Group(svgPath(0, 0, 2.1f, 0.1, true, color, "M13.803 5.33333C13.803 3.49238 15.3022 2 17.1515 2C19.0008 2 20.5 3.49238 20.5 5.33333C20.5 7.17428 19.0008 8.66667 17.1515 8.66667C16.2177 8.66667 15.3738 8.28596 14.7671 7.67347L10.1317 10.8295C10.1745 11.0425 10.197 11.2625 10.197 11.4872C10.197 11.9322 10.109 12.3576 9.94959 12.7464L15.0323 16.0858C15.6092 15.6161 16.3473 15.3333 17.1515 15.3333C19.0008 15.3333 20.5 16.8257 20.5 18.6667C20.5 20.5076 19.0008 22 17.1515 22C15.3022 22 13.803 20.5076 13.803 18.6667C13.803 18.1845 13.9062 17.7255 14.0917 17.3111L9.05007 13.9987C8.46196 14.5098 7.6916 14.8205 6.84848 14.8205C4.99917 14.8205 3.5 13.3281 3.5 11.4872C3.5 9.64623 4.99917 8.15385 6.84848 8.15385C7.9119 8.15385 8.85853 8.64725 9.47145 9.41518L13.9639 6.35642C13.8594 6.03359 13.803 5.6896 13.803 5.33333Z"));
@@ -1255,20 +1280,20 @@ public class GUI {
         path.setLayoutY(38 * sizeMultiplier / 2 - path.getLayoutBounds().getHeight() / 2 - 1.5 / sizeMultiplier);
         return path;
     }
-    private Node[] getGenerateParts(String key, Container container, Container details) {
+    private Node[] getGenerateParts(String key, Container container, Container details, Container playback) {
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/quiz.png")));
         ImageView imageView = new ImageView(image);
-        double width = image.getWidth()/10*sizeMultiplier;
-        double height = image.getHeight()/10*sizeMultiplier;
-        imageView.setFitWidth(width);
-        imageView.setFitHeight(height);
-        Rectangle clip = new Rectangle(width, height);
+        double imageWidth = image.getWidth()/10*sizeMultiplier;
+        double imageHeight = image.getHeight()/10*sizeMultiplier;
+        imageView.setFitWidth(imageWidth);
+        imageView.setFitHeight(imageHeight);
+        Rectangle clip = new Rectangle(imageWidth, imageHeight);
         clip.setArcWidth(30);
         clip.setArcHeight(30);
         imageView.setClip(clip);
         imageView.setLayoutX(95*sizeMultiplier);
         imageView.setLayoutY(56*sizeMultiplier);
-        Rectangle outline = new Rectangle(width, height);
+        Rectangle outline = new Rectangle(imageWidth, imageHeight);
         javafx.scene.paint.Color outlineColor = javafx.scene.paint.Color.rgb(78, 81, 87);
         outline.setStroke(outlineColor);
         outline.setStrokeWidth(3);
@@ -1281,7 +1306,7 @@ public class GUI {
             outline.setStroke(javafx.scene.paint.Color.rgb(53, 116, 240));
             Window typeSelector = new Window();
             typeSelector.open(frame);
-            typeSelector.actions.add(() -> {
+            typeSelector.onClose.add(() -> {
                 outline.setStroke(outlineColor);
                 outline.setStrokeWidth(3);
             });
@@ -1289,20 +1314,20 @@ public class GUI {
 
         Label nameLabel = new Label("3 Question Quiz");
         nameLabel.setFont(new javafx.scene.text.Font(nameLabel.getFont().getFamily(), nameLabel.getFont().getSize()*sizeMultiplier));
-        nameLabel.setLayoutY(imageView.getLayoutY()+height+3);
-        nameLabel.widthProperty().addListener((observable, oldValue, newValue) -> nameLabel.setLayoutX((width-newValue.doubleValue())/2 + imageView.getLayoutX()));
+        nameLabel.setLayoutY(imageView.getLayoutY()+imageHeight+3);
+        nameLabel.widthProperty().addListener((observable, oldValue, newValue) -> nameLabel.setLayoutX((imageWidth-newValue.doubleValue())/2 + imageView.getLayoutX()));
         nameLabel.setTextFill(javafx.scene.paint.Color.rgb(100, 100, 100));
 
         Label typeLabel = new Label("Type:");
         typeLabel.setFont(new javafx.scene.text.Font(typeLabel.getFont().getFamily(), typeLabel.getFont().getSize()*sizeMultiplier));
         typeLabel.setLayoutX(30*sizeMultiplier);
-        typeLabel.heightProperty().addListener((observable, oldValue, newValue) -> typeLabel.setLayoutY((height-newValue.doubleValue())/2 + 56));
+        typeLabel.heightProperty().addListener((observable, oldValue, newValue) -> typeLabel.setLayoutY((imageHeight-newValue.doubleValue())/2 + 56));
         typeLabel.setTextFill(Colors.textColor);
 
         Label languageLabel = new Label("Language:");
         languageLabel.setFont(new javafx.scene.text.Font(languageLabel.getFont().getFamily(), languageLabel.getFont().getSize()*sizeMultiplier));
         languageLabel.setLayoutX(30*sizeMultiplier);
-        languageLabel.setLayoutY(height + 93*sizeMultiplier);
+        languageLabel.setLayoutY(imageHeight + 93*sizeMultiplier);
         languageLabel.setTextFill(Colors.textColor);
 
         SimpleComboBox<String> languageComboBox = new SimpleComboBox<>(100*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
@@ -1314,7 +1339,7 @@ public class GUI {
         languageComboBox.getItems().addAll(languages);
         languageComboBox.getSelectionModel().select(0);
         languageComboBox.setLayoutX(95*sizeMultiplier);
-        languageComboBox.setLayoutY(height + 90*sizeMultiplier);
+        languageComboBox.setLayoutY(imageHeight + 90*sizeMultiplier);
 
         String[] lengths = {"< 1 min", "> 1 min 30 sec"};
         SimpleComboBox<String> lengthComboBox = new SimpleComboBox<>(117*sizeMultiplier, 25*sizeMultiplier, 10*sizeMultiplier);
@@ -1326,12 +1351,12 @@ public class GUI {
         lengthComboBox.getItems().addAll(lengths);
         lengthComboBox.getSelectionModel().select(0);
         lengthComboBox.setLayoutX(95*sizeMultiplier);
-        lengthComboBox.setLayoutY(height + 135*sizeMultiplier);
+        lengthComboBox.setLayoutY(imageHeight + 135*sizeMultiplier);
 
         Label lengthLabel = new Label("Length:");
         lengthLabel.setFont(new javafx.scene.text.Font(lengthLabel.getFont().getFamily(), lengthLabel.getFont().getSize()*sizeMultiplier));
         lengthLabel.setLayoutX(30*sizeMultiplier);
-        lengthLabel.setLayoutY(height + 138*sizeMultiplier);
+        lengthLabel.setLayoutY(imageHeight + 138*sizeMultiplier);
         lengthLabel.setStyle("-fx-text-fill: rgb(210, 210, 210)");
         lengthLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
@@ -1340,10 +1365,9 @@ public class GUI {
         generateButton.setStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
         generateButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53,116,240));
         generateButton.setTextFill(javafx.scene.paint.Color.WHITE);
-        AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
         generateButton.setOnAction(actionEvent -> {
             Scene scene = jfxPanel.getScene();
-            startLoadingScreen(scene);
+            startLoadingScreen();
             AtomicReference<Double<File, String>> tempFile = new AtomicReference<>();
             Thread thread = new Thread(() -> {
                 tempFile.set(api.video(key, languageComboBox.getValue().toLowerCase(), lengthComboBox.getSelectionModel().getSelectedIndex() == 0 ? 6 : 10));
@@ -1351,90 +1375,84 @@ public class GUI {
                     file = tempFile.get();
                 Platform.runLater(() -> {
                     if (file != null) {
-                        Media media = new Media(file.getKey().toURI().toString());
                         details.clear();
+                        Label nameDetailLabel = new Label("Name:");
+                        nameDetailLabel.setFont(new javafx.scene.text.Font(nameDetailLabel.getFont().getFamily(), nameDetailLabel.getFont().getSize() * sizeMultiplier));
+                        nameDetailLabel.setLayoutX(30 * sizeMultiplier);
+                        nameDetailLabel.setLayoutY(56 * sizeMultiplier);
+                        nameDetailLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
+
                         Label nameLabel2 = new Label(file.getKey().getName());
                         nameLabel2.setFont(new javafx.scene.text.Font(nameLabel2.getFont().getFamily(), nameLabel2.getFont().getSize() * sizeMultiplier));
-                        nameLabel2.setLayoutX(1250 * sizeMultiplier);
-                        nameLabel2.setLayoutY(60 * sizeMultiplier);
+                        nameLabel2.setLayoutX(106 * sizeMultiplier);
+                        nameLabel2.setLayoutY(56 * sizeMultiplier);
                         nameLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
                         Label pathLabel = new Label("Path:");
                         pathLabel.setFont(new javafx.scene.text.Font(pathLabel.getFont().getFamily(), pathLabel.getFont().getSize() * sizeMultiplier));
-                        pathLabel.setLayoutX(1142 * sizeMultiplier);
-                        pathLabel.setLayoutY(83 * sizeMultiplier);
+                        pathLabel.setLayoutX(30 * sizeMultiplier);
+                        pathLabel.setLayoutY(79 * sizeMultiplier);
                         pathLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                         Label pathLabel2 = new Label(file.getKey().getAbsolutePath().replace("\\" + file.getKey().getName(), ""));
                         pathLabel2.setFont(new javafx.scene.text.Font(pathLabel2.getFont().getFamily(), pathLabel2.getFont().getSize() * sizeMultiplier));
-                        pathLabel2.setLayoutX(1250 * sizeMultiplier);
-                        pathLabel2.setLayoutY(83 * sizeMultiplier);
+                        pathLabel2.setLayoutX(106 * sizeMultiplier);
+                        pathLabel2.setLayoutY(79 * sizeMultiplier);
                         pathLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
-
-                        double moveY = 205;
-                        double moveX = 130;
-                        mediaPlayer.set(new MediaPlayer(media));
-                        MediaView mediaView = new MediaView(mediaPlayer.get());
-                        mediaView.setScaleX((double) videoPreviewWidth / videoWidth * sizeMultiplier);
-                        mediaView.setScaleY((double) videoPreviewHeight / videoHeight * sizeMultiplier);
-                        mediaView.setLayoutY((-755-moveY) + (50+moveY) * sizeMultiplier);
-                        mediaView.setLayoutX((-414.5-moveX) + (780+moveX) * sizeMultiplier);
-
-                        moveY = 445;
-                        moveX = 588;
-                        MediaView mediaViewClone = new MediaView(mediaPlayer.get());
-                        mediaViewClone.setScaleX((double) 510 / videoHeight * sizeMultiplier);
-                        mediaViewClone.setScaleY((double) 510 / videoHeight * sizeMultiplier);
-                        mediaViewClone.setLayoutX((-396-moveX) + this.x + (moveX+15) * sizeMultiplier);
-                        mediaViewClone.setLayoutY((-680-moveY) + this.y + (moveY+15) * sizeMultiplier);
-
-                        Label nameDetailLabel = new Label("Name:");
-                        nameDetailLabel.setFont(new javafx.scene.text.Font(nameDetailLabel.getFont().getFamily(), nameDetailLabel.getFont().getSize() * sizeMultiplier));
-                        nameDetailLabel.setLayoutX(1142 * sizeMultiplier);
-                        nameDetailLabel.setLayoutY(60 * sizeMultiplier);
-                        nameDetailLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                         Label ratioLabel = new Label("Aspect ratio:");
                         ratioLabel.setFont(new javafx.scene.text.Font(ratioLabel.getFont().getFamily(), ratioLabel.getFont().getSize() * sizeMultiplier));
-                        ratioLabel.setLayoutX(1142 * sizeMultiplier);
-                        ratioLabel.setLayoutY(106 * sizeMultiplier);
+                        ratioLabel.setLayoutX(30 * sizeMultiplier);
+                        ratioLabel.setLayoutY(102 * sizeMultiplier);
                         ratioLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                         Label ratioLabel2 = new Label("9:16");
                         ratioLabel2.setFont(new javafx.scene.text.Font(ratioLabel2.getFont().getFamily(), ratioLabel2.getFont().getSize() * sizeMultiplier));
-                        ratioLabel2.setLayoutX(1250 * sizeMultiplier);
-                        ratioLabel2.setLayoutY(106 * sizeMultiplier);
+                        ratioLabel2.setLayoutX(106 * sizeMultiplier);
+                        ratioLabel2.setLayoutY(102 * sizeMultiplier);
                         ratioLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
                         Label resolutionLabel = new Label("Resolution:");
                         resolutionLabel.setFont(new javafx.scene.text.Font(resolutionLabel.getFont().getFamily(), resolutionLabel.getFont().getSize() * sizeMultiplier));
-                        resolutionLabel.setLayoutX(1142 * sizeMultiplier);
-                        resolutionLabel.setLayoutY(129 * sizeMultiplier);
+                        resolutionLabel.setLayoutX(30 * sizeMultiplier);
+                        resolutionLabel.setLayoutY(125 * sizeMultiplier);
                         resolutionLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                         Label resolutionLabel2 = new Label(videoWidth + "x" + videoHeight);
                         resolutionLabel2.setFont(new javafx.scene.text.Font(resolutionLabel2.getFont().getFamily(), resolutionLabel2.getFont().getSize() * sizeMultiplier));
-                        resolutionLabel2.setLayoutX(1250 * sizeMultiplier);
-                        resolutionLabel2.setLayoutY(129 * sizeMultiplier);
+                        resolutionLabel2.setLayoutX(106 * sizeMultiplier);
+                        resolutionLabel2.setLayoutY(125 * sizeMultiplier);
                         resolutionLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
 
                         Label fpsLabel = new Label("Frame rate:");
                         fpsLabel.setFont(new javafx.scene.text.Font(fpsLabel.getFont().getFamily(), fpsLabel.getFont().getSize() * sizeMultiplier));
-                        fpsLabel.setLayoutX(1142 * sizeMultiplier);
-                        fpsLabel.setLayoutY(152 * sizeMultiplier);
+                        fpsLabel.setLayoutX(30 * sizeMultiplier);
+                        fpsLabel.setLayoutY(148 * sizeMultiplier);
                         fpsLabel.setTextFill(javafx.scene.paint.Color.rgb(128, 128, 128));
 
                         Label fpsLabel2 = new Label("25.00fps");
                         fpsLabel2.setFont(new javafx.scene.text.Font(fpsLabel2.getFont().getFamily(), fpsLabel2.getFont().getSize() * sizeMultiplier));
-                        fpsLabel2.setLayoutX(1250 * sizeMultiplier);
-                        fpsLabel2.setLayoutY(152 * sizeMultiplier);
+                        fpsLabel2.setLayoutX(106 * sizeMultiplier);
+                        fpsLabel2.setLayoutY(148 * sizeMultiplier);
                         fpsLabel2.setTextFill(javafx.scene.paint.Color.rgb(178, 178, 178));
+
+                        Media media = new Media(file.getKey().toURI().toString());
+                        MediaPlayer mediaPlayer = new MediaPlayer(media);
+                        MediaView mediaView = new MediaView(mediaPlayer);
+                        details.addLineBreak("Video Details", 25);
+                        playback.onResize.add((width, height) -> {
+                            double mediaSize = Math.min(width / videoWidth, height / videoHeight);
+                            mediaView.setScaleX(mediaSize);
+                            mediaView.setScaleY(mediaSize);
+                            mediaView.setLayoutX((width - videoWidth * mediaSize) / 2 - (videoWidth - videoWidth * mediaSize) /2);
+                            mediaView.setLayoutY((height - videoHeight * mediaSize) / 2 - (videoHeight - videoHeight * mediaSize) /2);
+                        });
+                        playback.callOnResize(playback.getCurrentWidth(), playback.getCurrentHeight());
 
                         details.getChildren().addAll(
                                 nameLabel2,
                                 pathLabel,
                                 nameDetailLabel,
-                                mediaView,
                                 ratioLabel,
                                 ratioLabel2,
                                 resolutionLabel,
@@ -1443,16 +1461,17 @@ public class GUI {
                                 fpsLabel2,
                                 pathLabel2
                         );
+                        playback.getChildrenMap().put("mediaView", mediaView);
                     } else
                         JOptionPane.showMessageDialog(frame, "No video available", "Error", JOptionPane.ERROR_MESSAGE);
-                    stopLoadingScreen(scene);
+                    stopLoadingScreen();
                 });
             });
             thread.start();
         });
-        container.actions.add(() -> {
-            generateButton.setLayoutX(container.getCurrentWidth()-87*sizeMultiplier);
-            generateButton.setLayoutY(container.getCurrentHeight()-37*sizeMultiplier);
+        container.onResize.add((width, height) -> {
+            generateButton.setLayoutX(width-87*sizeMultiplier);
+            generateButton.setLayoutY(height-37*sizeMultiplier);
         });
 
         SimpleButton resetButton = new SimpleButton("Reset", 72*sizeMultiplier, 22*sizeMultiplier, 10*sizeMultiplier);
@@ -1464,9 +1483,9 @@ public class GUI {
             lengthComboBox.getSelectionModel().select(0);
             languageComboBox.getSelectionModel().select(0);
         });
-        container.actions.add(() -> {
-            resetButton.setLayoutX(container.getCurrentWidth()-167*sizeMultiplier);
-            resetButton.setLayoutY(container.getCurrentHeight()-37*sizeMultiplier);
+        container.onResize.add((width, height) -> {
+            resetButton.setLayoutX(width-167*sizeMultiplier);
+            resetButton.setLayoutY(height-37*sizeMultiplier);
         });
         return new Node[] {typeLabel, outline, imageView, nameLabel, languageLabel, lengthComboBox, languageComboBox, lengthLabel, generateButton, resetButton};
     }
@@ -1488,9 +1507,9 @@ public class GUI {
         logoutButton.setStrokeColor(javafx.scene.paint.Color.rgb(78, 81, 87));
         logoutButton.setSelectedStrokeColor(javafx.scene.paint.Color.rgb(53, 116, 240));
         logoutButton.setTextFill(Colors.textColor);
-        container.actions.add(() -> {
-            logoutButton.setLayoutX(container.getCurrentWidth()-87*sizeMultiplier);
-            logoutButton.setLayoutY(container.getCurrentHeight()-37*sizeMultiplier);
+        container.onResize.add((width, height) -> {
+            logoutButton.setLayoutX(width-87*sizeMultiplier);
+            logoutButton.setLayoutY(height-37*sizeMultiplier);
         });
         logoutButton.setOnAction(actionEvent -> {
             variables.deleteVariable("key");
@@ -1574,7 +1593,7 @@ public class GUI {
     private SVGPath svgPath(int x, int y, javafx.scene.paint.Color color, String path) {
         return svgPath(x, y, 1, 2.3, false, color, path);
     }
-    private Polygon createPlayShape(double width, double height, javafx.scene.paint.Color fillColor) {
+    private Pane createPlayShape(double width, double height, javafx.scene.paint.Color fillColor) {
         double halfHeight = height / 2;
 
         Polygon playShape = new Polygon();
@@ -1586,23 +1605,20 @@ public class GUI {
         );
         playShape.setFill(fillColor);
 
-        return playShape;
+        return new Pane(playShape);
     }
-    private StackPane createPauseShape(double width, double height, javafx.scene.paint.Color fillColor) {
+    private Pane createPauseShape(double width, double height, javafx.scene.paint.Color fillColor) {
         double rectangleWidth = width / 3;
 
-        Rectangle pauseShape1 = new Rectangle(rectangleWidth*sizeMultiplier, height*sizeMultiplier);
+        Rectangle pauseShape1 = new Rectangle(rectangleWidth, height);
         pauseShape1.setFill(fillColor);
         pauseShape1.setTranslateX(0);
 
-        Rectangle pauseShape2 = new Rectangle(rectangleWidth*sizeMultiplier, height*sizeMultiplier);
+        Rectangle pauseShape2 = new Rectangle(rectangleWidth, height);
         pauseShape2.setFill(fillColor);
         pauseShape2.setTranslateX(rectangleWidth * 2);
 
-        StackPane pauseShape = new StackPane(pauseShape1, pauseShape2);
-        pauseShape.setAlignment(Pos.CENTER);
-
-        return pauseShape;
+        return new Pane(pauseShape1, pauseShape2);
     }
     private SVGPath svgPath(int x, int y, float scale, double stroke, boolean fill, javafx.scene.paint.Color color, String path) {
         SVGPath svgPath = new SVGPath();

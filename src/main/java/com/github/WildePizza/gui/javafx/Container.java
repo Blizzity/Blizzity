@@ -1,16 +1,13 @@
 package com.github.WildePizza.gui.javafx;
 
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Container extends MappedPane {
@@ -26,7 +23,7 @@ public class Container extends MappedPane {
     public Rectangle bg1, bg2, outlineTopHitbox, outlineRightHitbox;
     double x;
     double y;
-    public List<ContainerInterface> actions = new ArrayList<>();
+    public List<Interface> onResize = new ArrayList<>();
     public Container setResizable(boolean resizable) {
         this.resizable = resizable;
         return this;
@@ -42,7 +39,7 @@ public class Container extends MappedPane {
             rectangle.setX(newValue.doubleValue()+25);
             rectangle.setWidth(width - newValue.doubleValue() - 55);
         });
-        actions.add(() -> rectangle.setWidth(width - label.getWidth() - 55));
+        onResize.add((width, height) -> rectangle.setWidth(width - label.getWidth() - 55));
         label.heightProperty().addListener((observable, oldValue, newValue) -> rectangle.setY(y + newValue.doubleValue()/2 + 1));
         rectangle.setFill(Color.rgb(65,65,73));
         getChildren().addAll(rectangle, label);
@@ -65,6 +62,8 @@ public class Container extends MappedPane {
         if (((height >= getMinHeight() || getMinHeight() == -1) && ((height <= getMaxHeight()) || getMaxHeight() == -1)) || ignore) {
             this.height = height;
             super.setHeight(height);
+            if (outlineRightHitbox != null)
+                outlineRightHitbox.setHeight(height);
             drawContainer();
             return true;
         }
@@ -86,12 +85,27 @@ public class Container extends MappedPane {
         if (((width >= getMinWidth() || getMinWidth() == -1) && ((width <= getMaxWidth()) || getMaxWidth() == -1)) || ignore) {
             this.width = width;
             super.setWidth(width);
+            if (outlineTopHitbox != null)
+                outlineTopHitbox.setWidth(width);
             drawContainer();
             return true;
         }
         return false;
     }
-
+    public Container setWidth(float width) {
+        this.width = width;
+        super.setWidth(width);
+        if (outlineTopHitbox != null)
+            outlineTopHitbox.setWidth(width);
+        return this;
+    }
+    public Container setHeight(float height) {
+        this.height = height;
+        super.setWidth(height);
+        if (outlineTopHitbox != null)
+            outlineTopHitbox.setWidth(height);
+        return this;
+    }
     public Container setOutlineColor(Color outlineColor) {
         this.outlineColor = outlineColor;
         drawContainer();
@@ -170,9 +184,12 @@ public class Container extends MappedPane {
         }
         return false;
     }
-    public void callInterface() {
-        for (ContainerInterface action : actions) {
-            action.execute();
+    public void addOnResize(Interface action) {
+        onResize.add(action);
+    }
+    public void callOnResize(double width, double height) {
+        for (Interface action : onResize) {
+            action.execute(width, height);
         }
     }
     public Container setOutline(int side, boolean outline, String name, MappedParent children, boolean resizable) {
@@ -253,8 +270,10 @@ public class Container extends MappedPane {
                                 List<Container> relatedChildren = getRelatedTreeX(children);
                                 int stop = -1;
                                 int index = 0;
+                                double originalX = getX();
+                                double originalWidth = getWidth();
                                 for (Container child : relatedChildren) {
-                                    if (child == this) {
+                                    if (child.getX() + child.getWidth() == originalX + originalWidth) {
                                         if (!child.setCurrentWidth(child.getCurrentWidth() - xOffset)) {
                                             stop=index;
                                             break;
@@ -269,12 +288,14 @@ public class Container extends MappedPane {
                                     index++;
                                 }
                                 index = 0;
+                                originalX = getX();
+                                originalWidth = getWidth();
                                 if (stop != -1) {
                                     outlineRightHitbox.setX(outlineRightHitbox.getX() + xOffset);
                                     for (Container child : relatedChildren) {
                                         if (index == stop)
                                             break;
-                                        if (child == this) {
+                                        if (child.getX() + child.getWidth() == originalX + originalWidth) {
                                             relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() + xOffset);
                                         } else {
                                             relatedChildren.get(index).setCurrentWidth(child.getCurrentWidth() - xOffset);
@@ -318,6 +339,20 @@ public class Container extends MappedPane {
         }
     }
 
+    public Container setOutlineX(double x) {
+        if (outlineTopHitbox != null)
+            outlineTopHitbox.setLayoutX(x);
+        if (outlineRightHitbox != null)
+            outlineRightHitbox.setLayoutX(x - outlineHitboxSize);
+        return this;
+    }
+    public Container setOutlineY(double y) {
+        if (outlineTopHitbox != null)
+            outlineTopHitbox.setLayoutY(y - outlineHitboxSize);
+        if (outlineRightHitbox != null)
+            outlineRightHitbox.setLayoutY(y);
+        return this;
+    }
     public Container setX(double x) {
         this.x = x;
         drawContainer();
@@ -343,7 +378,7 @@ public class Container extends MappedPane {
     }
 
     private void drawContainer() {
-        callInterface();
+        callOnResize(width, height);
         int offsetX = 0;
         int offsetY = 0;
         int offsetWidth = 0;
@@ -379,12 +414,12 @@ public class Container extends MappedPane {
     }
     public void clear() {
         getChildren().clear();
-        actions.clear();
+        onResize.clear();
         drawContainer();
     }
 
     @FunctionalInterface
-    public interface ContainerInterface {
-        void execute();
+    public interface Interface {
+        void execute(double width, double height);
     }
 }

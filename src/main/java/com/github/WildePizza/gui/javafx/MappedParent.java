@@ -34,6 +34,8 @@ public class MappedParent extends LayeredParent {
             throw new IllegalArgumentException("Key already exists: " + key);
         }
         children.put(key, new Double<>(layer, child));
+    }
+    public void renderOutline() {
         ObservableMap<String, Double<Integer, Node>> childrenClone = FXCollections.observableHashMap();
         childrenClone.putAll(children);
         childrenClone.forEach((name1, child1) -> {
@@ -51,7 +53,6 @@ public class MappedParent extends LayeredParent {
             }
         });
     }
-
     public void addAll(Object... objects) {
         for (int i = 0; true; i+=2) {
             if (i >= objects.length)

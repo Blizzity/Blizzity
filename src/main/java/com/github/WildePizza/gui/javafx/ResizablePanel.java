@@ -20,6 +20,11 @@ public class ResizablePanel extends MappedJFXPanel {
     public List<Interface> resizeEvent = new ArrayList<>();
     JDialog dialog;
     JFrame frame;
+
+    public void setDialog(JDialog dialog) {
+        this.dialog = dialog;
+    }
+
     public ResizablePanel(double width, double height, double offsetRadius, JDialog dialog) {
         this(width, height, offsetRadius);
         this.dialog = dialog;
@@ -39,9 +44,9 @@ public class ResizablePanel extends MappedJFXPanel {
         this.width = width;
         this.height = height;
         this.offsetRadius = offsetRadius;
+        setOpaque(false);
+        setBackground(new java.awt.Color(0, 0, 0, 0));
         Platform.runLater(() -> {
-            setOpaque(false);
-            setBackground(new java.awt.Color(0, 0, 0, 0));
             getScene().getRoot().setStyle("-fx-background-color: transparent;");
             getScene().setFill(javafx.scene.paint.Color.TRANSPARENT);
             getMappedParent().add("cursor.nw_resize", newDraggable(Cursor.NW_RESIZE), 0);
@@ -210,6 +215,9 @@ public class ResizablePanel extends MappedJFXPanel {
         for (Interface action : resizeEvent) {
             action.execute(width, height);
         }
+    }
+    public void addOnResize(Interface action) {
+        resizeEvent.add(action);
     }
     @FunctionalInterface
     public interface Interface {
