@@ -25,6 +25,7 @@ launch4j {
     icon = "${projectDir}/blizzity-logo.ico"
     outputDir = "libs"
 }
+
 tasks.register('createExeStandalone', Launch4jLibraryTask) {
     mustRunAfter("createExe")
     outfile = "${name}-standalone.exe"
@@ -37,12 +38,14 @@ shadowJar {
         attributes 'Main-Class': main
     }
 }
+
 jar {
     archiveFileName = "${name}.jar"
     manifest {
         attributes 'Main-Class': main
     }
 }
+
 build.dependsOn(createAllExecutables)
 
 java {
